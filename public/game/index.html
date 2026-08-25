@@ -13,7 +13,11 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: flex-start;
             min-height: 100vh; width: 100vw; 
+<<<<<<< HEAD
             overflow-y: auto; /* Cho phép cuộn mượt mà khi xoay ngang */
+=======
+            overflow-y: auto;
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
             transition: background 1s ease-in-out;
             color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
@@ -25,6 +29,8 @@
         .bg-cave { background: linear-gradient(to bottom, #212121, #607d8b); }
 
         /* Giao diện tự động co giãn theo chiều ngang/dọc của màn hình */
+=======
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
         #game-container {
             width: 100%; max-width: 900px;
             min-height: 100vh;
@@ -34,7 +40,6 @@
             position: relative; justify-content: space-between;
         }
 
-        /* Nút Kích hoạt Toàn màn hình */
         #fullscreen-btn {
             position: absolute; top: 15px; right: 15px;
             background: rgba(255, 255, 255, 0.2); color: white;
@@ -44,11 +49,17 @@
         }
         #fullscreen-btn:hover { background: white; color: black; }
 
+<<<<<<< HEAD
         /* Tiêu đề và thanh máu tối ưu cho mobile xoay ngang */
         h1 { text-align: center; font-size: 1.6rem; margin: 10px 0; color: #ffd700; text-shadow: 0 0 10px #ff9800; }
         #hud { display: flex; justify-content: space-around; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 8px; width: 100%; }
 
         /* Hộp câu hỏi */
+=======
+        h1 { text-align: center; font-size: 1.6rem; margin: 10px 0; color: #ffd700; text-shadow: 0 0 10px #ff9800; }
+        #hud { display: flex; justify-content: space-around; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 8px; width: 100%; }
+
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
         .question-box {
             background: rgba(255, 255, 255, 0.95);
             color: #111; text-shadow: none;
@@ -60,7 +71,10 @@
             width: 100%; box-sizing: border-box;
         }
 
+<<<<<<< HEAD
         /* Khung chứa trứng: Tự động dàn hàng ngang khi xoay ngang điện thoại, xếp lưới khi xoay dọc */
+=======
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
         .eggs-container { 
             display: flex; 
             flex-wrap: wrap;
@@ -72,9 +86,14 @@
             flex-grow: 1;
         }
 
+<<<<<<< HEAD
         /* Trứng Khủng Long linh hoạt theo chiều xoay màn hình */
         .egg-btn {
             flex: 1 1 42%; /* Mặc định 2 cột trên màn dọc */
+=======
+        .egg-btn {
+            flex: 1 1 42%;
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
             max-width: 200px;
             aspect-ratio: 3 / 3.8;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
@@ -88,7 +107,10 @@
             word-break: break-word;
         }
 
+<<<<<<< HEAD
         /* Khi xoay ngang điện thoại (màn hình rộng hơn), trứng sẽ tự dàn đều thành hàng ngang */
+=======
+>>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
         @media (min-width: 600px) {
             .egg-btn {
                 flex: 1 1 20%;
@@ -156,7 +178,6 @@
         </div>
     </div>
 
-    <!-- Tải sẵn âm thanh -->
     <audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/1936/1936-preview.mp3" preload="auto"></audio>
     <audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/946/946-preview.mp3" preload="auto"></audio>
 
@@ -243,11 +264,26 @@
             const container = document.getElementById('eggs-container');
             container.innerHTML = '';
             
-            qData.options.forEach((opt, index) => {
+            // 1. Chuẩn bị mảng đáp án
+            let shuffledOptions = qData.options.map((opt, index) => {
+                return {
+                    text: opt,
+                    isCorrect: index === qData.correctIndex
+                };
+            });
+
+            // 2. Thuật toán Fisher-Yates xáo trộn cực mạnh
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            
+            // 3. Đưa đáp án ra màn hình
+            shuffledOptions.forEach((optData) => {
                 const btn = document.createElement('button');
                 btn.className = 'egg-btn';
-                btn.innerHTML = opt;
-                btn.onclick = () => checkAnswer(index, qData.correctIndex, btn);
+                btn.innerHTML = optData.text;
+                btn.onclick = () => checkAnswer(optData.isCorrect, btn);
                 container.appendChild(btn);
             });
 
@@ -282,14 +318,14 @@
             }
         }
 
-        function checkAnswer(selectedIndex, correctIndex, btnElement) {
+        function checkAnswer(isCorrect, btnElement) {
             document.querySelectorAll('.egg-btn').forEach(btn => btn.disabled = true);
             const feedback = document.getElementById('feedback');
 
             soundCorrect.currentTime = 0;
             soundWrong.currentTime = 0;
 
-            if (selectedIndex === correctIndex) {
+            if (isCorrect) {
                 soundCorrect.play();
                 feedback.innerText = "CHÍNH XÁC! TÌM THẤY TRỨNG!";
                 feedback.className = 'correct';
