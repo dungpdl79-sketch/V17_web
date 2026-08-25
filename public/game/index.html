@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Săn Trứng Khủng Long Toán Học</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100vh; width: 100vw; overflow: hidden;
+            transition: background 1s ease-in-out;
+            color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .bg-jungle { background: linear-gradient(to bottom, #1a4a20, #4caf50); }
+        .bg-volcano { background: linear-gradient(to bottom, #4a0e0e, #ff5722); }
+        .bg-ice { background: linear-gradient(to bottom, #0d47a1, #81d4fa); }
+        .bg-desert { background: linear-gradient(to bottom, #b97a00, #ffcc80); }
+        .bg-cave { background: linear-gradient(to bottom, #212121, #607d8b); }
+
+        /* Giao diện bung Full 100% màn hình */
+        #game-container {
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 3vh 5vw; box-sizing: border-box;
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        /* Nút Kích hoạt Toàn màn hình */
+        #fullscreen-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.2); color: white;
+            border: 2px solid white; padding: 10px 15px; border-radius: 8px;
+            font-size: 1.2em; cursor: pointer; font-weight: bold;
+            transition: 0.3s; z-index: 100;
+        }
+        #fullscreen-btn:hover { background: white; color: black; }
+
+        /* Phóng to tiêu đề và thanh máu */
+        h1 { text-align: center; font-size: 4vh; margin-top: 0; color: #ffd700; text-shadow: 0 0 15px #ff9800; }
+        #hud { display: flex; justify-content: space-between; font-size: 3vh; font-weight: bold; margin-bottom: 3vh; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 1vh; }
+
+        /* Phóng to hộp câu hỏi cho học sinh bàn cuối */
+        .question-box {
+            background: rgba(255, 255, 255, 0.95);
+            color: #111; text-shadow: none;
+            padding: 4vh 2vw; border-radius: 20px;
+            font-size: 4.5vh; /* Chữ cực lớn */
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 5vh; box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .eggs-container { display: flex; gap: 4vw; flex-wrap: wrap; justify-content: center; }
+
+        /* Phóng to Trứng Khủng Long */
+        .egg-btn {
+            width: 16vw; height: 23vw;
+            max-width: 220px; max-height: 300px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            background: radial-gradient(circle at 30% 30%, #fffde7, #ffd54f, #f57f17);
+            border: none; cursor: pointer;
+            box-shadow: -5px 10px 15px rgba(0,0,0,0.5), inset -10px -15px 20px rgba(0,0,0,0.2);
+            color: #3e2723; font-weight: bold; font-size: 3.5vh; /* Chữ đáp án to rõ */
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative; padding: 15px; text-align: center;
+        }
+
+        .egg-btn:hover {
+            transform: translateY(-15px) rotate(5deg);
+            box-shadow: -10px 20px 30px rgba(0,0,0,0.7), inset -10px -15px 20px rgba(0,0,0,0.2);
+        }
+
+        .egg-btn[disabled] { cursor: not-allowed; filter: grayscale(80%); opacity: 0.7; }
+
+        @keyframes spinEgg {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(0.8); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .spin-effect { animation: spinEgg 0.6s ease-in-out forwards; }
+
+        .star-particle {
+            position: fixed; font-size: 40px; pointer-events: none; z-index: 1000;
+            animation: explode 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        #feedback { margin-top: 4vh; font-size: 5vh; text-align: center; min-height: 6vh; font-weight: bold; z-index: 10; }
+        .correct { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
+        .wrong { color: #ff3333; text-shadow: 0 0 20px #ff3333; }
+        
+        #game-over {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); display: none; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 100;
+        }
+        #game-over button { padding: 2vh 4vw; font-size: 4vh; border-radius: 15px; cursor: pointer; background: #4caf50; color: white; border: none; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-jungle" id="body-bg">
+
+    <div id="game-container">
+        <button id="fullscreen-btn" onclick="toggleFullScreen()">🖥️ Phóng To</button>
+        <h1>🦖 Săn Trứng Khủng Long</h1>
+        
+        <div id="hud">
+            <div>Sinh Lực: <span id="hp">3</span> ❤️</div>
+            <div>Trứng Thu Thập: <span id="score">0</span> 🥚</div>
+        </div>
+
+        <div class="question-box" id="question-text"></div>
+
+        <div class="eggs-container" id="eggs-container"></div>
+        
+        <div id="feedback"></div>
+
+        <div id="game-over">
+            <h2 id="end-title" style="font-size: 8vh;">KẾT THÚC</h2>
+            <div id="final-score" style="font-size: 5vh; margin-bottom: 5vh;">Trứng thu thập: 0</div>
+            <button onclick="startGame()">CHƠI LẠI</button>
+        </div>
+    </div>
+
+    <!-- Tải sẵn âm thanh -->
+    <audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/1936/1936-preview.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/946/946-preview.mp3" preload="auto"></audio>
+
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+
+        const questions = [
+            {
+                q: "Tìm tọa độ điểm cực đại của đồ thị hàm số $y = x^3 - 3x + 2$.",
+                options: ["$(-1; 4)$", "$(1; 0)$", "$(0; 2)$", "$(-1; 0)$"],
+                correctIndex: 0
+            },
+            {
+                q: "Giá trị cực tiểu của hàm số $y = -x^3 + 3x^2$ là bao nhiêu?",
+                options: ["$y = 0$", "$y = 4$", "$y = 2$", "$y = -2$"],
+                correctIndex: 0
+            },
+            {
+                q: "Đồ thị hàm số $y = x^4 - 2x^2 + 1$ có bao nhiêu điểm cực trị?",
+                options: ["3 điểm", "1 điểm", "2 điểm", "0 điểm"],
+                correctIndex: 0
+            },
+            {
+                q: "Cho hàm số $y = \\frac{2x - 1}{x + 1}$. Khẳng định nào sau đây đúng?",
+                options: [
+                    "Không có cực trị", 
+                    "Cực đại tại $x = -1$", 
+                    "Cực tiểu tại $x = \\frac{1}{2}$", 
+                    "Có 2 điểm cực trị"
+                ],
+                correctIndex: 0
+            },
+            {
+                q: "Tọa độ điểm cực trị của hàm số $y = x^3 - 3x^2 + 3x + 1$ là?",
+                options: ["Không có cực trị", "$(1; 2)$", "$(0; 1)$", "$(2; 3)$"],
+                correctIndex: 0
+            }
+        ];
+
+        const backgrounds = ['bg-jungle', 'bg-volcano', 'bg-ice', 'bg-desert', 'bg-cave'];
+        let availableQuestions = [];
+        let score = 0, hp = 3;
+
+        const soundCorrect = document.getElementById('sound-correct');
+        const soundWrong = document.getElementById('sound-wrong');
+
+        // Hàm bật/tắt chế độ toàn màn hình
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Không thể phóng to: ${err.message}`);
+                });
+                document.getElementById('fullscreen-btn').innerText = "❌ Thu nhỏ";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('fullscreen-btn').innerText = "🖥️ Phóng To";
+                }
+            }
+        }
+
+        function startGame() {
+            hp = 3; score = 0;
+            availableQuestions = [...questions];
+            document.getElementById('hp').innerText = hp;
+            document.getElementById('score').innerText = score;
+            document.getElementById('game-over').style.display = 'none';
+            document.getElementById('feedback').innerText = '';
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (hp <= 0 || availableQuestions.length === 0) {
+                endGame(hp > 0); return;
+            }
+
+            document.getElementById('body-bg').className = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            document.getElementById('feedback').innerText = '';
+
+            const randIndex = Math.floor(Math.random() * availableQuestions.length);
+            const qData = availableQuestions.splice(randIndex, 1)[0];
+
+            document.getElementById('question-text').innerHTML = qData.q;
+            
+            const container = document.getElementById('eggs-container');
+            container.innerHTML = '';
+            
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'egg-btn';
+                btn.innerHTML = opt;
+                btn.onclick = () => checkAnswer(index, qData.correctIndex, btn);
+                container.appendChild(btn);
+            });
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise();
+            }
+        }
+
+        function burstStars(buttonElement) {
+            const rect = buttonElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = ['⭐', '🌟', '✨'][Math.floor(Math.random() * 3)];
+                star.className = 'star-particle';
+                document.body.appendChild(star);
+
+                star.style.left = `${centerX - 20}px`;
+                star.style.top = `${centerY - 20}px`;
+
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 200 + 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                star.style.setProperty('--tx', `${tx}px`);
+                star.style.setProperty('--ty', `${ty}px`);
+
+                setTimeout(() => star.remove(), 1000);
+            }
+        }
+
+        function checkAnswer(selectedIndex, correctIndex, btnElement) {
+            document.querySelectorAll('.egg-btn').forEach(btn => btn.disabled = true);
+            const feedback = document.getElementById('feedback');
+
+            soundCorrect.currentTime = 0;
+            soundWrong.currentTime = 0;
+
+            if (selectedIndex === correctIndex) {
+                soundCorrect.play();
+                feedback.innerText = "CHÍNH XÁC! TÌM THẤY TRỨNG!";
+                feedback.className = 'correct';
+                
+                btnElement.style.background = 'radial-gradient(circle at 30% 30%, #fff, #4caf50, #1b5e20)';
+                btnElement.innerHTML = '<span style="font-size: 5vh;">🐣</span>';
+                burstStars(btnElement);
+                
+                score++;
+            } else {
+                soundWrong.play();
+                feedback.innerText = "SAI RỒI! BỊ KHỦNG LONG TẤN CÔNG!";
+                feedback.className = 'wrong';
+                
+                btnElement.classList.add('spin-effect');
+                btnElement.style.background = 'radial-gradient(circle at 30% 30%, #fff, #f44336, #b71c1c)';
+                
+                hp--;
+            }
+
+            document.getElementById('hp').innerText = hp;
+            document.getElementById('score').innerText = score;
+
+            setTimeout(nextQuestion, 2500);
+        }
+
+        function endGame(isVictory) {
+            document.getElementById('game-over').style.display = 'flex';
+            document.getElementById('final-score').innerText = `Trứng thu thập: ${score} / ${questions.length}`;
+            const title = document.getElementById('end-title');
+            if (isVictory) {
+                title.innerText = "🎉 CHIẾN THẮNG!"; title.style.color = "#4caf50";
+            } else {
+                title.innerText = "💥 THẤT BẠI!"; title.style.color = "#f44336";
+            }
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

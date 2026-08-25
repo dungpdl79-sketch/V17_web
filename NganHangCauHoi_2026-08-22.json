@@ -1,0 +1,415 @@
+{
+ "mcq": [
+  {
+   "id": "q_mt4qwrh7_0wxn4",
+   "tag": "chuong1_bai1",
+   "lvl": 1,
+   "q": "Nếu hàm số $y=f(x)$ đồng biến trên $K$ thì đồ thị của hàm số trên $K$ có dạng nào?",
+   "exp": "SGK: hàm số đồng biến trên $K$ thì đồ thị đi lên từ trái sang phải; nghịch biến thì đồ thị đi xuống từ trái sang phải.",
+   "error": "",
+   "opts": [
+    "Đi lên từ trái sang phải",
+    "Đi xuống từ trái sang phải",
+    "Là một đường thẳng nằm ngang",
+    "Luôn nằm phía trên trục hoành"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh7_1o6ee",
+   "tag": "chuong1_bai1",
+   "lvl": 1,
+   "q": "Cho hàm số $y=f(x)$ có đạo hàm trên khoảng $K$. Khẳng định nào đúng theo định lí trong SGK?",
+   "exp": "Định lí: $f'(x)>0$ trên $K$ thì $f$ đồng biến, $f'(x)<0$ trên $K$ thì $f$ nghịch biến. Phương án D sai vì đạo hàm có thể bằng 0 tại hữu hạn điểm mà hàm vẫn đồng biến.",
+   "error": "",
+   "opts": [
+    "Nếu $f'(x)>0$ với mọi $x\\in K$ thì $f(x)$ đồng biến trên $K$",
+    "Nếu $f'(x)>0$ với mọi $x\\in K$ thì $f(x)$ nghịch biến trên $K$",
+    "Nếu $f'(x)=0$ tại một điểm của $K$ thì $f(x)$ không đổi trên $K$",
+    "Nếu $f(x)$ đồng biến trên $K$ thì $f'(x)>0$ với mọi $x\\in K$"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh7_2lyl2",
+   "tag": "chuong1_bai1",
+   "lvl": 1,
+   "q": "Bước đầu tiên khi xét tính đơn điệu của hàm số $y=f(x)$ bằng bảng biến thiên là gì?",
+   "exp": "Bốn bước theo SGK: (1) tìm tập xác định; (2) tính $f'(x)$ và tìm các điểm mà $f'$ bằng 0 hoặc không tồn tại; (3) sắp xếp các điểm đó tăng dần rồi lập bảng biến thiên; (4) kết luận.",
+   "error": "",
+   "opts": [
+    "Tìm tập xác định của hàm số",
+    "Tính đạo hàm $f'(x)$",
+    "Lập bảng biến thiên",
+    "Kết luận khoảng đồng biến, nghịch biến"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh8_3nelc",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Hàm số $y=x^2-4x+2$ đồng biến trên khoảng nào?",
+   "exp": "Ví dụ 2 SGK. Tập xác định $\\mathbb{R}$. Ta có $y'=2x-4$, nên $y'>0$ khi $x\\in(2;+\\infty)$ và $y'<0$ khi $x\\in(-\\infty;2)$. Vậy hàm số đồng biến trên $(2;+\\infty)$, nghịch biến trên $(-\\infty;2)$.",
+   "error": "",
+   "opts": [
+    "$(2;+\\infty)$",
+    "$(-\\infty;2)$",
+    "$(-\\infty;+\\infty)$",
+    "$(0;+\\infty)$"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh8_4p877",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Xét chiều biến thiên của hàm số $y=\\dfrac{x-2}{x+1}$. Khẳng định nào đúng?",
+   "exp": "Ví dụ 4 SGK. Tập xác định $\\mathbb{R}\\setminus\\{-1\\}$. Ta có $y'=\\dfrac{(x+1)-(x-2)}{(x+1)^2}=\\dfrac{3}{(x+1)^2}>0$ với mọi $x\\neq-1$. Hàm số đồng biến trên từng khoảng $(-\\infty;-1)$ và $(-1;+\\infty)$, <b>không</b> được kết luận đồng biến trên $\\mathbb{R}$ vì hàm số không xác định tại $x=-1$.",
+   "error": "",
+   "opts": [
+    "Hàm số đồng biến trên các khoảng $(-\\infty;-1)$ và $(-1;+\\infty)$",
+    "Hàm số đồng biến trên $\\mathbb{R}$",
+    "Hàm số nghịch biến trên các khoảng $(-\\infty;-1)$ và $(-1;+\\infty)$",
+    "Hàm số đồng biến trên $(-\\infty;-1)$ và nghịch biến trên $(-1;+\\infty)$"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh8_56iwg",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Hàm số $y=\\dfrac{x^2-2x+5}{x-1}$ nghịch biến trên các khoảng nào?",
+   "exp": "Ví dụ 3 SGK. Tập xác định $\\mathbb{R}\\setminus\\{1\\}$. Ta có $y'=\\dfrac{x^2-2x-3}{(x-1)^2}$, $y'=0\\Leftrightarrow x=-1$ hoặc $x=3$. Từ bảng biến thiên: đồng biến trên $(-\\infty;-1)$ và $(3;+\\infty)$; nghịch biến trên $(-1;1)$ và $(1;3)$. Lưu ý phải tách tại $x=1$ vì hàm số không xác định ở đó.",
+   "error": "",
+   "opts": [
+    "$(-1;1)$ và $(1;3)$",
+    "$(-\\infty;-1)$ và $(3;+\\infty)$",
+    "$(-1;3)$",
+    "$(-\\infty;1)$ và $(1;+\\infty)$"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh8_62uji",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Hàm số $y=-\\dfrac{1}{3}x^3+x^2-x+5$ đơn điệu như thế nào?",
+   "exp": "Ví dụ 5 SGK. Tập xác định $\\mathbb{R}$. Ta có $y'=-x^2+2x-1=-(x-1)^2\\leq 0$ với mọi $x$, và $y'=0$ chỉ tại $x=1$ (một điểm duy nhất). Theo chú ý sau định lí, hàm số vẫn nghịch biến trên toàn bộ $\\mathbb{R}$.",
+   "error": "",
+   "opts": [
+    "Nghịch biến trên $\\mathbb{R}$",
+    "Đồng biến trên $\\mathbb{R}$",
+    "Đồng biến trên $(-\\infty;1)$ và nghịch biến trên $(1;+\\infty)$",
+    "Nghịch biến trên $(-\\infty;1)$ và đồng biến trên $(1;+\\infty)$"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt4qwrh9_746sj",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Cho hàm số $y=f(x)$ có đồ thị như hình vẽ. Hàm số nghịch biến trên khoảng nào?<br><img src=\"data:image/png;base64,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\" style=\"max-width:100%;border-radius:8px\"><br>",
+   "exp": "Ví dụ 1 SGK. Đọc trên đồ thị: phần đồ thị đi lên ứng với khoảng đồng biến $(-2;1)$ và $(5;8)$; phần đi xuống ứng với khoảng nghịch biến $(1;5)$.",
+   "error": "",
+   "opts": [
+    "$(1;5)$",
+    "$(-2;1)$",
+    "$(5;8)$",
+    "$(-2;8)$"
+   ],
+   "ans": 0
+  }
+ ],
+ "tf": [
+  {
+   "id": "q_mt4qwrh9_8j4ex",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Cho hàm số $y=\\dfrac{x^2-2x+5}{x-1}$.",
+   "exp": "Ví dụ 3 SGK. $y'=\\dfrac{x^2-2x-3}{(x-1)^2}$ nên $y'=0\\Leftrightarrow x=-1$ hoặc $x=3$. Ý c) sai vì hàm số không xác định tại $x=1$, phải tách thành hai khoảng nghịch biến riêng là $(-1;1)$ và $(1;3)$, không được viết gộp thành $(-1;3)$.",
+   "error": "",
+   "stmts": [
+    {
+     "t": "Tập xác định của hàm số là $\\mathbb{R}\\setminus\\{1\\}$",
+     "ans": true
+    },
+    {
+     "t": "$y'=0\\Leftrightarrow x=-1$ hoặc $x=3$",
+     "ans": true
+    },
+    {
+     "t": "Hàm số nghịch biến trên khoảng $(-1;3)$",
+     "ans": false
+    },
+    {
+     "t": "Hàm số đồng biến trên khoảng $(3;+\\infty)$",
+     "ans": true
+    }
+   ]
+  },
+  {
+   "id": "q_mt4qwrh9_9w9ue",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Cho hàm số $y=\\dfrac{x-2}{x+1}$.",
+   "exp": "Ví dụ 4 SGK. $y'=\\dfrac{(x+1)-(x-2)}{(x+1)^2}=\\dfrac{3}{(x+1)^2}>0$ với mọi $x\\neq-1$. Ý c) sai: đạo hàm dương trên từng khoảng nhưng hàm số gián đoạn tại $x=-1$ nên không đồng biến trên $\\mathbb{R}$.",
+   "error": "",
+   "stmts": [
+    {
+     "t": "$y'=\\dfrac{3}{(x+1)^2}$",
+     "ans": true
+    },
+    {
+     "t": "$y'>0$ với mọi $x\\neq-1$",
+     "ans": true
+    },
+    {
+     "t": "Hàm số đồng biến trên $\\mathbb{R}$",
+     "ans": false
+    },
+    {
+     "t": "Hàm số đồng biến trên khoảng $(-1;+\\infty)$",
+     "ans": true
+    }
+   ]
+  },
+  {
+   "id": "q_mt4qwrh9_104efg",
+   "tag": "chuong1_bai1",
+   "lvl": 1,
+   "q": "Xét các khẳng định về tính đơn điệu của hàm số.",
+   "exp": "Ba ý đầu đúng theo SGK. Ý d) sai: định lí vẫn đúng khi $f'(x)$ bằng 0 tại một số hữu hạn điểm — ví dụ $y=-\\dfrac{1}{3}x^3+x^2-x+5$ có $y'=-(x-1)^2$ bằng 0 tại $x=1$ nhưng vẫn nghịch biến trên $\\mathbb{R}$.",
+   "error": "",
+   "stmts": [
+    {
+     "t": "Hàm số nghịch biến trên $K$ thì đồ thị đi xuống từ trái sang phải",
+     "ans": true
+    },
+    {
+     "t": "Đồng biến và nghịch biến được gọi chung là đơn điệu",
+     "ans": true
+    },
+    {
+     "t": "Nếu $f'(x)=0$ với mọi $x\\in K$ thì $f(x)$ không đổi trên $K$",
+     "ans": true
+    },
+    {
+     "t": "Nếu $f'(x)$ bằng 0 tại một điểm của $K$ thì hàm số không thể đơn điệu trên $K$",
+     "ans": false
+    }
+   ]
+  }
+ ],
+ "sa": [
+  {
+   "id": "q_mt4qwrh9_11tx13",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Hàm số $y=x^2-4x+2$ đồng biến trên khoảng $(a;+\\infty)$. Tìm giá trị của $a$.",
+   "exp": "Ví dụ 2 SGK. $y'=2x-4>0\\Leftrightarrow x>2$, nên hàm số đồng biến trên $(2;+\\infty)$, suy ra $a=2$.",
+   "error": "",
+   "ans": "2",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt4qwrha_12lzqq",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Cho hàm số $y=\\dfrac{x^2-2x+5}{x-1}$. Tính tổng các nghiệm của phương trình $y'=0$.",
+   "exp": "Ví dụ 3 SGK. $y'=\\dfrac{x^2-2x-3}{(x-1)^2}$, $y'=0\\Leftrightarrow x^2-2x-3=0\\Leftrightarrow x=-1$ hoặc $x=3$. Tổng hai nghiệm là $-1+3=2$.",
+   "error": "",
+   "ans": "2",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt4qwrha_13pd2i",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Hàm số $y=-\\dfrac{1}{3}x^3+x^2-x+5$ có bao nhiêu khoảng đồng biến?",
+   "exp": "Ví dụ 5 SGK. $y'=-(x-1)^2\\leq 0$ với mọi $x$, hàm số nghịch biến trên toàn bộ $\\mathbb{R}$ nên không có khoảng đồng biến nào.",
+   "error": "",
+   "ans": "0",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt4qwrha_144n12",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Hàm số $y=\\dfrac{x-2}{x+1}$ có bao nhiêu khoảng đồng biến trên tập xác định của nó?",
+   "exp": "Ví dụ 4 SGK. Tập xác định $\\mathbb{R}\\setminus\\{-1\\}$ gồm hai khoảng $(-\\infty;-1)$ và $(-1;+\\infty)$; $y'>0$ trên cả hai nên có 2 khoảng đồng biến.",
+   "error": "",
+   "ans": "2",
+   "saKind": "auto"
+  }
+ ],
+ "_templates": [
+  {
+   "name": "TEST PHẦN MỀM",
+   "scope": [
+    "chuong1_bai1"
+   ],
+   "cells": {
+    "chuong1_bai1": {
+     "mcq": [
+      3,
+      2,
+      3,
+      0
+     ],
+     "tf": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "sa": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "manual": {
+    "mcq": [],
+    "tf": [],
+    "sa": []
+   },
+   "scoring": {
+    "mcq": 0.25,
+    "sa": 0.5,
+    "tf": [
+     0,
+     0.1,
+     0.25,
+     0.5,
+     1
+    ],
+    "scale10": true
+   },
+   "order": "lvl",
+   "at": "23/8/2026"
+  }
+ ],
+ "_curriculum": [
+  {
+   "chuong": "chuong1",
+   "ten": "Chương I — Ứng dụng đạo hàm",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong1_bai1",
+     "Bài 1: Tính đơn điệu và cực trị của hàm số"
+    ],
+    [
+     "chuong1_bai2",
+     "Bài 2: Giá trị lớn nhất và nhỏ nhất của hàm số"
+    ],
+    [
+     "chuong1_bai3",
+     "Bài 3: Đường tiệm cận của đồ thị hàm số"
+    ],
+    [
+     "chuong1_bai4",
+     "Bài 4: Khảo sát sự biến thiên và vẽ đồ thị"
+    ],
+    [
+     "chuong1_bai5",
+     "Bài 5: Ứng dụng đạo hàm giải quyết vấn đề thực tiễn"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong2",
+   "ten": "Chương II — Vectơ và tọa độ trong không gian",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong2_bai6",
+     "Bài 6: Vectơ trong không gian"
+    ],
+    [
+     "chuong2_bai7",
+     "Bài 7: Hệ tọa độ trong không gian"
+    ],
+    [
+     "chuong2_bai8",
+     "Bài 8: Biểu thức tọa độ các phép toán vectơ"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong3",
+   "ten": "Chương III — Các số đặc trưng đo mức độ phân tán",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong3_bai9",
+     "Bài 9: Khoảng biến thiên và khoảng tứ phân vị"
+    ],
+    [
+     "chuong3_bai10",
+     "Bài 10: Phương sai và độ lệch chuẩn"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong4",
+   "ten": "Chương IV — Nguyên hàm và tích phân",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong4_bai11",
+     "Bài 11: Nguyên hàm"
+    ],
+    [
+     "chuong4_bai12",
+     "Bài 12: Tích phân"
+    ],
+    [
+     "chuong4_bai13",
+     "Bài 13: Ứng dụng hình học của tích phân"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong5",
+   "ten": "Chương V — Phương pháp tọa độ trong không gian",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong5_bai14",
+     "Bài 14: Phương trình mặt phẳng"
+    ],
+    [
+     "chuong5_bai15",
+     "Bài 15: Phương trình đường thẳng"
+    ],
+    [
+     "chuong5_bai16",
+     "Bài 16: Công thức tính góc trong không gian"
+    ],
+    [
+     "chuong5_bai17",
+     "Bài 17: Phương trình mặt cầu"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong6",
+   "ten": "Chương VI — Xác suất có điều kiện",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong6_bai18",
+     "Bài 18: Xác suất có điều kiện"
+    ],
+    [
+     "chuong6_bai19",
+     "Bài 19: Công thức xác suất toàn phần và công thức Bayes"
+    ]
+   ]
+  }
+ ]
+}

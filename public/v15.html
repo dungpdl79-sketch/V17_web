@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e3a8a'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23fbbf24' font-family='sans-serif' font-weight='bold'%3E%C4%90%3C/text%3E%3C/svg%3E">
+<title>Đỉnh Cao Trí Tuệ V15 — Xưởng Thiết Kế Offline</title>
+
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: { typeset: false }
+};
+</script>
+<script id="MathJax-script" async crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Nunito:wght@400;600;800&display=swap');
+
+:root{
+  --primary-dark:#0f172a; --primary-blue:#1e3a8a; --accent-blue:#3b82f6;
+  --accent-gold:#fbbf24; --accent-red:#ef4444; --accent-green:#10b981;
+  --bg-light:#f8fafc; --text-light:#fff; --text-dark:#1e293b; --line:#e2e8f0;
+}
+*{box-sizing:border-box}
+
+body{ margin:0;padding:0;font-family:'Nunito',sans-serif; background:#f8fafc!important; display:flex; flex-direction:row; min-height:100vh; color:var(--text-dark); align-items: flex-start; }
+
+#login-wrapper { display: none !important; }
+
+.sidebar { width: 280px !important; min-width: 280px !important; background: #153d8a !important; color: #fff !important; display: flex !important; flex-direction: column !important; position: sticky !important; top: 0 !important; height: 100vh !important; overflow-y: auto !important; z-index: 50 !important; padding: 0 !important; box-shadow: 4px 0 15px rgba(0,0,0,0.2) !important; }
+.sidebar-btn { background: transparent; color: #cbd5e1; border: 1px solid transparent; padding: 12px 14px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; text-align: left; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 10px; flex-shrink: 0; width: 100%; }
+.sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+.sidebar-btn.active { background: #2563eb !important; color: white !important; box-shadow: none !important; border-color: #60a5fa !important; transform: none !important; }
+.ui-menu-label { padding: 14px 10px 6px; color: #93c5fd; font: 900 12px/1 'Montserrat', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 5px; border-top: none !important; }
+
+.main-content { display: block !important; padding: 30px 40px !important; flex: 1; overflow-y: auto; }
+.container { width:100%; max-width:1000px; margin:0 auto }
+.game-panel { background:#fff; border-radius:20px; padding:34px 26px; box-shadow:0 10px 25px rgba(0,0,0,.05); display:none; animation:slideUp .4s ease-out; position:relative; border: 1px solid var(--line); }
+.active-panel { display:block }
+@keyframes slideUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+h1{font-family:'Montserrat',sans-serif;text-align:center;text-transform:uppercase;margin:0 0 6px;font-weight:900}
+.title-teacher{color:var(--primary-blue);font-size:1.9em}
+.subtitle{text-align:center;color:#64748b;font-size:1.05em;margin-bottom:22px;font-weight:700}
+.select-box,.input-box{width:100%;max-width:560px;padding:12px 18px;font-size:1.05em;font-family:'Nunito',sans-serif; border:2px solid #cbd5e1;border-radius:12px;outline:none;margin:0 auto 14px;display:block;text-align:center; font-weight:600;color:var(--primary-dark);background:#f8fafc;cursor:pointer}
+.input-box{cursor:text;text-align:left}
+textarea.input-box{resize:vertical;min-height:130px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;font-weight:400}
+.btn{font-family:'Montserrat',sans-serif;font-size:1.05em;font-weight:700;padding:14px 30px;border:none;border-radius:12px; cursor:pointer;display:inline-block;margin:8px;text-transform:uppercase;transition:.15s;color:#fff;letter-spacing:.5px}
+.btn-sm{padding:10px 14px;font-size:.82em;margin:4px}
+.btn-teacher{background:var(--primary-blue);box-shadow:0 5px 0 #1e40af}
+.btn-play{background:var(--accent-gold);color:#78350f;box-shadow:0 5px 0 #d97706}
+.btn-green{background:var(--accent-green);box-shadow:0 5px 0 #047857}
+.btn-orange{background:#f97316;box-shadow:0 5px 0 #c2410c}
+.btn-purple{background:#8b5cf6;box-shadow:0 5px 0 #5b21b6}
+.btn-gray{background:#64748b;box-shadow:0 5px 0 #475569}
+.btn-red{background:var(--accent-red);box-shadow:0 5px 0 #991b1b}
+.btn:active{transform:translateY(5px);box-shadow:none!important}
+.btn-container{text-align:center;margin-top:18px}
+.admin-form{background:#f1f5f9;padding:24px;border-radius:16px;border:2px dashed #94a3b8;margin-bottom:20px;display:none}
+.form-row{display:flex;gap:12px;margin-bottom:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.hint{font-size:.85em;color:#475569;text-align:center;line-height:1.5;flex-shrink:0;}
+.matrix-box{background:#e2e8f0;padding:14px;border-radius:12px;margin-bottom:14px;border:1px solid #cbd5e1}
+.matrix-input{width:78px;padding:8px;border-radius:6px;border:1px solid #94a3b8;text-align:center;font-weight:700;font-size:1.05em}
+.matrix-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;background:#fff;padding:10px 14px;border-radius:8px}
+.opt-toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-weight:600}
+.opt-toggle input[type=checkbox]{width:20px;height:20px}
+.stats-table{width:100%;border-collapse:collapse;text-align:center;background:#fff;margin-top:10px;font-size:.92em}
+.stats-table th{background:#e2e8f0;padding:9px;border:1px solid #cbd5e1;color:var(--primary-blue);font-size:.9em}
+.stats-table td{padding:8px;border:1px solid #cbd5e1}
+.preview-item{border:2px solid #cbd5e1;border-radius:12px;padding:18px;margin-bottom:18px;background:#f8fafc;position:relative}
+.action-badges{position:absolute;top:-14px;right:16px;display:flex;gap:8px}
+.badge-edit{background:#fbbf24;color:#78350f;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.badge-move{background:#3b82f6;color:#fff;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.badge-delete{background:#ef4444;color:#fff;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.tag-pill{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:99px;padding:2px 10px;font-size:.75em;font-weight:700;margin-left:6px}
+
+/* STUDIO CSS */
+.ds-step{border:1px solid var(--line)!important;border-radius:13px!important;background:#fff!important;box-shadow:0 4px 14px rgba(15,23,42,.04);padding:20px!important;margin-bottom:16px!important}
+.ds-step h4{margin:0 0 12px!important;color:#173676!important;font-size:1.1em!important;letter-spacing:.25px; font-family:'Montserrat'}
+.ds-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ds-tabs button{flex:1 1 120px;padding:10px;border:2px solid var(--line);background:#f8fafc;border-radius:10px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif}
+.ds-tabs button.on{background:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}
+.ds-table{width:100%;border-collapse:collapse;font-size:.9em;min-width:520px}
+.ds-table th{background:#e2e8f0;border:1px solid #cbd5e1;padding:8px;color:var(--primary-blue)}
+.ds-table td{border:1px solid #cbd5e1;padding:6px;text-align:center}
+.ds-table td.name{text-align:left;font-weight:600;font-size:.95em;min-width:170px}
+.ds-cell{width:60px;padding:8px 4px;border:1px solid #cbd5e1;border-radius:6px;text-align:center;font-weight:700}
+.ds-cell.over{border-color:var(--accent-red);background:#fee2e2;color:#991b1b}
+.ds-avail{display:block;font-size:.75em;color:#94a3b8;font-weight:600;margin-top:4px}
+.ds-scope{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:260px;overflow:auto;padding:6px}
+.ds-scope label{display:flex;gap:8px;align-items:center;font-size:.9em;background:#f8fafc;padding:8px 10px;border-radius:8px;cursor:pointer; border:1px solid var(--line);}
+.ds-scope label.empty{opacity:.45}
+.ds-scope label:hover{border-color:#93c5fd;background:#eff6ff}
+.ds-scope label:has(input:checked){border-color:#3b82f6;background:#dbeafe;box-shadow:0 0 0 2px rgba(59,130,246,.08)}
+.ds-pick{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.ds-pick label{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:.9em}
+.ds-pick label:hover{background:#eff6ff}
+.ds-cart{list-style:none;padding:0;max-height:260px;overflow:auto}
+.ds-cart li{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:.9em}
+.ds-sum{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-top:10px;font-size:.95em;line-height:1.6}
+.mini{width:76px;padding:8px;border:1px solid #94a3b8;border-radius:6px;text-align:center;font-weight:700}
+
+@media(max-width:800px){
+  .sidebar { transform: translateX(-100%); position: fixed !important; }
+  .sidebar.mobile-open { transform: translateX(0); }
+  .main-content { padding: 15px 10px !important; }
+}
+
+/* =====================================================================
+   KHUNG DUYỆT DỮ LIỆU AI — CHẾ ĐỘ TOÀN MÀN HÌNH
+   Trước đây danh sách chờ duyệt bị kẹt trong .container (tối đa 1000px)
+   rồi lại cuộn trong một ô cao 60vh, nên đồ thị và công thức dài bị cắt,
+   thầy cô phải cuộn hai tầng mới đọc hết một câu.
+   ===================================================================== */
+#bulk-preview-area .bulk-head{
+  position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;
+  align-items:center;justify-content:space-between;
+  background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;
+  padding:10px 16px;margin-bottom:12px;text-align:left
+}
+#bulk-preview-area .bulk-head b{color:var(--primary-blue);font-size:1.15em}
+#bulk-preview-area .bulk-head .dem{font-size:.85em;color:#475569;font-weight:700}
+#bulk-preview-area .bulk-list{
+  max-height:62vh;overflow-y:auto;padding-right:8px;
+  border-top:2px solid #e2e8f0;padding-top:14px
+}
+#bulk-preview-area .bulk-card{
+  margin-bottom:16px;padding:18px;background:#fff;border-radius:10px;
+  border:1px solid #cbd5e1;text-align:left
+}
+#bulk-preview-area .bulk-card.dang-sua{border:2px solid #8b5cf6;background:#faf5ff}
+/* Ảnh đồ thị co theo bề ngang khung, không bị cắt như trước */
+#bulk-preview-area .bulk-card img{max-width:100%;height:auto;display:block;margin:8px 0}
+#bulk-preview-area .bulk-card table{max-width:100%}
+
+/* LỖI CŨ: .input-box có max-width:560px và margin:0 auto, nên dù đặt
+   style="width:100%" thì ô soạn thảo vẫn kẹt 560px và nằm giữa —
+   sửa một câu có đồ thị hay công thức dài rất khổ. */
+#bulk-preview-area .bulk-edit{
+  width:100%!important;max-width:none!important;margin:0 0 10px!important;
+  text-align:left;display:block
+}
+
+/* Toàn màn hình: thoát khỏi .container và khỏi thanh menu bên trái */
+#bulk-preview-area.bulk-full{
+  position:fixed;inset:0;z-index:9000;margin:0;padding:14px 20px;
+  background:#f8fafc;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:none;border-radius:0
+}
+#bulk-preview-area.bulk-full .bulk-list{
+  max-height:none;flex:1;min-height:0;border-top:none;padding-top:8px
+}
+#bulk-preview-area.bulk-full .bulk-card{padding:22px 26px}
+body.bulk-khoa-cuon{overflow:hidden}
+
+/* Màn hình rộng: xếp phương án thành 2 cột cho đỡ phải cuộn */
+@media(min-width:1250px){
+  #bulk-preview-area.bulk-full .bulk-opts{
+    display:grid;grid-template-columns:1fr 1fr;gap:2px 30px
+  }
+}
+
+/* --- Hàng chọn mức độ / bài học và ô chọn đáp án --- */
+#bulk-preview-area .bulk-meta{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;
+  background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;
+  padding:10px 14px;margin-bottom:14px
+}
+#bulk-preview-area .bulk-meta label{
+  display:flex;flex-direction:column;gap:4px;
+  font-size:.82em;font-weight:800;color:#3730a3;text-transform:uppercase;letter-spacing:.4px
+}
+#bulk-preview-area .bulk-mini{
+  padding:8px 10px;border:2px solid #cbd5e1;border-radius:8px;background:#fff;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:.95em;
+  color:var(--primary-dark);cursor:pointer;text-transform:none;letter-spacing:0
+}
+#bulk-preview-area .bulk-ghichu{
+  font-size:.85em;color:#475569;font-weight:700;margin:12px 0 6px
+}
+#bulk-preview-area .bulk-dong-opt{
+  display:flex;gap:10px;margin-bottom:8px;align-items:flex-start
+}
+/* Ô tròn chọn đáp án — để to cho dễ bấm */
+#bulk-preview-area .bulk-chon{
+  display:flex;align-items:center;gap:6px;padding:10px 12px;
+  border:2px solid #cbd5e1;border-radius:8px;background:#f8fafc;
+  cursor:pointer;font-weight:800;flex-shrink:0;margin-top:2px
+}
+#bulk-preview-area .bulk-chon input{width:20px;height:20px;cursor:pointer;margin:0}
+#bulk-preview-area .bulk-chon:has(input:checked){
+  border-color:var(--accent-green);background:#dcfce7;color:#065f46
+}
+
+/* Thẻ mức độ / bài học ở chế độ xem — bấm vào là đổi ngay, khỏi vào Sửa */
+#bulk-preview-area .pill-sua{
+  border:none;font:inherit;cursor:pointer;
+  background:#e0e7ff;color:#3730a3;border-radius:99px;
+  padding:4px 12px;font-size:.78em;font-weight:800;margin-left:6px
+}
+#bulk-preview-area .pill-sua:hover{background:#c7d2fe}
+#bulk-preview-area .pill-sua.canxem{background:#fee2e2;color:#991b1b}
+
+/* Ô đặt mức độ cho cả lô, nằm trên thanh tiêu đề */
+#bulk-preview-area .bulk-head .lo-mucdo{
+  display:flex;align-items:center;gap:6px;background:#fff;
+  border:1px solid #c7d2fe;border-radius:10px;padding:5px 10px;
+  font-size:.82em;font-weight:800;color:#3730a3
+}
+</style>
+</head>
+<body>
+
+<div id="login-wrapper"></div>
+
+<!-- SIDEBAR V15 -->
+<nav id="app-sidebar" class="sidebar">
+  <div style="padding:24px 20px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1)">
+      <h2 style="color:#fbbf24; font-size:24px; font-weight:900; margin:0 0 8px; text-transform:uppercase; line-height:1.2; text-shadow:0 2px 4px rgba(0,0,0,0.3); font-family:'Montserrat', sans-serif;">ĐỈNH CAO<br>TRÍ TUỆ</h2>
+      <p style="color:#93c5fd; font-size:12px; margin:0 0 12px; font-weight:bold;">XƯỞNG SOẠN ĐỀ V15 OFFLINE</p>
+      <p style="color:#fbbf24; font-size:14px; font-weight:bold; margin:0; text-transform:uppercase;">ADMIN • Quản Trị</p>
+  </div>
+  <div style="padding:16px 12px; flex:1; display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
+      <div>
+          <div class="ui-menu-label">BIÊN SOẠN HỌC LIỆU</div>
+          <button class="sidebar-btn active" data-target="manual" onclick="toggleAdminForm('manual')"><span style="font-size:18px">📝</span> Nhập / Sửa Câu Hỏi</button>
+          <button class="sidebar-btn" data-target="bulk" onclick="toggleAdminForm('bulk')"><span style="font-size:18px">🤖</span> Nạp Hàng Loạt (AI)</button>
+          <button class="sidebar-btn" data-target="anhhtml" onclick="toggleAdminForm('anhhtml')"><span style="font-size:18px">🖼️</span> Xưởng Ảnh → HTML</button>
+      </div>
+      <div>
+          <div class="ui-menu-label">THIẾT KẾ & TRỰC QUAN</div>
+          <button class="sidebar-btn" data-target="designer" onclick="toggleAdminForm('designer')"><span style="font-size:18px">📐</span> Studio Thiết Kế Đề</button>
+          <button class="sidebar-btn" data-target="desmos" onclick="toggleAdminForm('desmos')"><span style="font-size:18px">📈</span> Studio Vẽ Đồ Thị</button>
+          <button class="sidebar-btn" data-target="quickexam" onclick="toggleAdminForm('quickexam')"><span style="font-size:18px">🚀</span> Tạo Đề Nhanh</button>
+      </div>
+      <div>
+          <div class="ui-menu-label">QUẢN LÝ NGÂN HÀNG</div>
+          <button class="sidebar-btn" data-target="stats" onclick="toggleAdminForm('stats')"><span style="font-size:18px">📊</span> Thống Kê Ngân Hàng</button>
+          <button class="sidebar-btn" data-target="duplicates" onclick="toggleAdminForm('duplicates')"><span style="font-size:18px">🔍</span> Lọc Câu Trùng</button>
+          <button class="sidebar-btn" data-target="curriculum" onclick="toggleAdminForm('curriculum')"><span style="font-size:18px">📚</span> Danh Mục Bài Học</button>
+          <button class="sidebar-btn" data-target="backup" onclick="toggleAdminForm('backup')"><span style="font-size:18px">💾</span> Cấu hình & Backup</button>
+      </div>
+  </div>
+  <div style="padding:20px; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.1)">
+      <div id="storage-info" style="color:#93c5fd; margin-bottom:10px; font-size:12px; text-align:center; font-weight:bold;">Đang tải...</div>
+      <button class="sidebar-btn" style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; justify-content:center; margin-bottom:0; font-weight:bold;" onclick="clearCustomData()">🗑️ Xóa Ngân Hàng</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="app-main" class="main-content">
+<div class="container">
+<div id="teacher-screen" class="game-panel active-panel" style="display: block;">
+
+  <div id="admin-form-anhhtml" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🖼️ Xưởng Ảnh → HTML</h3>
+    <p class="hint">Dán ảnh bảng biến thiên trong đề, hoặc gõ hàm số để dựng tự động. Xong bấm <b>Chép thẻ HTML</b> rồi dán vào ô nội dung câu hỏi.</p>
+    <div class="btn-container" style="margin-top:0">
+      <button class="btn btn-purple btn-sm" onclick="window.open('xuong-anh.html','_blank','noopener')">↗ Mở ở tab riêng</button>
+      <button class="btn btn-gray btn-sm" onclick="var f=document.getElementById('khungXuong'); f.src=f.src">⟳ Tải lại xưởng</button>
+    </div>
+    <iframe id="khungXuong" src="xuong-anh.html" title="Xưởng dựng hình" allow="clipboard-write" loading="lazy" style="width:100%;height:800px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;margin-top:15px;"></iframe>
+  </div>
+
+  <div id="admin-form-designer" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📐 Studio thiết kế đề</h3>
+    <p class="hint">Bạn tự quyết định mọi thứ: bài nào, mức độ nào, bao nhiêu câu, chấm mấy điểm, xếp theo thứ tự gì. Làm xong có thể lưu lại thành mẫu để năm sau dùng lại.</p>
+
+    <div class="ds-step">
+      <h4>Bước 1 — Chọn phạm vi kiến thức</h4>
+      <div class="form-row" style="margin-bottom:8px">
+        <button class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectAll(true)">Chọn tất cả</button>
+        <button class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectAll(false)">Bỏ chọn hết</button>
+        <button class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectNonEmpty()">Chỉ bài đã có câu hỏi</button>
+        <select id="ds-chuong-quick" class="select-box" style="margin:0;max-width:250px;padding:8px" onchange="dsSelectChuong(this.value)">
+          <option value="">— Chọn nhanh cả chương —</option>
+        </select>
+      </div>
+      <div id="ds-scope" class="ds-scope"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 2 — Ma trận số câu theo bài và mức độ</h4>
+      <div class="ds-tabs">
+        <button id="ds-tab-mcq" class="on" onclick="dsTab('mcq')">Phần I — Trắc nghiệm</button>
+        <button id="ds-tab-tf" onclick="dsTab('tf')">Phần II — Đúng / Sai</button>
+        <button id="ds-tab-sa" onclick="dsTab('sa')">Phần III — Trả lời ngắn</button>
+      </div>
+      <div class="form-row" style="margin-bottom:8px">
+        <button class="btn btn-purple btn-sm" style="margin:0" onclick="dsQuickFill()">⚡ Điền nhanh theo tỉ lệ</button>
+        <button class="btn btn-gray btn-sm" style="margin:0" onclick="dsFillMax()">Lấy tối đa đang có</button>
+        <button class="btn btn-gray btn-sm" style="margin:0" onclick="dsClearMatrix()">Xóa ô của phần này</button>
+      </div>
+      <div style="overflow-x:auto"><div id="ds-matrix"></div></div>
+      <div id="ds-summary" class="ds-sum"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 3 — Chỉ định tay câu hỏi cụ thể <span style="font-weight:400;text-transform:none">(không bắt buộc)</span></h4>
+      <div class="form-row">
+        <select id="ds-pick-tag" class="select-box" style="margin:0;max-width:280px;padding:8px" onchange="dsRenderPicker()"></select>
+        <select id="ds-pick-type" class="select-box" style="margin:0;max-width:170px;padding:8px" onchange="dsRenderPicker()">
+          <option value="mcq">Trắc nghiệm</option><option value="tf">Đúng / Sai</option><option value="sa">Trả lời ngắn</option>
+        </select>
+        <select id="ds-pick-lvl" class="select-box" style="margin:0;max-width:150px;padding:8px" onchange="dsRenderPicker()">
+          <option value="0">Mọi mức độ</option><option value="1">Nhận biết</option><option value="2">Thông hiểu</option>
+          <option value="3">Vận dụng</option><option value="4">Vận dụng cao</option>
+        </select>
+      </div>
+      <input type="text" id="ds-pick-search" class="input-box" placeholder="Tìm trong nội dung câu hỏi…" oninput="dsRenderPicker()">
+      <div id="ds-picker" class="ds-pick"></div>
+      <div style="margin-top:12px"><b id="ds-cart-title">Đã chọn tay: 0 câu</b></div>
+      <ul id="ds-cart" class="ds-cart"></ul>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 4 — Thang điểm</h4>
+      <div class="matrix-row"><span>Điểm mỗi câu trắc nghiệm</span><input type="number" id="sc-mcq" class="mini" step="0.05" min="0" value="0.25" oninput="dsSync()"></div>
+      <div class="matrix-row"><span>Điểm mỗi câu trả lời ngắn</span><input type="number" id="sc-sa" class="mini" step="0.05" min="0" value="0.5" oninput="dsSync()"></div>
+      <div class="matrix-row" style="flex-wrap:wrap"><span>Câu đúng/sai — điểm khi làm đúng 1 / 2 / 3 / 4 ý</span>
+        <span style="display:flex;gap:5px">
+          <input type="number" id="sc-tf1" class="mini" style="width:62px" step="0.05" min="0" value="0.1" oninput="dsSync()">
+          <input type="number" id="sc-tf2" class="mini" style="width:62px" step="0.05" min="0" value="0.25" oninput="dsSync()">
+          <input type="number" id="sc-tf3" class="mini" style="width:62px" step="0.05" min="0" value="0.5" oninput="dsSync()">
+          <input type="number" id="sc-tf4" class="mini" style="width:62px" step="0.05" min="0" value="1" oninput="dsSync()">
+        </span></div>
+      <div class="opt-toggle"><input type="checkbox" id="sc-scale10" checked onchange="dsSync()"><label for="sc-scale10">Quy đổi kết quả về thang 10</label></div>
+      <div id="ds-score-note" class="hint" style="text-align:left"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 5 — Thứ tự câu trong đề</h4>
+      <select id="ds-order" class="select-box" style="max-width:100%" onchange="dsSync()">
+        <option value="lvl">Trong mỗi phần: từ dễ đến khó</option>
+        <option value="lvl_desc">Trong mỗi phần: từ khó đến dễ</option>
+        <option value="bai">Trong mỗi phần: theo thứ tự bài học trong sách</option>
+        <option value="random">Trong mỗi phần: xáo trộn hoàn toàn</option>
+        <option value="manual">Giữ nguyên: câu chọn tay lên trước, rồi đến câu bốc theo ma trận</option>
+      </select>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 6 — Mẫu ma trận dùng lại</h4>
+      <div class="form-row">
+        <input type="text" id="ds-tpl-name" class="input-box" style="margin:0;max-width:280px" placeholder="Tên mẫu, ví dụ: Giữa kỳ I – 12A">
+        <button class="btn btn-green btn-sm" style="margin:0" onclick="dsSaveTemplate()">💾 Lưu mẫu</button>
+      </div>
+      <div class="form-row">
+        <select id="ds-tpl-list" class="select-box" style="margin:0;max-width:280px;padding:8px"></select>
+        <button class="btn btn-teacher btn-sm" style="margin:0" onclick="dsLoadTemplate()">Nạp mẫu</button>
+        <button class="btn btn-red btn-sm" style="margin:0" onclick="dsDeleteTemplate()">Xóa mẫu</button>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn btn-teacher btn-sm" onclick="dsBuild()">▶ Tạo đề JSON</button>
+    </div>
+  </div>
+
+  <div id="admin-form-manual" class="admin-form active-panel">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0" id="manual-form-title">Nhập / sửa câu hỏi</h3>
+    <input type="hidden" id="editing-q-id"><input type="hidden" id="editing-q-cat">
+    <div class="form-row">
+      <select id="new-q-type" class="select-box" style="margin:0;max-width:300px" onchange="renderAddForm()">
+        <option value="mcq">Trắc nghiệm (4 phương án)</option><option value="tf">Đúng / Sai (4 ý)</option><option value="sa">Trả lời ngắn</option>
+      </select>
+      <select id="new-q-lvl" class="select-box" style="margin:0;max-width:190px">
+        <option value="1">Mức 1: Nhận biết</option><option value="2">Mức 2: Thông hiểu</option><option value="3">Mức 3: Vận dụng</option><option value="4">Mức 4: Vận dụng cao</option>
+      </select>
+    </div>
+    <select id="new-q-tag" class="select-box"></select>
+    
+    <div style="background:#e2e8f0;padding:10px;border-radius:8px;margin-bottom:14px;border:1px solid #cbd5e1">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="table-template-select" class="select-box" style="margin:0;flex:1 1 200px;padding:8px">
+          <option value="">— Chọn loại bảng mẫu —</option><option value="bac3_2cuctri">Biến thiên: bậc 3 có 2 cực trị</option><option value="bac3_nghichbien">Biến thiên: bậc 3 (hệ số a &lt; 0)</option><option value="phanthuc">Biến thiên: hàm phân thức</option><option value="bang_xet_dau">Bảng xét dấu f'(x)</option>
+        </select>
+        <button class="btn btn-purple btn-sm" style="margin:0" onclick="insertTableTemplate()">Chèn Code</button>
+      </div>
+    </div>
+    <textarea id="new-q-content" class="input-box" placeholder="Nội dung câu hỏi (Dán ảnh Ctrl+V vào đây tự nén WebP)"></textarea>
+    <div id="dynamic-form-area"></div>
+    <textarea id="new-q-exp" class="input-box" placeholder="Lời giải chi tiết"></textarea>
+    <div class="btn-container" id="save-btn-container"><button class="btn btn-green btn-sm" onclick="saveCustomQuestion()">Đẩy vào Xưởng</button></div>
+  </div>
+
+  <div id="admin-form-quickexam" class="admin-form">
+    <h4 style="text-align:center;color:var(--primary-blue);margin-top:0;font-size:24px;">🚀 TẠO ĐỀ NHANH MỘT NỐT NHẠC</h4>
+    <select id="mode-select" class="select-box" onchange="toggleCustomMatrix()">
+      <option value="1">Chế độ 1 — Trắc nghiệm tốc độ (10 câu)</option><option value="2">Chế độ 2 — Ôn tập chương (12 TN + 4 Đ/S + 3 ngắn)</option><option value="3">Chế độ 3 — Thi học kỳ (12 TN + 4 Đ/S + 6 ngắn)</option><option value="custom">⚙️ Chế độ 4 — Tùy chỉnh</option>
+    </select>
+    <div id="custom-matrix-box" class="matrix-box" style="display:none">
+      <div class="matrix-row"><span>Trắc nghiệm</span><input type="number" id="custom-num-mcq" class="matrix-input" value="12" min="0"></div>
+      <div class="matrix-row"><span>Đúng/Sai</span><input type="number" id="custom-num-tf" class="matrix-input" value="4" min="0"></div>
+      <div class="matrix-row"><span>Trả lời ngắn</span><input type="number" id="custom-num-sa" class="matrix-input" value="6" min="0"></div>
+    </div>
+    <select id="topic-select" class="select-box" style="font-weight:700"></select>
+    <div class="btn-container"><button class="btn btn-teacher" onclick="generateGame()">TẠO ĐỀ JSON</button></div>
+  </div>
+
+  <!-- PHẦN XEM TRƯỚC DỮ LIỆU TỪ AI (BƯỚC 1 + 2) -->
+  <div id="admin-form-bulk" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🤖 Trạm nhận dữ liệu từ AI</h3>
+    <div class="btn-container" style="margin-top:6px"><button class="btn btn-purple btn-sm" onclick="copyAIPrompt()">📋 Chép lệnh AI</button></div>
+    <textarea id="bulk-import-data" class="input-box" placeholder='Dán khối JSON tại đây...' style="margin-bottom:10px;"></textarea>
+    
+    <div class="btn-container" style="margin-top:6px">
+      <button class="btn btn-purple btn-sm" onclick="previewBulkData()">👀 XEM TRƯỚC DỮ LIỆU</button>
+    </div>
+    <div id="bulk-report" class="hint" style="margin-top:10px; color:var(--accent-green); font-weight:bold;"></div>
+    
+    <div id="bulk-preview-area" style="margin-top: 20px;"></div>
+  </div>
+
+  <div id="admin-form-duplicates" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🔍 Lọc Câu Hỏi Trùng Lặp</h3>
+    <div class="btn-container"><button class="btn btn-purple btn-sm" onclick="scanDuplicates()">🚀 Bắt Đầu Quét</button></div>
+    <div id="duplicate-results" style="margin-top: 15px; max-height: 500px; overflow-y: auto; padding-right: 5px;"></div>
+  </div>
+
+  <div id="admin-form-desmos" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📈 Công cụ vẽ đồ thị</h3>
+    <div class="btn-container"><button class="btn btn-purple btn-sm" onclick="window.open('https://www.desmos.com/calculator','_blank')">📈 Mở Desmos</button> <button class="btn btn-teacher btn-sm" onclick="window.open('https://www.geogebra.org/graphing','_blank')">📐 Mở GeoGebra</button></div>
+  </div>
+
+  <div id="admin-form-backup" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">💾 Cấu hình & Backup</h3>
+    <div class="btn-container">
+      <button class="btn btn-green btn-sm" onclick="exportBank()">⬇️ Tải file Backup (.json)</button>
+      <button class="btn btn-teacher btn-sm" onclick="document.getElementById('restore-file').click()">⬆️ Khôi phục từ file Backup</button>
+    </div>
+    <input type="file" id="restore-file" accept=".json,application/json" style="display:none" onchange="restoreBank(this)">
+    <div class="matrix-box" style="margin-top:14px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:10px">
+      <div class="opt-toggle"><input type="radio" name="restore-mode" id="restore-merge" checked><label for="restore-merge">Gộp thêm vào ngân hàng hiện có (bỏ qua câu trùng)</label></div>
+      <div class="opt-toggle"><input type="radio" name="restore-mode" id="restore-replace"><label for="restore-replace">Thay thế toàn bộ ngân hàng</label></div>
+    </div>
+  </div>
+
+  <div id="admin-form-preview" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0" id="preview-title">👁️ Xem trước câu hỏi</h3>
+    <div style="text-align:center;margin-bottom:15px"><button class="btn btn-gray btn-sm" onclick="toggleAdminForm('stats')">⬅ QUAY LẠI BẢNG THỐNG KÊ</button></div>
+    <div id="preview-content-area"></div>
+  </div>
+
+  <div id="admin-form-stats" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📊 Thống kê ngân hàng Offline</h3>
+    <div id="stats-content" style="max-height:600px;overflow:auto;background:#fff;padding:10px;border-radius:8px;border:1px solid #cbd5e1"></div>
+  </div>
+
+  <div id="admin-form-curriculum" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📚 Danh mục bài học</h3>
+    <div class="btn-container" style="margin-top:0">
+      <button class="btn btn-gray btn-sm" onclick="dmLayMacDinh()">Khôi phục danh mục mặc định</button>
+      <button class="btn btn-green btn-sm" onclick="dmLuu()">💾 Lưu danh mục</button>
+    </div>
+    <div id="dm-bang"></div>
+  </div>
+
+</div>
+</div>
+</main>
+
+<script>
+// =========================================================
+// MÃ LÕI DATABASE
+// =========================================================
+let memoryDB = { mcq: [], tf: [], sa: [] };
+let DM = null; // LỖI CŨ: DM chưa khai báo -> ReferenceError bị try/catch nuốt mất
+let idSeq=0; function newId(){ return 'q_'+Date.now().toString(36)+'_'+(idSeq++)+Math.random().toString(36).slice(2,6); }
+
+// Tải file an toàn: Firefox bỏ qua a.click() nếu thẻ <a> không nằm trong DOM
+function taiFile(noiDung, kieu, tenFile){
+  const blob = noiDung instanceof Blob ? noiDung : new Blob([noiDung], { type: kieu });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = tenFile; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+}
+
+async function initStorage() {
+    try {
+        const saved = localStorage.getItem('dctt_v15_db');
+        if (saved && saved !== "undefined" && saved !== "null") { memoryDB = JSON.parse(saved); }
+    } catch (e) {}
+    if (!memoryDB || typeof memoryDB !== 'object') memoryDB = {};
+    if (!Array.isArray(memoryDB.mcq)) memoryDB.mcq = [];
+    if (!Array.isArray(memoryDB.tf)) memoryDB.tf = [];
+    if (!Array.isArray(memoryDB.sa)) memoryDB.sa = [];
+}
+async function saveDB(db, silent) {
+    memoryDB = db;
+    try { localStorage.setItem('dctt_v15_db', JSON.stringify(db)); updateStorageInfo(); return true;
+    } catch (e) { if (!silent) alert('❌ Trình duyệt hết bộ nhớ lưu trữ! Hãy tải file Backup về máy tính.'); return false; }
+}
+function loadDB() { return memoryDB; }
+
+const CURRICULUM = [
+  { chuong:'chuong1', ten:'Chương I — Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số', tap:'Tập 1', bai:[
+    ['chuong1_bai1','Bài 1: Tính đơn điệu và cực trị của hàm số'], ['chuong1_bai2','Bài 2: Giá trị lớn nhất và giá trị nhỏ nhất của hàm số'], ['chuong1_bai3','Bài 3: Đường tiệm cận của đồ thị hàm số'], ['chuong1_bai4','Bài 4: Khảo sát sự biến thiên và vẽ đồ thị của hàm số'], ['chuong1_bai5','Bài 5: Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn']
+  ]},
+  { chuong:'chuong2', ten:'Chương II — Vectơ và hệ trục tọa độ trong không gian', tap:'Tập 1', bai:[
+    ['chuong2_bai6','Bài 6: Vectơ trong không gian'], ['chuong2_bai7','Bài 7: Hệ trục tọa độ trong không gian'], ['chuong2_bai8','Bài 8: Biểu thức tọa độ của các phép toán vectơ']
+  ]},
+  { chuong:'chuong3', ten:'Chương III — Các số đặc trưng đo mức độ phân tán của mẫu số liệu ghép nhóm', tap:'Tập 1', bai:[
+    ['chuong3_bai9','Bài 9: Khoảng biến thiên và khoảng tứ phân vị'], ['chuong3_bai10','Bài 10: Phương sai và độ lệch chuẩn']
+  ]},
+  { chuong:'chuong4', ten:'Chương IV — Nguyên hàm và tích phân', tap:'Tập 2', bai:[
+    ['chuong4_bai11','Bài 11: Nguyên hàm'],
+    ['chuong4_bai12','Bài 12: Tích phân'],
+    ['chuong4_bai13','Bài 13: Ứng dụng hình học của tích phân']
+  ]},
+  { chuong:'chuong5', ten:'Chương V — Phương pháp tọa độ trong không gian', tap:'Tập 2', bai:[
+    ['chuong5_bai14','Bài 14: Phương trình mặt phẳng'],
+    ['chuong5_bai15','Bài 15: Phương trình đường thẳng trong không gian'],
+    ['chuong5_bai16','Bài 16: Công thức tính góc trong không gian'],
+    ['chuong5_bai17','Bài 17: Phương trình mặt cầu']
+  ]},
+  { chuong:'chuong6', ten:'Chương VI — Xác suất có điều kiện', tap:'Tập 2', bai:[
+    ['chuong6_bai18','Bài 18: Xác suất có điều kiện'],
+    ['chuong6_bai19','Bài 19: Công thức xác suất toàn phần và công thức Bayes']
+  ]}
+];
+let TAG_NAME = {}; CURRICULUM.forEach(c => c.bai.forEach(b => TAG_NAME[b[0]] = b[1]));
+const LVL_NAME = {1:'Nhận biết',2:'Thông hiểu',3:'Vận dụng',4:'Vận dụng cao'};
+let TAG_ORDER={}; (function(){ let i=0; CURRICULUM.forEach(c=>c.bai.forEach(b=>TAG_ORDER[b[0]]=i++)); })();
+
+function buildDropdowns(){
+  let a='', b='<option value="all">TỔNG ÔN TẤT CẢ</option>';
+  CURRICULUM.forEach(c=>{ a += `<optgroup label="${c.ten}">`; b += `<optgroup label="${c.ten}"><option value="${c.chuong}">► Ôn ${c.ten}</option>`; c.bai.forEach(([v,t])=>{ a+=`<option value="${v}">${t}</option>`; b+=`<option value="${v}">${t}</option>`; }); a+='</optgroup>'; b+='</optgroup>'; });
+  const tg = document.getElementById('new-q-tag'), ts = document.getElementById('topic-select');
+  if(tg) tg.innerHTML=a; if(ts) ts.innerHTML=b;
+}
+
+// LỖI CŨ: show() gọi getElementById của 5 màn hình đã bị gỡ khỏi V15 -> crash null.
+// Bản offline chỉ còn 'teacher-screen' nên rút gọn lại cho an toàn.
+function show(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('active-panel'));
+  el.classList.add('active-panel');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleAdminForm(type){
+  ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam'].forEach(t=>{ const el = document.getElementById('admin-form-'+t); if(el) el.style.display='none'; });
+  const el = document.getElementById('admin-form-'+type); if(el) el.style.display='block';
+  document.querySelectorAll('.sidebar-btn').forEach(btn => { btn.classList.remove('active'); if(btn.dataset.target === type) btn.classList.add('active'); });
+  if(type==='stats') { setTimeout(renderStats, 100); }
+  if(type==='designer') { if(typeof dsOpen === 'function') dsOpen(); }
+}
+
+function updateStorageInfo() {
+    const el = document.getElementById('storage-info'); if(!el) return;
+    const n = (memoryDB.mcq?memoryDB.mcq.length:0) + (memoryDB.tf?memoryDB.tf.length:0) + (memoryDB.sa?memoryDB.sa.length:0);
+    el.innerHTML = `Đã lưu <b>${n}</b> câu hỏi vào bộ nhớ.`;
+}
+
+function typeset(el){ if(window.MathJax && MathJax.typesetPromise){ try{ MathJax.typesetPromise(el?[el]:undefined).catch(()=>{}); }catch(e){} } }
+function cleanText(t){ return typeof t==='string' ? t.replace(/\[cite[^\]]*\]/g,'').trim() : (t??''); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function stripTags(html) { return (new DOMParser().parseFromString(String(html == null ? "" : html), "text/html").body.textContent || "").replace(/\s+/g, " ").trim(); }
+function moRong(html) { return html; } 
+function safeHtml(t){ return moRong(cleanText(t)); }
+function normalizeForDup(text) { return String(text || '').replace(/\s+/g, '').replace(/<[^>]*>?/gm, '').toLowerCase(); }
+
+const AI_PROMPT = `Bạn là giáo viên Toán 12. Hãy soạn câu hỏi và TRẢ VỀ DUY NHẤT KHỐI JSON: {"mcq":[{"tag":"chuong1_bai1","lvl":2,"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"..."}],"tf":[{"tag":"chuong1_bai1","lvl":3,"q":"...","stmts":[{"t":"Ý a","ans":true},{"t":"Ý b","ans":false},{"t":"Ý c","ans":true},{"t":"Ý d","ans":false}],"exp":"..."}],"sa":[{"tag":"chuong1_bai1","lvl":4,"q":"...","ans":"12","exp":"..."}]}`;
+// LỖI CŨ: navigator.clipboard không tồn tại khi mở bằng file:// -> TypeError, nút chết im lặng.
+function copyAIPrompt(){
+  const xong = ()=>alert("Đã copy lệnh AI! Dán vào Gemini / ChatGPT / Claude để nhờ soạn câu hỏi.");
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(AI_PROMPT).then(xong).catch(()=>duPhong());
+  } else duPhong();
+  function duPhong(){
+    const ta=document.createElement('textarea');
+    ta.value=AI_PROMPT; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); xong(); }
+    catch(e){ prompt('Trình duyệt chặn tự động chép. Hãy bấm Ctrl+C để chép lệnh dưới đây:', AI_PROMPT); }
+    document.body.removeChild(ta);
+  }
+}
+
+var TRUONG_TOI_DA = 300000; var NAP_TOI_DA = 2000;
+function validateQ(q, cat) {
+    if (!q || typeof q !== "object") return "không phải đối tượng";
+    if (!q.q || typeof q.q !== "string") return 'thiếu nội dung "q"';
+    if (cat === "mcq" && (!Array.isArray(q.opts) || q.opts.length !== 4)) return "cần 4 phương án";
+    if (cat === "tf" && (!Array.isArray(q.stmts) || q.stmts.length !== 4)) return "cần 4 ý";
+    if (cat === "sa" && (q.ans === undefined || String(q.ans).trim() === "")) return 'thiếu "ans"';
+    return null;
+}
+function chuanHoa(s) { return String(s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
+
+// =========================================================
+// KIỂM DUYỆT TRẠM NHẬN DỮ LIỆU TỪ AI
+// =========================================================
+let bulkDraftData = null;
+let bulkEditState = null;
+
+function previewBulkData() {
+    var oRaw = document.getElementById("bulk-import-data"), bao = document.getElementById("bulk-report");
+    var raw = oRaw.value.trim();
+    if (!raw) { bao.innerHTML = '<span style="color:#ef4444">Chưa dán dữ liệu JSON.</span>'; return; }
+    var data;
+    try { data = JSON.parse(raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim()); }
+    catch (e) { bao.innerHTML = '<span style="color:#ef4444">JSON sai cú pháp: ' + escapeHtml(e.message) + "</span>"; return; }
+
+    let them = { mcq: [], tf: [], sa: [] }, boQua = 0, loi = [];
+    const db = loadDB();
+    ["mcq", "tf", "sa"].forEach(cat => {
+        if (!Array.isArray(data[cat])) return;
+        data[cat].forEach((q, i) => {
+            // LỖI CŨ: TRUONG_TOI_DA và NAP_TOI_DA khai báo nhưng không hề được dùng
+            if (them.mcq.length + them.tf.length + them.sa.length >= NAP_TOI_DA) { return; }
+            var e = validateQ(q, cat);
+            if (e) { loi.push(cat + "[" + i + "]: " + e); return; }
+            if (String(q.q).length > TRUONG_TOI_DA) { loi.push(cat + "[" + i + "]: nội dung quá dài (ảnh nhúng quá nặng)"); return; }
+            if (db[cat].some(x => x.tag === q.tag && chuanHoa(x.q) === chuanHoa(q.q))) { boQua++; return; }
+            var moi = { id: newId(), tag: q.tag||"chuong1_bai1", lvl: parseInt(q.lvl) || 1, q: cleanText(q.q), exp: cleanText(q.exp) };
+            if (cat === "mcq") { moi.opts = q.opts.map(cleanText); moi.ans = q.ans; }
+            if (cat === "tf") { moi.stmts = q.stmts.map(s => ({ t: cleanText(s.t), ans: !!s.ans })); }
+            if (cat === "sa") { moi.ans = String(q.ans).trim(); }
+            them[cat].push(moi);
+        });
+    });
+    
+    bulkDraftData = them;
+    bulkEditState = null;
+    
+    let msg = '';
+    if (boQua) msg += `Bỏ qua ${boQua} câu trùng. `;
+    if (loi.length) msg += `Lỗi ${loi.length} câu. `;
+    bao.innerHTML = msg ? `<span style="color:#d97706">${msg}</span>` : '<span style="color:green">Phân tích JSON thành công. Vui lòng kiểm tra bên dưới!</span>';
+    
+    renderBulkPreview();
+}
+
+/* Bật/tắt chế độ toàn màn hình cho khung duyệt */
+function toggleBulkFull() {
+    const area = document.getElementById('bulk-preview-area');
+    const bat = !area.classList.contains('bulk-full');
+    area.classList.toggle('bulk-full', bat);
+    document.body.classList.toggle('bulk-khoa-cuon', bat);
+    const nut = document.getElementById('nut-bulk-full');
+    if (nut) nut.innerHTML = bat ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH';
+}
+
+/* Bấm Esc là thoát toàn màn hình — khỏi phải đi tìm nút */
+document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    const area = document.getElementById('bulk-preview-area');
+    if (area && area.classList.contains('bulk-full')) toggleBulkFull();
+});
+
+function renderBulkPreview() {
+    const area = document.getElementById('bulk-preview-area');
+    if(!bulkDraftData) {
+        area.innerHTML = '';
+        // đang ở toàn màn hình mà hết dữ liệu thì trả lại màn hình bình thường
+        if (area.classList.contains('bulk-full')) toggleBulkFull();
+        return;
+    }
+
+    // Giữ nguyên chỗ đang cuộn: bản cũ dựng lại toàn bộ danh sách sau mỗi
+    // lần Sửa / Lưu / Xóa nên nhảy vọt về câu 1, duyệt 22 câu rất mệt.
+    const cuonCu = (document.getElementById('bulk-list') || {}).scrollTop || 0;
+
+    let total = bulkDraftData.mcq.length + bulkDraftData.tf.length + bulkDraftData.sa.length;
+    if(total === 0) {
+        area.innerHTML = '<p class="hint">Không có câu hỏi mới nào hợp lệ để nạp.</p>';
+        return;
+    }
+
+    const dangFull = area.classList.contains('bulk-full');
+    const dem = `${bulkDraftData.mcq.length} trắc nghiệm · ${bulkDraftData.tf.length} đúng–sai · ${bulkDraftData.sa.length} trả lời ngắn`;
+
+    // Đếm số câu AI tự nhận là chưa chắc đáp án, để nhắc thầy cô soát trước
+    let canSoat = 0;
+    ['mcq','tf','sa'].forEach(c => bulkDraftData[c].forEach(q => { if (canKiemTra(q)) canSoat++; }));
+
+    let h = `<div class="bulk-head">
+               <div>
+                 <b>Danh sách chờ duyệt: ${total} câu</b>
+                 <div class="dem">${dem}${canSoat ? ` · <span style="color:#b91c1c">⚠ ${canSoat} câu cần soát đáp án</span>` : ''}</div>
+               </div>
+               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                 <!-- Ô đặt MỨC ĐỘ cho cả lô: AI thường gán tất cả về "Nhận biết",
+                      trước đây thầy cô phải mở từng câu để sửa. -->
+                 <div class="lo-mucdo">
+                   <span>Mức độ cả lô</span>
+                   <select id="lo-mucdo-chon" class="bulk-mini" style="padding:6px 8px">
+                     ${[1,2,3,4].map(v => `<option value="${v}">${LVL_NAME[v]}</option>`).join('')}
+                   </select>
+                   <button class="btn btn-gray btn-sm" style="margin:0;padding:6px 10px" onclick="apDungMucDoCaLo()">Áp dụng</button>
+                 </div>
+                 <button id="nut-bulk-full" class="btn btn-teacher btn-sm" style="margin:0" onclick="toggleBulkFull()">${dangFull ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH'}</button>
+                 <button class="btn btn-green btn-sm" style="margin:0" onclick="confirmBulkImport()">✅ CHỐT NẠP (${total})</button>
+               </div>
+             </div>`;
+    h += `<div class="bulk-list" id="bulk-list">`;
+
+    ['mcq', 'tf', 'sa'].forEach(cat => {
+        bulkDraftData[cat].forEach((q, i) => {
+            const dangSua = bulkEditState && bulkEditState.cat === cat && bulkEditState.index === i;
+            h += `<div class="bulk-card${dangSua ? ' dang-sua' : ''}" id="the-${cat}-${i}">`;
+
+            if (dangSua) {
+                h += `<div style="font-weight:bold;color:#6d28d9;margin-bottom:10px">✏️ Đang sửa: [${LABEL[cat].toUpperCase()}] Câu ${i+1}</div>`;
+
+                /* BỔ SUNG: hàng chọn mức độ và bài học.
+                   Trước đây khung duyệt chỉ hiện hai thẻ "Nhận biết" / tên bài
+                   dưới dạng chữ, không sửa được. AI gán mức độ và bài học
+                   thường sai, thầy cô phải nạp vào rồi mới vào Thống Kê Ngân
+                   Hàng sửa từng câu — rất mất công. */
+                h += `<div class="bulk-meta">
+                        <label>Mức độ
+                          <select id="b-edit-lvl" class="bulk-mini">
+                            ${[1,2,3,4].map(v => `<option value="${v}"${(+q.lvl||1)===v?' selected':''}>${LVL_NAME[v]}</option>`).join('')}
+                          </select>
+                        </label>
+                        <label style="flex:1 1 320px">Thuộc bài
+                          <select id="b-edit-tag" class="bulk-mini" style="width:100%">
+                            ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(c.ten)}">`
+                                + c.bai.map(([v, t]) => `<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
+                                + `</optgroup>`).join('')}
+                          </select>
+                        </label>
+                      </div>`;
+
+                h += `<textarea id="b-edit-q" class="input-box bulk-edit" style="min-height:130px;">${escapeHtml(q.q)}</textarea>`;
+                if (cat === 'mcq') {
+                    /* BỔ SUNG: nút tròn chọn ĐÁP ÁN ĐÚNG.
+                       Bản cũ chỉ sửa được CHỮ của phương án, không đổi được
+                       phương án nào là đáp án — mà đó chính là chỗ AI hay sai
+                       nhất ("cần kiểm tra đáp án"). */
+                    h += `<div class="bulk-ghichu">Chấm tròn ô bên trái để chọn đáp án đúng:</div>`;
+                    q.opts.forEach((o, j) => {
+                        h += `<div class="bulk-dong-opt">
+                                <label class="bulk-chon" title="Chọn ${String.fromCharCode(65+j)} làm đáp án đúng">
+                                  <input type="radio" name="b-edit-dapan" value="${j}"${j === q.ans ? ' checked' : ''}>
+                                  <span>${String.fromCharCode(65+j)}.</span>
+                                </label>
+                                <textarea id="b-edit-opt-${j}" class="input-box bulk-edit" style="flex:1; min-height:52px; padding:8px;">${escapeHtml(o)}</textarea>
+                              </div>`;
+                    });
+                } else if (cat === 'tf') {
+                    /* BỔ SUNG: đổi Đúng/Sai của từng ý — bản cũ cũng không có */
+                    h += `<div class="bulk-ghichu">Chọn Đúng hoặc Sai cho từng ý:</div>`;
+                    q.stmts.forEach((s, j) => {
+                        h += `<div class="bulk-dong-opt">
+                                <span style="font-weight:bold; width:22px; padding-top:12px;">${String.fromCharCode(97+j)})</span>
+                                <textarea id="b-edit-stmt-${j}" class="input-box bulk-edit" style="flex:1; min-height:52px; padding:8px;">${escapeHtml(s.t)}</textarea>
+                                <select id="b-edit-stmt-ans-${j}" class="bulk-mini" style="margin-top:8px">
+                                  <option value="1"${s.ans ? ' selected' : ''}>ĐÚNG</option>
+                                  <option value="0"${s.ans ? '' : ' selected'}>SAI</option>
+                                </select>
+                              </div>`;
+                    });
+                } else if (cat === 'sa') {
+                     h += `<div class="bulk-ghichu">Đáp án (nhiều đáp án chấp nhận được thì ngăn bằng dấu <b>|</b>, ví dụ <code>0.5|1/2</code>):</div>`;
+                     h += `<input type="text" id="b-edit-ans" value="${escapeHtml(q.ans)}" class="input-box bulk-edit" style="padding:10px;">`;
+                }
+                h += `<textarea id="b-edit-exp" class="input-box bulk-edit" style="min-height:90px;" placeholder="Lời giải chi tiết...">${escapeHtml(q.exp)}</textarea>`;
+
+                h += `<div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn btn-green btn-sm" onclick="saveBulkEdit('${cat}', ${i})">💾 Lưu chỉnh sửa</button>
+                        <button class="btn btn-gray btn-sm" onclick="cancelBulkEdit()">Hủy sửa</button>
+                      </div>`;
+            } else {
+                /* Mức độ và bài học nay là ô chọn ngay tại đây — trước là hai
+                   thẻ chữ chết, muốn đổi phải bấm "Sửa câu này" rồi lưu lại. */
+                h += `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;">
+                        <span style="font-weight:bold;color:var(--primary-blue)">[${LABEL[cat].toUpperCase()}] Câu ${i+1}</span>
+                        <select class="bulk-mini" style="padding:5px 8px;font-size:.85em"
+                                onchange="datMucDo('${cat}',${i},this.value)">
+                          ${[1,2,3,4].map(v => `<option value="${v}"${(+q.lvl||1)===v?' selected':''}>${LVL_NAME[v]}</option>`).join('')}
+                        </select>
+                        <select class="bulk-mini" style="padding:5px 8px;font-size:.85em;max-width:260px"
+                                onchange="datBaiHoc('${cat}',${i},this.value)">
+                          ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(c.ten)}">`
+                              + c.bai.map(([v, t]) => `<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
+                              + `</optgroup>`).join('')}
+                        </select>
+                        ${canKiemTra(q) ? '<span class="pill-sua canxem">⚠ Cần soát đáp án</span>' : ''}
+                      </div>`;
+                h += `<div style="margin-bottom:12px;">${safeHtml(q.q)}</div>`;
+                if (cat === 'mcq') {
+                    h += `<ul class="bulk-opts" style="list-style:none; padding:0; margin:0 0 12px 0;">`;
+                    q.opts.forEach((o, j) => {
+                        h += `<li style="padding:4px; ${j === q.ans ? 'color:var(--accent-green); font-weight:bold;' : ''}">${String.fromCharCode(65+j)}. ${safeHtml(o)}</li>`;
+                    });
+                    h += `</ul>`;
+                } else if (cat === 'tf') {
+                    h += `<ul style="list-style:none; padding:0; margin:0 0 12px 0;">`;
+                    q.stmts.forEach((s, j) => {
+                        h += `<li style="padding:4px;">${String.fromCharCode(97+j)}) ${safeHtml(s.t)} — <b>${s.ans ? 'ĐÚNG' : 'SAI'}</b></li>`;
+                    });
+                    h += `</ul>`;
+                } else if (cat === 'sa') {
+                    h += `<div style="color:var(--accent-green); font-weight:bold; margin-bottom:12px;">Đáp án: ${escapeHtml(q.ans)}</div>`;
+                }
+                if (q.exp) h += `<div style="background:#f8fafc;border-left:4px solid #cbd5e1;padding:8px 12px;margin-bottom:12px;font-size:.93em"><b>Lời giải:</b> ${safeHtml(q.exp)}</div>`;
+
+                h += `<div style="display:flex; gap:10px;">
+                        <button class="btn btn-purple btn-sm" onclick="startBulkEdit('${cat}', ${i})">✏️ Sửa câu này</button>
+                        <button class="btn btn-red btn-sm" onclick="deleteBulkItem('${cat}', ${i})">🗑️ Xóa câu này</button>
+                      </div>`;
+            }
+            h += `</div>`;
+        });
+    });
+    h += `</div>`;
+    h += `<div class="btn-container" style="margin-top:16px;"><button class="btn btn-green" style="font-size: 18px; padding: 16px 30px;" onclick="confirmBulkImport()">✅ CHỐT NẠP VÀO XƯỞNG (${total} CÂU)</button></div>`;
+    area.innerHTML = h;
+    typeset(area);
+
+    const ds = document.getElementById('bulk-list');
+    if (ds) {
+        ds.scrollTop = cuonCu;
+        // Vừa bấm Sửa thì kéo đúng câu đó vào giữa khung cho dễ nhìn
+        if (bulkEditState) {
+            const the = document.getElementById(`the-${bulkEditState.cat}-${bulkEditState.index}`);
+            if (the) the.scrollIntoView({ block: 'center' });
+            const o = document.getElementById('b-edit-q');
+            if (o) o.focus();
+        }
+    }
+}
+
+/* Đổi mức độ / bài học ngay ở chế độ xem. Chỉ sửa dữ liệu, KHÔNG dựng lại
+   danh sách — dựng lại thì mất chỗ đang cuộn và mất cả ô chọn đang mở. */
+function datMucDo(cat, idx, v) {
+    if (bulkDraftData && bulkDraftData[cat] && bulkDraftData[cat][idx])
+        bulkDraftData[cat][idx].lvl = parseInt(v) || 1;
+}
+function datBaiHoc(cat, idx, v) {
+    if (v && bulkDraftData && bulkDraftData[cat] && bulkDraftData[cat][idx])
+        bulkDraftData[cat][idx].tag = v;
+}
+
+/* Đặt một mức độ cho tất cả câu đang chờ duyệt. AI hay gán hết về "Nhận biết",
+   thầy cô chỉnh chung một lượt rồi mới sửa lẻ vài câu. */
+function apDungMucDoCaLo() {
+    if (!bulkDraftData) return;
+    const o = document.getElementById('lo-mucdo-chon');
+    if (!o) return;
+    const v = parseInt(o.value) || 1;
+    let n = 0;
+    ['mcq', 'tf', 'sa'].forEach(cat => bulkDraftData[cat].forEach(q => { q.lvl = v; n++; }));
+    if (!confirm(`Đặt mức độ "${LVL_NAME[v]}" cho cả ${n} câu đang chờ duyệt?`)) return;
+    bulkEditState = null;
+    renderBulkPreview();
+}
+
+/* Nhận ra câu mà AI tự thú là chưa chắc đáp án, để gắn cờ đỏ nhắc soát.
+   Ví dụ lời giải ghi "CAN KIEM TRA DAP AN: Đề gốc thiếu bảng biến thiên…" */
+function canKiemTra(q) {
+    // Chữ "đ" không tách được bằng NFD nên phải thay riêng, nếu không
+    // "đáp án" ra "đap an" và không khớp mẫu.
+    const t = String(q && q.exp || '').normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+        .toLowerCase();
+    return /can kiem tra dap an|kiem tra lai dap an|chua the xac dinh|chua xac dinh duoc dap an|thieu du kien|khong du du kien/.test(t);
+}
+
+function startBulkEdit(cat, idx) { bulkEditState = { cat, index: idx }; renderBulkPreview(); }
+function cancelBulkEdit() { bulkEditState = null; renderBulkPreview(); }
+function saveBulkEdit(cat, idx) {
+    const q = bulkDraftData[cat][idx];
+    const oLvl = document.getElementById('b-edit-lvl');
+    const oTag = document.getElementById('b-edit-tag');
+    if (oLvl) q.lvl = parseInt(oLvl.value) || 1;
+    if (oTag && oTag.value) q.tag = oTag.value;
+
+    q.q = document.getElementById('b-edit-q').value;
+    q.exp = document.getElementById('b-edit-exp').value;
+    if (cat === 'mcq') {
+        q.opts = [0,1,2,3].map(j => document.getElementById(`b-edit-opt-${j}`).value);
+        // Đáp án đúng — bản cũ không lưu trường này nên sửa xong vẫn giữ
+        // nguyên đáp án AI đoán bừa.
+        const chon = document.querySelector('input[name="b-edit-dapan"]:checked');
+        if (!chon) { alert('Thầy cô chưa chọn đáp án đúng cho câu này.'); return; }
+        q.ans = parseInt(chon.value);
+        if (q.opts.some(o => !String(o).trim())) { alert('Có phương án đang để trống.'); return; }
+    } else if (cat === 'tf') {
+        q.stmts.forEach((s, j) => {
+            s.t = document.getElementById(`b-edit-stmt-${j}`).value;
+            const o = document.getElementById(`b-edit-stmt-ans-${j}`);
+            if (o) s.ans = o.value === '1';
+        });
+    } else if (cat === 'sa') {
+        q.ans = document.getElementById('b-edit-ans').value.trim();
+        if (!q.ans) { alert('Câu trả lời ngắn chưa có đáp án.'); return; }
+    }
+    if (!String(q.q).trim()) { alert('Nội dung câu hỏi đang để trống.'); return; }
+    bulkEditState = null;
+    renderBulkPreview();
+}
+function deleteBulkItem(cat, idx) {
+    if(!confirm("Xóa câu này khỏi danh sách chờ duyệt?")) return;
+    bulkDraftData[cat].splice(idx, 1);
+    renderBulkPreview();
+}
+async function confirmBulkImport() {
+    if(!bulkDraftData) return;
+    const db = loadDB();
+    let added = 0;
+    ['mcq', 'tf', 'sa'].forEach(cat => {
+        bulkDraftData[cat].forEach(q => { db[cat].push(q); added++; });
+    });
+    if(added > 0 && await saveDB(db)) {
+        // Thoát toàn màn hình trước khi báo, nếu không thầy nạp xong vẫn thấy
+        // màn hình trắng phủ kín, tưởng máy treo.
+        const area = document.getElementById('bulk-preview-area');
+        if (area.classList.contains('bulk-full')) toggleBulkFull();
+        alert(`🎉 Tuyệt vời! Đã nạp thành công ${added} câu vào Xưởng.`);
+        document.getElementById("bulk-import-data").value = '';
+        bulkDraftData = null;
+        area.innerHTML = '';
+        document.getElementById('bulk-report').innerHTML = '';
+    } else if (added === 0) {
+        alert('Không có câu nào được nạp.');
+    }
+}
+
+// =========================================================
+function scanDuplicates() {
+    const db = loadDB(); let html = ''; let totalDups = 0;
+    ['mcq', 'tf', 'sa'].forEach(cat => {
+        const map = new Map();
+        db[cat].forEach(q => { const key = normalizeForDup(q.q); if (!map.has(key)) map.set(key, []); map.get(key).push(q); });
+        let catHtml = '';
+        map.forEach((group) => {
+            if (group.length > 1) {
+                totalDups++; catHtml += `<div style="border: 2px solid orange; padding: 10px; margin-bottom: 10px; border-radius:8px;"><b>Trùng ${group.length} câu:</b>`;
+                // LỖI CŨ: chèn thẳng q.q (có thể chứa <img> base64 hoặc <table>) làm vỡ giao diện
+                group.forEach(q => {
+                  const tom = stripTags(q.q).slice(0, 80);
+                  catHtml += `<div style="margin-top:5px;">[${escapeHtml(TAG_NAME[q.tag] || q.tag || '?')}] ${escapeHtml(tom)}… <button class="btn btn-red btn-sm" onclick="deleteDup('${q.id}','${cat}')">Xóa</button></div>`;
+                });
+                catHtml += `</div>`;
+            }
+        });
+        if (catHtml) html += `<h4>${cat.toUpperCase()}</h4>` + catHtml;
+    });
+    document.getElementById('duplicate-results').innerHTML = totalDups === 0 ? '<b style="color:green">Tuyệt vời! Không có câu trùng lặp!</b>' : html;
+}
+async function deleteDup(id, cat) {
+    if(!confirm('Xóa bản sao?')) return;
+    const db = loadDB(); db[cat] = db[cat].filter(q => q.id !== id);
+    if (await saveDB(db)) scanDuplicates(); 
+}
+
+// ---------------------------------------------------------
+// ĐÃ KHÔI PHỤC NÚT XEM TRONG THỐNG KÊ NGÂN HÀNG
+// ---------------------------------------------------------
+function renderStats(){
+  const db=loadDB(); let html='<table class="stats-table"><tr><th style="text-align:left">Bài học</th><th>TN</th><th>Đ/S</th><th>Ngắn</th><th>Tổng</th><th>Thao tác</th></tr>';
+  let T={mcq:0,tf:0,sa:0};
+  CURRICULUM.forEach(c=>{
+    html+=`<tr style="background:#f1f5f9"><td colspan="6" style="text-align:left;font-weight:800;color:var(--primary-blue)">${c.ten}</td></tr>`;
+    c.bai.forEach(([tag,name])=>{
+      const m=db.mcq.filter(q=>q.tag===tag), f=db.tf.filter(q=>q.tag===tag), s=db.sa.filter(q=>q.tag===tag), tot=m.length+f.length+s.length;
+      T.mcq+=m.length; T.tf+=f.length; T.sa+=s.length;
+      if(tot>0){
+          html+=`<tr><td style="text-align:left;font-size:.88em;font-weight:600">${name}</td><td>${m.length}</td><td>${f.length}</td><td>${s.length}</td><td style="font-weight:800;color:var(--primary-blue)">${tot}</td>
+          <td><button class="btn btn-teacher btn-sm" style="margin:0;padding:5px 10px" onclick="previewQuestions('${tag}', '${escapeHtml(String(name).replace(/['"\\]/g, ""))}')">👁️ Xem</button></td></tr>`;
+      }
+    });
+  });
+  html+=`<tr style="background:#e2e8f0;font-weight:900;color:var(--primary-blue)"><td style="text-align:right">TỔNG CỘNG</td><td>${T.mcq}</td><td>${T.tf}</td><td>${T.sa}</td><td style="color:var(--accent-red);font-size:1.1em">${T.mcq+T.tf+T.sa}</td><td></td></tr></table>`;
+  const st = document.getElementById('stats-content');
+  if(st) st.innerHTML=html;
+}
+
+function renderAddForm(){
+  const type=document.getElementById('new-q-type').value, area=document.getElementById('dynamic-form-area');
+  if(!area) return;
+  if(type==='mcq'){ area.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><input type="text" id="opt-A" class="input-box" style="margin:0" placeholder="A"><input type="text" id="opt-B" class="input-box" style="margin:0" placeholder="B"><input type="text" id="opt-C" class="input-box" style="margin:0" placeholder="C"><input type="text" id="opt-D" class="input-box" style="margin:0" placeholder="D"></div><div class="form-row" style="margin-top:10px;"><b>Đáp án đúng:</b><select id="mcq-ans" class="select-box" style="margin:0;width:100px"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>`; }
+  else if(type==='tf'){ area.innerHTML=['a','b','c','d'].map(k=>`<div class="form-row"><input type="text" id="stmt-${k}" class="input-box" style="margin:0;flex:1" placeholder="Ý ${k})"><select id="ans-${k}" class="select-box" style="margin:0;width:100px"><option value="true">Đúng</option><option value="false">Sai</option></select></div>`).join(''); }
+  else{ area.innerHTML=`<input type="text" id="sa-exact-ans" class="input-box" placeholder="Đáp án (VD: 0,5|1/2)">`; }
+}
+
+async function saveCustomQuestion(){
+  const type=document.getElementById('new-q-type').value, tag=document.getElementById('new-q-tag').value, lvl=parseInt(document.getElementById('new-q-lvl').value)||1;
+  const qContent=document.getElementById('new-q-content').value.trim(), exp=document.getElementById('new-q-exp').value.trim();
+  if(!qContent){ alert("Chưa có nội dung câu hỏi."); return; }
+  
+  const editingId=document.getElementById('editing-q-id').value, editingCat=document.getElementById('editing-q-cat').value;
+  const q={ id: editingId||newId(), tag, lvl, q:qContent, exp };
+  if(type==='mcq'){ const opts=['A','B','C','D'].map(k=>document.getElementById('opt-'+k).value.trim()); q.opts=opts; q.ans=parseInt(document.getElementById('mcq-ans').value); }
+  else if(type==='tf'){ q.stmts=['a','b','c','d'].map(k=>({t:document.getElementById('stmt-'+k).value.trim(), ans:document.getElementById('ans-'+k).value==='true'})); }
+  else{ q.ans=document.getElementById('sa-exact-ans').value.trim(); }
+  
+  const db=loadDB();
+  if(editingId){
+      const idx = db[editingCat].findIndex(x=>x.id===editingId);
+      if(idx !== -1) db[editingCat].splice(idx, 1);
+  }
+  db[type].push(q); 
+  if(await saveDB(db)){
+    // LỖI CŨ NGHIÊM TRỌNG: không xóa editing-q-id sau khi lưu.
+    // Sửa 1 câu rồi nhập câu MỚI -> câu mới mang lại id cũ và ĐÈ MẤT câu vừa sửa.
+    document.getElementById('editing-q-id').value='';
+    document.getElementById('editing-q-cat').value='';
+    document.getElementById('new-q-content').value='';
+    document.getElementById('new-q-exp').value='';
+    document.getElementById('manual-form-title').innerText='Nhập / sửa câu hỏi';
+    renderAddForm();
+    alert(editingId ? "Đã cập nhật câu hỏi thành công!" : "Đã lưu câu hỏi mới thành công!");
+  }
+}
+
+function previewQuestions(tag, name){
+  document.getElementById('admin-form-stats').style.display='none'; document.getElementById('admin-form-preview').style.display='block'; document.getElementById('preview-title').innerText='👁️ '+(TAG_NAME[tag]||tag);
+  const db=loadDB(); let html='';
+  const block=(list,cat,label,color)=>list.forEach((q,i)=>{
+    html+=`<div class="preview-item">
+      <div class="action-badges" id="b-${q.id}"><div class="badge-edit" onclick="loadQuestionForEdit('${q.id}','${cat}')">Sửa</div><div class="badge-move" onclick="showMoveSelect('${q.id}')">Chuyển</div><div class="badge-delete" onclick="deleteQuestion('${q.id}','${cat}','${tag}','${name}')">Xóa</div></div>
+      <div id="m-${q.id}" style="display:none; position:absolute; top:-14px; right:16px; background:#fff; padding:4px; border:2px solid var(--primary-blue); z-index:10; border-radius:8px;">
+        <select id="s-${q.id}" style="padding:4px; max-width:150px;"></select>
+        <button style="background:green;color:white;border:none;border-radius:4px;padding:4px;" onclick="confirmMove('${q.id}','${cat}','${tag}','${name}')">Lưu</button>
+        <button style="background:gray;color:white;border:none;border-radius:4px;padding:4px;" onclick="cancelMove('${q.id}')">Hủy</button>
+      </div>
+      <div style="font-weight:700;color:${color};margin-bottom:8px">[${label}] Câu ${i+1} <span class="tag-pill">${LVL_NAME[+q.lvl||1]}</span></div><div>${safeHtml(q.q)}</div>`;
+    if(cat==='mcq') html+='<ul style="list-style:none;padding:0;margin-top:8px">'+(q.opts||[]).map((o,j)=>`<li style="padding:4px;${j===q.ans?'color:var(--accent-green);font-weight:700':''}">${String.fromCharCode(65+j)}. ${safeHtml(o)}</li>`).join('')+'</ul>';
+    if(cat==='tf') html+='<ul style="list-style:none;padding:0;margin-top:8px">'+(q.stmts||[]).map((s,j)=>`<li style="padding:4px">${String.fromCharCode(97+j)}) ${safeHtml(s.t)} — <b>${s.ans?'ĐÚNG':'SAI'}</b></li>`).join('')+'</ul>';
+    if(cat==='sa') html+=`<div style="margin-top:8px;font-weight:700;color:var(--accent-green)">Đáp án: ${escapeHtml(cleanText(q.ans))}</div>`;
+    html+=`</div>`;
+  });
+  block(db.mcq.filter(q=>q.tag===tag),'mcq','Trắc nghiệm','var(--primary-blue)'); block(db.tf .filter(q=>q.tag===tag),'tf','Đúng / Sai','#b45309'); block(db.sa .filter(q=>q.tag===tag),'sa','Trả lời ngắn','var(--accent-red)');
+  document.getElementById('preview-content-area').innerHTML = html || '<p>Trống.</p>'; 
+  typeset(document.getElementById('preview-content-area'));
+}
+
+function loadQuestionForEdit(id,cat){
+  const db=loadDB(); const q=db[cat].find(x=>x.id===id); if(!q) return; toggleAdminForm('manual');
+  document.getElementById('manual-form-title').innerText='✏️ Đang SỬA câu hỏi (lưu xong sẽ tự thoát chế độ sửa)';
+  document.getElementById('editing-q-id').value=id; document.getElementById('editing-q-cat').value=cat;
+  document.getElementById('new-q-type').value=cat; document.getElementById('new-q-tag').value=q.tag; document.getElementById('new-q-lvl').value=+q.lvl||1;
+  document.getElementById('new-q-content').value=q.q||''; document.getElementById('new-q-exp').value=q.exp||''; renderAddForm();
+  if(cat==='mcq'){ ['A','B','C','D'].forEach((k,i)=>document.getElementById('opt-'+k).value=cleanText(q.opts?.[i]||'')); document.getElementById('mcq-ans').value=q.ans??0; }
+  else if(cat==='tf'){ ['a','b','c','d'].forEach((k,i)=>{ document.getElementById('stmt-'+k).value=cleanText(q.stmts?.[i]?.t||''); document.getElementById('ans-'+k).value=q.stmts?.[i]?.ans?'true':'false'; }); }
+  else{ document.getElementById('sa-exact-ans').value=cleanText(q.ans||''); }
+}
+
+function showMoveSelect(id) {
+  document.getElementById('b-' + id).style.display = 'none'; document.getElementById('m-' + id).style.display = 'flex';
+  const sel = document.getElementById('s-' + id);
+  if (sel.options.length === 0) {
+      let opts = ''; CURRICULUM.forEach(c => { opts += `<optgroup label="${c.ten}">`; c.bai.forEach(([v, t]) => { opts += `<option value="${v}">${t}</option>`; }); opts += `</optgroup>`; });
+      sel.innerHTML = opts;
+  }
+}
+function cancelMove(id) { document.getElementById('b-' + id).style.display = 'flex'; document.getElementById('m-' + id).style.display = 'none'; }
+async function confirmMove(id, cat, oldTag, oldName) {
+  const newTag = document.getElementById('s-' + id).value; if (newTag === oldTag) { cancelMove(id); return; }
+  const db = loadDB(); const qIndex = db[cat].findIndex(q => q.id === id);
+  if (qIndex > -1) { db[cat][qIndex].tag = newTag; if (await saveDB(db)) previewQuestions(oldTag, oldName); }
+}
+
+async function deleteQuestion(id,cat,tag,name){ if(!confirm('Xóa?')) return; const db=loadDB(); db[cat]=db[cat].filter(q=>q.id!==id); if(await saveDB(db)) previewQuestions(tag, name); }
+
+function exportBank(){
+  const d=new Date(), ts=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  taiFile(JSON.stringify({...loadDB()}, null, 1), 'application/json', `V15_XuongOffline_Backup_${ts}.json`);
+}
+async function clearCustomData(){ if(prompt('Gõ XOA để xóa:')==='XOA'){ exportBank(); setTimeout(async ()=>{ if(await saveDB({mcq:[],tf:[],sa:[]})) location.reload(); },800); } }
+
+// LỖI CŨ: nút "Khôi phục từ file Backup" gọi restoreBank() nhưng HÀM NÀY CHƯA HỀ ĐƯỢC VIẾT.
+// Hai nút radio Gộp / Thay thế cũng vì thế mà vô tác dụng.
+async function restoreBank(input){
+  const f = input?.files?.[0];
+  if(!f) return;
+  const thayThe = document.getElementById('restore-replace')?.checked;
+  const reader = new FileReader();
+  reader.onerror = () => { alert('❌ Không đọc được file. Hãy chọn lại.'); input.value=''; };
+  reader.onload = async (ev) => {
+    let data;
+    try { data = JSON.parse(String(ev.target.result || '')); }
+    catch(e){ alert('❌ File không phải JSON hợp lệ.\n' + e.message); input.value=''; return; }
+
+    const hopLe = c => Array.isArray(data?.[c]) ? data[c] : [];
+    const nguon = { mcq: hopLe('mcq'), tf: hopLe('tf'), sa: hopLe('sa') };
+    const tongNguon = nguon.mcq.length + nguon.tf.length + nguon.sa.length;
+    if(tongNguon === 0){ alert('File hợp lệ nhưng không chứa câu hỏi nào.'); input.value=''; return; }
+
+    let db, them = 0, trung = 0;
+    if(thayThe){
+      if(!confirm(`⚠️ THAY THẾ toàn bộ ngân hàng hiện tại bằng ${tongNguon} câu trong file?\nDữ liệu cũ sẽ mất. Nên bấm Tải file Backup trước.`)){ input.value=''; return; }
+      db = { mcq: [], tf: [], sa: [] };
+    } else {
+      db = loadDB();
+    }
+
+    ['mcq','tf','sa'].forEach(cat => {
+      nguon[cat].forEach(q => {
+        if(validateQ(q, cat)) return;
+        if(db[cat].some(x => x.tag === q.tag && chuanHoa(x.q) === chuanHoa(q.q))){ trung++; return; }
+        db[cat].push({ ...q, id: q.id || newId() });
+        them++;
+      });
+    });
+
+    if(await saveDB(db)){
+      alert(`✅ Khôi phục xong.\n• Đã nạp: ${them} câu\n• Bỏ qua vì trùng: ${trung} câu`);
+      buildDropdowns(); renderStats(); updateStorageInfo();
+      if(typeof dsReady !== 'undefined') dsReady = false;
+    }
+    input.value = '';
+  };
+  reader.readAsText(f);
+}
+
+// LỖI CŨ: select "Chế độ" gọi toggleCustomMatrix() nhưng HÀM NÀY CHƯA HỀ ĐƯỢC VIẾT
+// -> chọn "Chế độ 4 — Tùy chỉnh" không bao giờ hiện ô nhập số câu.
+function toggleCustomMatrix(){
+  const box = document.getElementById('custom-matrix-box');
+  const mode = document.getElementById('mode-select')?.value;
+  if(box) box.style.display = (mode === 'custom') ? 'block' : 'none';
+}
+
+const TABLE_TPL = { 
+  bac3_2cuctri:`<table style="width:100%;border-collapse:collapse;text-align:center;margin:15px 0;background:#fff"><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$x$</td><td style="padding:8px">$-\\infty$</td><td></td><td>$x_1$</td><td></td><td>$x_2$</td><td></td><td>$+\\infty$</td></tr><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$f'(x)$</td><td></td><td>$+$</td><td>$0$</td><td>$-$</td><td>$0$</td><td>$+$</td><td></td></tr><tr><td style="border-right:2px solid #1e293b;padding:20px 8px;font-weight:bold">$f(x)$</td><td style="vertical-align:bottom">$-\\infty$</td><td>$\\nearrow$</td><td style="vertical-align:top">$y_{CĐ}$</td><td>$\\searrow$</td><td style="vertical-align:bottom">$y_{CT}$</td><td>$\\nearrow$</td><td style="vertical-align:top">$+\\infty$</td></tr></table>`,
+  bac3_nghichbien:`<table style="width:100%;border-collapse:collapse;text-align:center;margin:15px 0;background:#fff"><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$x$</td><td>$-\\infty$</td><td></td><td>$x_1$</td><td></td><td>$x_2$</td><td></td><td>$+\\infty$</td></tr><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$f'(x)$</td><td></td><td>$-$</td><td>$0$</td><td>$+$</td><td>$0$</td><td>$-$</td><td></td></tr><tr><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$f(x)$</td><td style="vertical-align:top">$+\\infty$</td><td>$\\searrow$</td><td style="vertical-align:bottom">$y_{CT}$</td><td>$\\nearrow$</td><td style="vertical-align:top">$y_{CĐ}$</td><td>$\\searrow$</td><td style="vertical-align:bottom">$-\\infty$</td></tr></table>`,
+  phanthuc:`<table style="width:100%;border-collapse:collapse;text-align:center;margin:15px 0;background:#fff"><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$x$</td><td>$-\\infty$</td><td></td><td>$x_0$</td><td></td><td>$+\\infty$</td></tr><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$y'$</td><td></td><td>$-$</td><td style="border-left:1px double #000;border-right:1px double #000"></td><td>$-$</td><td></td></tr><tr><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$y$</td><td style="vertical-align:top">$y_{TCN}$</td><td>$\\searrow$</td><td style="border-left:1px double #000;border-right:1px double #000">$-\\infty \\quad +\\infty$</td><td>$\\searrow$</td><td style="vertical-align:bottom">$y_{TCN}$</td></tr></table>`,
+  bang_xet_dau:`<table style="width:100%;border-collapse:collapse;text-align:center;margin:15px 0;background:#fff"><tr style="border-bottom:2px solid #1e293b"><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$x$</td><td>$-\\infty$</td><td></td><td>$x_1$</td><td></td><td>$x_2$</td><td></td><td>$x_3$</td><td></td><td>$+\\infty$</td></tr><tr><td style="border-right:2px solid #1e293b;padding:8px;font-weight:bold">$f'(x)$</td><td></td><td>$-$</td><td>$0$</td><td>$+$</td><td>$0$</td><td>$-$</td><td>$0$</td><td>$+$</td><td></td></tr></table>`
+};
+function insertTableTemplate(){ const t=document.getElementById('table-template-select').value; if(t) insertAtCursor(document.getElementById('new-q-content'), TABLE_TPL[t]||''); }
+
+function compressImage(dataUrl, maxW=1100, quality=0.85){
+  return new Promise(res=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; } const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,w,h); try{ res(c.toDataURL('image/webp',quality)); }catch(e){ res(dataUrl); } }; img.onerror=()=>res(dataUrl); img.src=dataUrl; });
+}
+// LỖI CŨ: sau khi chèn, con trỏ nhảy về đầu ô -> gõ tiếp bị chèn sai chỗ
+function insertAtCursor(el,text){
+  const s=el.selectionStart??el.value.length, e=el.selectionEnd??el.value.length;
+  el.value = el.value.slice(0,s)+text+el.value.slice(e);
+  const viTri = s + text.length;
+  el.focus();
+  try{ el.setSelectionRange(viTri, viTri); }catch(err){}
+}
+document.addEventListener("paste", async function (e) { 
+  if(e.target.tagName==='TEXTAREA'){
+    const items = e.clipboardData?.items || [];
+    for(const item of items) {
+      if(item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile(); if(!file) return;
+        const reader=new FileReader();
+        reader.onload=async ev=> {
+          const small = await compressImage(ev.target.result);
+          // Cảnh báo trước khi nhét ảnh quá nặng vào localStorage (giới hạn ~5MB)
+          if(small.length > TRUONG_TOI_DA){
+            alert('⚠️ Ảnh này quá nặng ('+Math.round(small.length/1024)+' KB) và có thể làm đầy bộ nhớ trình duyệt.\nHãy cắt gọn ảnh rồi dán lại.');
+            return;
+          }
+          insertAtCursor(e.target, `\n<img src="${small}" style="max-width:100%;border-radius:8px">\n`);
+          updateStorageInfo();
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+    }
+  }
+});
+
+// =========================================================
+// STUDIO THIẾT KẾ ĐỀ ĐÃ ĐƯỢC VÁ LỖI CÚ PHÁP HOÀN CHỈNH
+// =========================================================
+const TPL_KEY='dcttTemplatesV12';
+const LABEL={mcq:'trắc nghiệm', tf:'đúng/sai', sa:'trả lời ngắn'};
+const PART_NAME={mcq:'Phần I', tf:'Phần II', sa:'Phần III'};
+const SC_DEFAULT={ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true };
+
+let DS={ scope:[], cells:{}, tab:'mcq', manual:{mcq:[],tf:[],sa:[]}, scoring:{ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true }, order:'lvl', name:'' };
+let dsReady=false;
+
+function dsCells(tag){ if(!DS.cells[tag]) DS.cells[tag]={mcq:[0,0,0,0],tf:[0,0,0,0],sa:[0,0,0,0]}; return DS.cells[tag]; }
+function dsAvail(db,tag,type,lvl){ return db[type].filter(q=>q.tag===tag && (+q.lvl||1)===lvl).length; }
+function dsScopeSorted(){ return DS.scope.slice().sort((a,b)=>TAG_ORDER[a]-TAG_ORDER[b]); }
+
+function dsOpen(){
+  if(!dsReady){
+    const ch=document.getElementById('ds-chuong-quick');
+    if(ch) ch.innerHTML='<option value="">— Chọn nhanh cả chương —</option>' + CURRICULUM.map(c=>`<option value="${c.chuong}">${c.ten}</option>`).join('');
+    const pk=document.getElementById('ds-pick-tag');
+    if(pk) pk.innerHTML='<option value="all">Tất cả các bài</option>' + CURRICULUM.map(c=>`<optgroup label="${c.ten}">`+c.bai.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')+'</optgroup>').join('');
+    
+    const db = loadDB();
+    DS.scope = Object.keys(TAG_ORDER).filter(tag => db.mcq.some(q=>q.tag===tag)||db.tf.some(q=>q.tag===tag)||db.sa.some(q=>q.tag===tag));
+    dsReady=true;
+  }
+  dsRenderScope(); dsRenderMatrix(); dsRenderPicker(); dsRenderCart(); dsRefreshTemplates(); dsSync();
+}
+
+function dsRenderScope(){
+  const db=loadDB(); let h='';
+  CURRICULUM.forEach(c=>{
+    h+=`<div style="grid-column:1/-1;font-weight:800;color:var(--primary-blue);font-size:.82em;margin-top:6px">${c.ten}</div>`;
+    c.bai.forEach(([tag,name])=>{
+      const n=db.mcq.filter(q=>q.tag===tag).length+db.tf.filter(q=>q.tag===tag).length+db.sa.filter(q=>q.tag===tag).length;
+      h+=`<label class="${n?'':'empty'}"><input type="checkbox" value="${tag}" ${DS.scope.includes(tag)?'checked':''} onchange="dsToggleScope(this)"><span>${name} <b>(${n})</b></span></label>`;
+    });
+  });
+  const ds = document.getElementById('ds-scope');
+  if(ds) ds.innerHTML=h;
+}
+function dsToggleScope(cb){ if(cb.checked){ if(!DS.scope.includes(cb.value)) DS.scope.push(cb.value); } else DS.scope=DS.scope.filter(t=>t!==cb.value); dsRenderMatrix(); }
+function dsSelectAll(v){ DS.scope = v ? Object.keys(TAG_ORDER) : []; dsRenderScope(); dsRenderMatrix(); }
+function dsSelectNonEmpty(){ const db=loadDB(); DS.scope=Object.keys(TAG_ORDER).filter(tag=> db.mcq.some(q=>q.tag===tag)||db.tf.some(q=>q.tag===tag)||db.sa.some(q=>q.tag===tag)); dsRenderScope(); dsRenderMatrix(); }
+function dsSelectChuong(ch){ if(!ch) return; const c=CURRICULUM.find(x=>x.chuong===ch); if(!c) return; c.bai.forEach(([tag])=>{ if(!DS.scope.includes(tag)) DS.scope.push(tag); }); document.getElementById('ds-chuong-quick').value=''; dsRenderScope(); dsRenderMatrix(); }
+
+function dsTab(t){ DS.tab=t; ['mcq','tf','sa'].forEach(k=>{ const e = document.getElementById('ds-tab-'+k); if(e) e.classList.toggle('on',k===t); }); dsRenderMatrix(); }
+function dsSetCell(tag,lvl,val){ dsCells(tag)[DS.tab][lvl-1]=Math.max(0,parseInt(val)||0); dsRenderMatrix(); }
+
+// HÀM VẼ MA TRẬN (BƯỚC 2)
+function dsRenderMatrix(){
+  const box=document.getElementById('ds-matrix'); if(!box) return;
+  const scope=dsScopeSorted();
+  if(!scope.length){ box.innerHTML='<p class="hint">Chưa chọn bài nào ở bước 1.</p>'; dsSummary(); return; }
+  const db=loadDB(), t=DS.tab; let colT=[0,0,0,0], h='';
+  h+=`<table class="ds-table"><tr><th style="text-align:left">Bài học</th><th>Nhận biết</th><th>Thông hiểu</th><th>Vận dụng</th><th>VD cao</th><th>Tổng</th></tr>`;
+  scope.forEach(tag=>{
+    const c=dsCells(tag)[t]; let row=0;
+    h+=`<tr><td class="name">${TAG_NAME[tag]}</td>`;
+    for(let l=1;l<=4;l++){
+      const av=dsAvail(db,tag,t,l), v=c[l-1]; row+=v; colT[l-1]+=v;
+      h+=`<td><input type="number" min="0" max="99" class="ds-cell ${v>av?'over':''}" value="${v}" onchange="dsSetCell('${tag}',${l},this.value)"><span class="ds-avail">có ${av}</span></td>`;
+    }
+    h+=`<td><b>${row}</b></td></tr>`;
+  });
+  h+=`<tr style="background:#f1f5f9"><td class="name"><b>Tổng ${LABEL[t]}</b></td>${colT.map(v=>`<td><b>${v}</b></td>`).join('')}<td><b>${colT.reduce((a,b)=>a+b,0)}</b></td></tr></table>`;
+  box.innerHTML=h; dsSummary();
+}
+
+function dsClearMatrix(){ DS.scope.forEach(tag=>dsCells(tag)[DS.tab]=[0,0,0,0]); dsRenderMatrix(); }
+function dsFillMax(){ const db=loadDB(); DS.scope.forEach(tag=>{ for(let l=1;l<=4;l++) dsCells(tag)[DS.tab][l-1]=dsAvail(db,tag,DS.tab,l); }); dsRenderMatrix(); }
+function dsQuickFill(){
+  const t=DS.tab;
+  if(!DS.scope.length){ alert('Hãy chọn bài ở bước 1 trước.'); return; }
+  const total=parseInt(prompt(`Tổng số câu ${LABEL[t]} cho cả đề?`, t==='mcq'?'12':t==='tf'?'4':'6'));
+  if(!total||total<0) return;
+  const r=(prompt('Tỉ lệ mức độ NB - TH - VD - VDC (%)','40-30-20-10')||'').split('-').map(x=>parseFloat(x)||0);
+  if(r.length!==4){ alert('Cần đúng 4 số, ví dụ 40-30-20-10.'); return; }
+  const s=r.reduce((a,b)=>a+b,0)||1;
+  let per=r.map(x=>Math.round(total*x/s));
+  let diff=total-per.reduce((a,b)=>a+b,0), guard=0;
+  while(diff!==0 && guard<200){ const i=guard%4; if(diff>0){per[i]++;diff--;} else if(per[i]>0){per[i]--;diff++;} guard++; }
+
+  const db=loadDB(), scope=dsScopeSorted(), miss=[];
+  scope.forEach(tag=>dsCells(tag)[t]=[0,0,0,0]);
+  per.forEach((need,i)=>{
+    const lvl=i+1; let g=0;
+    while(need>0 && g<500){
+      let placed=false;
+      for(const tag of scope){
+        if(need<=0) break;
+        const c=dsCells(tag)[t];
+        if(c[i]<dsAvail(db,tag,t,lvl)){ c[i]++; need--; placed=true; }
+      }
+      if(!placed) break; g++;
+    }
+    if(need>0) miss.push(`${LVL_NAME[lvl]}: còn thiếu ${need} câu`);
+  });
+  dsRenderMatrix();
+  if(miss.length) alert('Ngân hàng chưa đủ câu cho tỉ lệ này:\n'+miss.join('\n')+'\n\nMa trận đã điền tối đa có thể. Bạn có thể sửa tay từng ô.');
+}
+
+function dsCounts(){
+  const n={mcq:0,tf:0,sa:0}, lv=[0,0,0,0];
+  DS.scope.forEach(tag=>{ const c=dsCells(tag); ['mcq','tf','sa'].forEach(t=>c[t].forEach((v,i)=>{ n[t]+=v; lv[i]+=v; })); });
+  const db=loadDB();
+  ['mcq','tf','sa'].forEach(t=>DS.manual[t].forEach(id=>{ const q=db[t].find(x=>x.id===id); if(q){ n[t]++; lv[(+q.lvl||1)-1]++; } }));
+  return {n,lv};
+}
+function dsTotalPoints(){
+  const {n}=dsCounts(), s=DS.scoring;
+  return { mcq:n.mcq*s.mcq, tf:n.tf*s.tf[4], sa:n.sa*s.sa, all:n.mcq*s.mcq + n.tf*s.tf[4] + n.sa*s.sa };
+}
+function dsSummary(){
+  const {n,lv}=dsCounts(), p=dsTotalPoints();
+  const totalQ=n.mcq+n.tf+n.sa, totalLv=lv.reduce((a,b)=>a+b,0)||1;
+  const ds = document.getElementById('ds-summary');
+  if(ds) ds.innerHTML= `<b>Đề gồm ${totalQ} câu</b> — ${n.mcq} trắc nghiệm · ${n.tf} đúng/sai · ${n.sa} trả lời ngắn<br>Phân bố mức độ: NB ${lv[0]} · TH ${lv[1]} · VD ${lv[2]} · VDC ${lv[3]}<br>Điểm tối đa: <b>${p.all.toFixed(2)}</b> (I: ${p.mcq.toFixed(2)} · II: ${p.tf.toFixed(2)} · III: ${p.sa.toFixed(2)})`;
+}
+
+function dsRenderPicker(){
+  const db=loadDB();
+  const tag=document.getElementById('ds-pick-tag')?.value;
+  const type=document.getElementById('ds-pick-type')?.value;
+  const lvl=+document.getElementById('ds-pick-lvl')?.value;
+  const kw=(document.getElementById('ds-pick-search')?.value||'').trim().toLowerCase();
+  if(!tag || !type) return;
+  let list=db[type].filter(q=>(tag==='all'||q.tag===tag)&&(!lvl||(+q.lvl||1)===lvl));
+  if(kw) list=list.filter(q=>stripTags(q.q).toLowerCase().includes(kw));
+  const box=document.getElementById('ds-picker');
+  if(!list.length){ box.innerHTML='<p class="hint" style="padding:14px">Không có câu hỏi nào khớp bộ lọc.</p>'; return; }
+  box.innerHTML=list.slice(0,150).map(q=>{
+    const txt=stripTags(q.q);
+    return `<label><input type="checkbox" ${DS.manual[type].includes(q.id)?'checked':''} onchange="dsToggleManual('${type}','${q.id}',this.checked)">
+      <span><span class="tag-pill">${LVL_NAME[+q.lvl||1]}</span>${escapeHtml(txt.slice(0,150))}${txt.length>150?'…':''}</span></label>`;
+  }).join('');
+}
+function dsToggleManual(type,id,on){
+  if(on){ if(!DS.manual[type].includes(id)) DS.manual[type].push(id); } else DS.manual[type]=DS.manual[type].filter(x=>x!==id);
+  dsRenderCart(); dsSummary();
+}
+function dsRenderCart(){
+  const db=loadDB(); const ul=document.getElementById('ds-cart'); let h=''; let n=0;
+  ['mcq','tf','sa'].forEach(type=>{
+    DS.manual[type].forEach((id,idx)=>{
+      const q=db[type].find(x=>x.id===id); if(!q) return; n++;
+      const txt=stripTags(q.q);
+      h+=`<li><span><span class="tag-pill">${PART_NAME[type]}</span><span class="tag-pill">${LVL_NAME[+q.lvl||1]}</span>${escapeHtml(txt.slice(0,80))}</span>
+        <span style="display:flex;gap:4px;flex-shrink:0">
+          <button class="btn btn-gray btn-sm" style="margin:0;padding:4px 8px" onclick="dsMove('${type}',${idx},-1)">▲</button>
+          <button class="btn btn-gray btn-sm" style="margin:0;padding:4px 8px" onclick="dsMove('${type}',${idx},1)">▼</button>
+          <button class="btn btn-red btn-sm" style="margin:0;padding:4px 8px" onclick="dsToggleManual('${type}','${id}',false);dsRenderPicker()">✕</button>
+        </span></li>`;
+    });
+  });
+  ul.innerHTML = h || '<li style="justify-content:center;color:#64748b">Chưa chỉ định câu nào. Ma trận sẽ tự bốc toàn bộ.</li>';
+  document.getElementById('ds-cart-title').innerText=`Đã chọn tay: ${n} câu`;
+}
+function dsMove(type,idx,dir){ const a=DS.manual[type], j=idx+dir; if(j<0||j>=a.length) return; [a[idx],a[j]]=[a[j],a[idx]]; dsRenderCart(); }
+
+function dsSync(){
+  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
+  DS.scoring={ mcq:g('sc-mcq')||0.25, sa:g('sc-sa')||0.5, tf:[0,g('sc-tf1')||0.1,g('sc-tf2')||0.25,g('sc-tf3')||0.5,g('sc-tf4')||1.0], scale10:document.getElementById('sc-scale10')?.checked??true };
+  DS.order=document.getElementById('ds-order')?.value || 'lvl';
+  dsSummary();
+}
+
+function dsTemplates(){ try{ return JSON.parse(localStorage.getItem(TPL_KEY))||[]; }catch(e){ return []; } }
+function dsWriteTemplates(list){ try{ localStorage.setItem(TPL_KEY, JSON.stringify(list)); return true; }catch(e){ alert('Không lưu được mẫu: bộ nhớ đã đầy.'); return false; } }
+function dsRefreshTemplates(){
+  const list=dsTemplates(); const sel=document.getElementById('ds-tpl-list');
+  if(sel) sel.innerHTML = list.length ? list.map((t,i)=>`<option value="${i}">${escapeHtml(t.name)}</option>`).join('') : '<option value="">(chưa có mẫu nào)</option>';
+}
+function dsSaveTemplate(){
+  const name=document.getElementById('ds-tpl-name').value.trim();
+  if(!name){ alert('Hãy đặt tên cho mẫu.'); return; }
+  dsSync(); const list=dsTemplates();
+  const tpl={ name, scope:[...DS.scope], cells:JSON.parse(JSON.stringify(DS.cells)), manual:JSON.parse(JSON.stringify(DS.manual)), scoring:JSON.parse(JSON.stringify(DS.scoring)), order:DS.order, at:new Date().toLocaleDateString('vi-VN') };
+  const i=list.findIndex(t=>t.name===name);
+  if(i>=0){ if(!confirm(`Mẫu "${name}" đã có. Ghi đè?`)) return; list[i]=tpl; } else list.push(tpl);
+  if(dsWriteTemplates(list)){ dsRefreshTemplates(); DS.name=name; alert('Đã lưu mẫu.'); }
+}
+function dsLoadTemplate(){
+  const i=document.getElementById('ds-tpl-list').value;
+  const list=dsTemplates(); const t=list[i];
+  if(!t){ alert('Chưa chọn mẫu.'); return; }
+  DS.scope=[...(t.scope||[])]; DS.cells=JSON.parse(JSON.stringify(t.cells||{})); DS.manual=Object.assign({mcq:[],tf:[],sa:[]}, JSON.parse(JSON.stringify(t.manual||{}))); DS.scoring=Object.assign(JSON.parse(JSON.stringify(SC_DEFAULT)), t.scoring||{}); DS.order=t.order||'lvl'; DS.name=t.name;
+  document.getElementById('sc-mcq').value=DS.scoring.mcq; document.getElementById('sc-sa').value=DS.scoring.sa; [1,2,3,4].forEach(k=>document.getElementById('sc-tf'+k).value=DS.scoring.tf[k]); document.getElementById('sc-scale10').checked=DS.scoring.scale10!==false; document.getElementById('ds-order').value=DS.order; document.getElementById('ds-tpl-name').value=DS.name;
+  dsRenderScope(); dsRenderMatrix(); dsRenderPicker(); dsRenderCart(); dsSync(); alert(`Đã nạp mẫu "${t.name}".`);
+}
+function dsDeleteTemplate(){
+  const i=document.getElementById('ds-tpl-list').value;
+  const list=dsTemplates(); if(!list[i]) return;
+  if(!confirm(`Xóa mẫu "${list[i].name}"?`)) return;
+  list.splice(i,1); dsWriteTemplates(list); dsRefreshTemplates();
+}
+
+function generateGame(){
+  const db=loadDB();
+  
+  const isQuick = document.getElementById('admin-form-quickexam').style.display === 'block';
+  let need={mcq:0,tf:0,sa:0};
+  let sel={mcq:[],tf:[],sa:[]};
+  let rng=Math.random;
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function shuffleArray(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  let examCode = String(Math.floor(Math.random()*900000)+100000);
+  rng=mulberry32(parseInt(examCode,10));
+
+  if(isQuick) {
+      const topic=document.getElementById('topic-select').value, modeVal=document.getElementById('mode-select').value;
+      // LỖI CŨ: thiếu hẳn nhánh modeVal === '3' -> "Chế độ 3 — Thi học kỳ" luôn báo "Chưa đủ câu hỏi"
+      if(modeVal==='1') need={mcq:10,tf:0,sa:0};
+      else if(modeVal==='2') need={mcq:12,tf:4,sa:3};
+      else if(modeVal==='3') need={mcq:12,tf:4,sa:6};
+      else if(modeVal==='custom') need={ mcq:+document.getElementById('custom-num-mcq').value||0, tf: +document.getElementById('custom-num-tf').value||0, sa: +document.getElementById('custom-num-sa').value||0 };
+      const pool={ mcq:db.mcq.filter(q=>(topic==='all'||q.tag===topic)), tf:db.tf.filter(q=>(topic==='all'||q.tag===topic)), sa:db.sa.filter(q=>(topic==='all'||q.tag===topic)) };
+      const getQ = (p, n) => shuffleArray(p).slice(0, n);
+      sel={ mcq:getQ(pool.mcq,need.mcq), tf:getQ(pool.tf,need.tf), sa:getQ(pool.sa,need.sa) };
+  } else {
+      const used=new Set();
+      ['mcq','tf','sa'].forEach(t=>DS.manual[t].forEach(id=>{ const q=db[t].find(x=>x.id===id); if(q && !used.has(id)){ used.add(id); sel[t].push(JSON.parse(JSON.stringify(q))); } }));
+      dsScopeSorted().forEach(tag=>{
+        const c=dsCells(tag);
+        ['mcq','tf','sa'].forEach(t=>{
+          for(let l=1;l<=4;l++){
+            const needNum=c[t][l-1]; if(!needNum) continue;
+            const pool=db[t].filter(q=>q.tag===tag && (+q.lvl||1)===l && !used.has(q.id));
+            const picked=shuffleArray(pool).slice(0,needNum);
+            picked.forEach(q=>{ used.add(q.id); sel[t].push(JSON.parse(JSON.stringify(q))); });
+          }
+        });
+      });
+  }
+
+  if(sel.mcq.length+sel.tf.length+sel.sa.length === 0) { alert("Chưa đủ câu hỏi để tạo đề!"); return; }
+
+  // LỖI CŨ: Bước 5 "Thứ tự câu trong đề" được lưu vào DS.order nhưng KHÔNG BAO GIỜ được dùng.
+  if(!isQuick){
+    const kieu = DS.order || 'lvl';
+    const sapXep = arr => {
+      if(kieu==='manual') return arr;
+      if(kieu==='random') return shuffleArray(arr);
+      if(kieu==='bai')    return arr.slice().sort((a,b)=>(TAG_ORDER[a.tag]??999)-(TAG_ORDER[b.tag]??999));
+      const chieu = kieu==='lvl_desc' ? -1 : 1;
+      return arr.slice().sort((a,b)=>chieu*(((+a.lvl||1)-(+b.lvl||1)) || ((TAG_ORDER[a.tag]??999)-(TAG_ORDER[b.tag]??999))));
+    };
+    sel.mcq=sapXep(sel.mcq); sel.tf=sapXep(sel.tf); sel.sa=sapXep(sel.sa);
+  }
+
+  let testPaper=[];
+  // LỖI CŨ NGHIÊM TRỌNG: xuất type = 1/2/3 (số) trong khi V17 kiểm tra q.type === "mcq".
+  // Hậu quả: mọi câu trắc nghiệm sang V17 biến thành ô nhập text, mất sạch phương án A/B/C/D.
+  const push=(arr,type,partNo,partName)=>arr.forEach((q,i)=>{
+    const item={...q, type, partNo, part:partName, partQNum:i+1, partTotal:arr.length};
+    if(type==='mcq' && Array.isArray(q.opts)){
+      const opts=q.opts.map((t,idx)=>({t, isTrue: idx===q.ans}));
+      item.display = shuffleArray(opts);
+    }
+    testPaper.push(item);
+  });
+  push(sel.mcq,'mcq',1,'PHẦN I — TRẮC NGHIỆM');
+  push(sel.tf ,'tf' ,2,'PHẦN II — ĐÚNG / SAI');
+  push(sel.sa ,'sa' ,3,'PHẦN III — TRẢ LỜI NGẮN');
+
+  // LỖI CŨ: Bước 4 "Thang điểm" hoàn toàn không đi vào file JSON -> cài đặt điểm bị vứt bỏ.
+  const thangDiem = isQuick
+    ? { mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true }
+    : JSON.parse(JSON.stringify(DS.scoring));
+
+  const tenDe = (!isQuick && DS.name) ? DS.name : "Đề Thiết Kế Đỉnh Cao Trí Tuệ";
+  const bundle = {
+    title: tenDe,
+    code: examCode,
+    durationMinutes: 45,
+    scoring: thangDiem,
+    createdAt: new Date().toISOString(),
+    questions: testPaper
+  };
+  taiFile(JSON.stringify(bundle, null, 2), "application/json", `De_V15_${examCode}.json`);
+  alert(`🎉 Đã xuất đề thành công!\n\n• ${sel.mcq.length} trắc nghiệm · ${sel.tf.length} đúng/sai · ${sel.sa.length} trả lời ngắn\n• Mã đề: ${examCode}\n\nAnh tải file này lên HỆ THỐNG PHÁT ĐỀ ONLINE (V17) để học sinh làm bài nhé.`);
+}
+
+// LỖI CŨ: nút "▶ Tạo đề JSON" của Studio Thiết Kế Đề gọi dsBuild() nhưng HÀM NÀY CHƯA HỀ ĐƯỢC VIẾT
+// -> bấm nút không có phản ứng gì (ReferenceError trong Console). Hàm thật tên là generateGame().
+function dsBuild(){
+  dsSync();
+  generateGame();
+}
+
+// =========================================================
+// QUẢN LÝ DANH MỤC BÀI HỌC
+// =========================================================
+function dmVe() {
+  var box = document.getElementById("dm-bang"); if (!box) return;
+  if (!DM) { box.innerHTML = '<p class="hint">Chưa tải được danh mục bài học.</p>'; return; }
+  var h = "";
+  DM.forEach(function (c, ci) {
+    h += '<div class="ds-step" style="border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; background:#fff;"><div class="form-row" style="margin-bottom:8px">'
+      + '<input class="input-box" style="margin:0;flex:1 1 320px" value="' + escapeHtml(c.ten)
+      + '" oninput="dmSuaChuong(' + ci + ',this.value)" placeholder="Tên chương">'
+      + '<input class="input-box" style="margin:0;max-width:130px;font-family:ui-monospace,monospace" value="'
+      + escapeHtml(String(c.chuong)) + '" oninput="dmSuaSoChuong(' + ci + ',this.value)" placeholder="chuong1">'
+      + '<input class="input-box" style="margin:0;max-width:110px" value="' + escapeHtml(String(c.tap || ""))
+      + '" oninput="dmSuaTap(' + ci + ',this.value)" placeholder="Tập 1">'
+      + '<button class="btn btn-red btn-sm" style="margin:0" onclick="dmXoaChuong(' + ci + ')">Xóa chương</button>'
+      + "</div>";
+    c.bai.forEach(function (b, bi) {
+      h += '<div class="form-row" style="margin-bottom:5px">'
+        + '<input class="input-box" style="margin:0;max-width:190px;font-family:ui-monospace,monospace" value="' + escapeHtml(b[0])
+        + '" oninput="dmSuaMa(' + ci + "," + bi + ',this.value)" placeholder="chuong1_bai1">'
+        + '<input class="input-box" style="margin:0;flex:1 1 260px" value="' + escapeHtml(b[1])
+        + '" oninput="dmSuaTen(' + ci + "," + bi + ',this.value)" placeholder="Tên bài">'
+        + '<button class="btn btn-gray btn-sm" style="margin:0" onclick="dmXoaBai(' + ci + "," + bi + ')">✕</button>'
+        + "</div>";
+    });
+    h += '<button class="btn btn-gray btn-sm" style="margin:6px 0 0" onclick="dmThemBai(' + ci + ')">+ Thêm bài</button></div>';
+  });
+  h += '<button class="btn btn-teacher btn-sm" onclick="dmThemChuong()">+ Thêm chương</button>';
+  box.innerHTML = h;
+}
+
+function dmSuaChuong(i, v) { DM[i].ten = v; }
+function dmSuaTap(i, v) { DM[i].tap = String(v).trim(); }
+function dmSuaSoChuong(i, v) { DM[i].chuong = String(v).trim(); }
+function dmSuaMa(i, j, v) { DM[i].bai[j][0] = String(v).trim(); }
+function dmSuaTen(i, j, v) { DM[i].bai[j][1] = v; }
+function dmXoaBai(i, j) { DM[i].bai.splice(j, 1); dmVe(); }
+function dmThemBai(i) {
+  var so = String(DM[i].chuong).replace(/\D/g, "") || (i + 1);
+  var caoNhat = 0;
+  DM.forEach(function (c) {
+    c.bai.forEach(function (b) { var m = /_bai(\d+)$/.exec(b[0]); if (m && +m[1] > caoNhat) caoNhat = +m[1]; });
+  });
+  DM[i].bai.push(["chuong" + so + "_bai" + (caoNhat + 1), "Bài mới"]);
+  dmVe();
+}
+function dmXoaChuong(i) { if (confirm("Xóa cả chương này khỏi danh mục?")) { DM.splice(i, 1); dmVe(); } }
+function dmThemChuong() {
+  var n = DM.length + 1;
+  DM.push({ chuong: "chuong" + n, ten: "Chương mới", tap: "Tập 1", bai: [["chuong" + n + "_bai1", "Bài 1"]] });
+  dmVe();
+}
+
+async function dmTaiVe() {
+  try {
+      var saved = localStorage.getItem('dctt_v15_dm');
+      if (saved && saved !== "undefined" && saved !== "null") { DM = JSON.parse(saved); }
+      if (!Array.isArray(DM) || DM.length === 0) DM = JSON.parse(JSON.stringify(CURRICULUM));
+  } catch (e) { DM = JSON.parse(JSON.stringify(CURRICULUM)); }
+  dmVe();
+}
+function dmLayMacDinh() { if (!confirm("Thay bằng danh mục mặc định ban đầu?")) return; DM = JSON.parse(JSON.stringify(CURRICULUM)); localStorage.setItem('dctt_v15_dm', JSON.stringify(DM)); alert("Đã khôi phục."); dmTaiVe(); }
+
+function dmLuu() { 
+    if (!DM) return alert("Chưa có danh mục để lưu!");
+    try {
+        localStorage.setItem('dctt_v15_dm', JSON.stringify(DM));
+        
+        CURRICULUM.length = 0;
+        DM.forEach(c => CURRICULUM.push(c));
+        Object.keys(TAG_NAME).forEach(k => delete TAG_NAME[k]);
+        CURRICULUM.forEach(c => c.bai.forEach(b => TAG_NAME[b[0]] = b[1]));
+        
+        Object.keys(TAG_ORDER).forEach(k => delete TAG_ORDER[k]);
+        let i=0; CURRICULUM.forEach(c => c.bai.forEach(b => TAG_ORDER[b[0]] = i++));
+
+        buildDropdowns();
+        alert("Đã lưu danh mục thành công vào bộ nhớ Offline.");
+    } catch(e) {
+        alert("Lỗi lưu trữ danh mục: " + e.message);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const lw = document.getElementById('login-wrapper'); if(lw) lw.style.display = 'none';
+        document.body.style.background = '#f8fafc';
+        await initStorage();
+        await dmTaiVe();
+    } catch(e) {
+        console.error("Lỗi khởi tạo:", e);
+    } finally {
+        buildDropdowns();
+        renderAddForm();
+        updateStorageInfo();
+        toggleCustomMatrix();
+        dsRefreshTemplates();
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "mcq": [],
+  "tf": [],
+  "sa": [
+    {
+      "tag": "chuong1_bai4",
+      "lvl": 3,
+      "q": "(THPT Triệu Sơn 3 - Thanh Hóa 2025) Cho hàm số $y=\\frac{x^2+3x+3}{x+1}$ có đồ thị $(C)$. Gọi $d$ là khoảng cách giữa hai điểm cực trị của $(C)$ và $d_1$ là khoảng cách từ điểm cực đại của $(C)$ đến gốc tọa độ. Giá trị của $d^2+d_1^2$ bằng bao nhiêu?",
+      "ans": "25",
+      "exp": "Ta có $y=x+2+\\frac{1}{x+1}$ nên $y'=1-\\frac{1}{(x+1)^2}$. Giải $y'=0$ được $x=-2$ và $x=0$. Hai điểm cực trị là $A(-2;-1)$ và $B(0;3)$; trong đó $A$ là điểm cực đại. Do đó $d^2=AB^2=(0+2)^2+(3+1)^2=20$ và $d_1^2=OA^2=(-2)^2+(-1)^2=5$. Vậy $d^2+d_1^2=25$."
+    },
+    {
+      "tag": "chuong1_bai1",
+      "lvl": 3,
+      "q": "(Chuyên Phan Bội Châu - Nghệ An 2025) Hàm số $y=\\frac{x^2-x+1}{x-1}$ có giá trị cực đại và giá trị cực tiểu lần lượt là $a$ và $b$. Tính $3a+2b$.",
+      "ans": "3",
+      "exp": "Viết $y=x+\\frac{1}{x-1}$, suy ra $y'=1-\\frac{1}{(x-1)^2}$. Phương trình $y'=0$ cho $x=0$ hoặc $x=2$. Dấu của đạo hàm đổi từ dương sang âm tại $x=0$ nên $a=y(0)=-1$; đạo hàm đổi từ âm sang dương tại $x=2$ nên $b=y(2)=3$. Vậy $3a+2b=3(-1)+2\\cdot3=3$."
+    },
+    {
+      "tag": "chuong1_bai1",
+      "lvl": 3,
+      "q": "(THPT Lê Xoay - Vĩnh Phúc 2025) Cho hàm số $y=f(x)=\\frac{2x^2+26x+18}{x+13}$ có điểm cực tiểu $x=x_1$ và điểm cực đại $x=x_2$. Tính $P=-2x_1+x_2$.",
+      "ans": "4",
+      "exp": "Ta có $f(x)=2x+\\frac{18}{x+13}$ nên $f'(x)=2-\\frac{18}{(x+13)^2}$. Điều kiện $f'(x)=0$ tương đương $(x+13)^2=9$, do đó $x=-10$ hoặc $x=-16$. Vì $f''(x)=\\frac{36}{(x+13)^3}$ nên $f''(-10)>0$, suy ra $x_1=-10$; còn $f''(-16)<0$, suy ra $x_2=-16$. Vậy $P=-2(-10)-16=4$."
+    },
+    {
+      "tag": "chuong1_bai5",
+      "lvl": 4,
+      "q": "(Cụm trường THPT Bắc Ninh 2025) Trong hệ trục tọa độ $(Oxy)$, đồ thị $(C):y=\\frac{x^2+x+1}{x+1}$ mô tả chuyển động của hai tàu đánh cá $A$ và $B$; đơn vị trên mỗi trục là km. Quỹ đạo của hai tàu luôn thuộc hai nhánh khác nhau của $(C)$. <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(x^2+x+1)/(x+1)\",\"from\":-7,\"to\":-1.08},{\"fn\":\"(x^2+x+1)/(x+1)\",\"from\":-0.92,\"to\":7}],\"xmin\":-7,\"xmax\":7,\"ymin\":-7,\"ymax\":7,\"asymptotes\":{\"v\":[-1]},\"label\":\"(C)\",\"labelAt\":{\"x\":3.8,\"y\":4.2}}'></div> Tính khoảng cách ngắn nhất giữa hai tàu, làm tròn đến hàng phần trăm.",
+      "ans": "2,83|2.83",
+      "exp": "Đặt $u=x+1$ và $v=y+1$. Từ $y=x+\\frac{1}{x+1}$ suy ra $uv=1$. Hai nhánh của hyperbol đối xứng qua tâm $I(-1;-1)$. Với một điểm có tọa độ $(u;v)$ trên một nhánh, điểm gần nhất tương ứng trên nhánh kia là điểm đối xứng $(-u;-v)$; khoảng cách giữa chúng là $2\\sqrt{u^2+v^2}$. Vì $uv=1$ và $u,v$ cùng dấu nên $u^2+v^2\\ge 2uv=2$. Dấu bằng xảy ra khi $|u|=|v|=1$. Vậy khoảng cách nhỏ nhất là $2\\sqrt2\\approx2,83$ km."
+    },
+    {
+      "tag": "chuong1_bai5",
+      "lvl": 4,
+      "q": "(Sở Hà Tĩnh 2025) Một máy bay trình diễn có đường bay là một phần đồ thị của hàm phân thức bậc hai trên bậc nhất $y=f(x)$, có tiệm cận đứng $x=2$. Điểm $G$ là giao điểm của tiệm cận xiên với trục $Ox$. Máy bay xuất phát tại $A$ trên trục $Ox$ với $OA=2,5$; ở vị trí cao nhất $B$, máy bay cách $A$ một đoạn $1,5$ theo phương song song với $Ox$ và cách mặt đất $4,5$. <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"-x+10.5-4/(x-2)\",\"from\":2.08,\"to\":12}],\"xmin\":0,\"xmax\":12,\"ymin\":-2,\"ymax\":12,\"xticks\":[2,2.5,4,10,10.5],\"yticks\":[4.5],\"points\":[{\"x\":2.5,\"y\":0},{\"x\":4,\"y\":4.5},{\"x\":10,\"y\":0},{\"x\":10.5,\"y\":0}],\"asymptotes\":{\"v\":[2]},\"label\":\"y=f(x)\",\"labelAt\":{\"x\":6,\"y\":3.6}}'></div> Vị trí máy bay tiếp đất cách điểm giới hạn một khoảng bằng bao nhiêu?",
+      "ans": "0,5|0.5|1/2",
+      "exp": "Viết $f(x)=mx+n+\\frac{k}{x-2}$. Vì $A$ ở bên phải tiệm cận và $OA=2,5$ nên $A(2,5;0)$. Điểm cao nhất cách $A$ theo phương ngang $1,5$ nên $B(4;4,5)$. Từ $f'(4)=0$ có $m-\\frac{k}{4}=0$, tức $k=4m$. Hai điều kiện $f(2,5)=0$ và $f(4)=4,5$ lần lượt cho $10,5m+n=0$ và $6m+n=4,5$. Suy ra $m=-1$, $n=10,5$, $k=-4$. Tiệm cận xiên là $y=-x+10,5$, nên $G(10,5;0)$. Giải $f(x)=0$ được hai nghiệm $x=2,5$ và $x=10$, vì vậy điểm tiếp đất là $C(10;0)$. Do đó $CG=10,5-10=0,5$."
+    },
+    {
+      "tag": "chuong1_bai5",
+      "lvl": 4,
+      "q": "(Chuyên Hạ Long 2025) Bờ hồ là một nhánh của đồ thị $y=\\frac{2x+1}{x-1}$ và đường đi là đường thẳng $(d):y=-x+4$. Cần đặt hai cột đèn trên bờ hồ và hai cột đèn trên đường đi sao cho bốn cột đèn tạo thành một hình vuông. <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(2x+1)/(x-1)\",\"from\":1.08,\"to\":7},{\"fn\":\"-x+4\",\"from\":-1,\"to\":6}],\"xmin\":-1,\"xmax\":7,\"ymin\":-1,\"ymax\":7,\"asymptotes\":{\"v\":[1],\"h\":[2]},\"label\":\"bờ hồ\",\"labelAt\":{\"x\":4.8,\"y\":2.7}}'></div> Tính khoảng cách giữa hai cột đèn trên bờ hồ, làm tròn đến hàng phần trăm.",
+      "ans": "1,92|1.92",
+      "exp": "Gọi đường thẳng qua hai cột đèn trên bờ hồ là $y=-x+k$, song song với $(d)$. Hoành độ giao điểm của đường này với bờ hồ thỏa $\\frac{2x+1}{x-1}=-x+k$, hay $x^2+(1-k)x+k+1=0$. Hiệu hai nghiệm có độ lớn $\\sqrt{k^2-6k-3}$, nên độ dài cạnh nằm trên bờ hồ là $s=\\sqrt2\\sqrt{k^2-6k-3}$. Khoảng cách giữa hai đường thẳng song song $y=-x+k$ và $y=-x+4$ là $\\frac{|k-4|}{\\sqrt2}$. Vì bốn điểm tạo thành hình vuông nên hai đại lượng này bằng nhau, suy ra $4(k^2-6k-3)=(k-4)^2$. Chọn nghiệm phù hợp với nhánh bờ hồ trong hình là $k=\\frac{8+2\\sqrt{37}}{3}$. Do đó $s=\\frac{k-4}{\\sqrt2}=\\frac{\\sqrt2(\\sqrt{37}-2)}{3}\\approx1,92$."
+    },
+    {
+      "tag": "chuong1_bai4",
+      "lvl": 3,
+      "q": "(Chuyên Thái Bình 2025) Cho hàm số $y=\\frac{ax^2+bx+c}{x+d}$ có đồ thị như hình dưới đây. <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"-x/(x+1)*x\",\"from\":-7,\"to\":-1.08},{\"fn\":\"-x/(x+1)*x\",\"from\":-0.92,\"to\":7}],\"xmin\":-5,\"xmax\":5,\"ymin\":-6,\"ymax\":7,\"xticks\":[-2,-1],\"yticks\":[4],\"points\":[{\"x\":-2,\"y\":4},{\"x\":0,\"y\":0}],\"asymptotes\":{\"v\":[-1]},\"label\":\"y\",\"labelAt\":{\"x\":2.4,\"y\":-1.8}}'></div> Tính $a+b+c+d$.",
+      "ans": "0",
+      "exp": "Tiệm cận đứng $x=-1$ cho $d=1$. Tiệm cận xiên trên hình có hệ số góc $-1$, nên $a=-1$. Khi chia đa thức, tiệm cận xiên là $y=ax+(b-ad)=-x+(b+1)$. Đường tiệm cận đi qua $(0;1)$ nên $b+1=1$, suy ra $b=0$. Đồ thị đi qua gốc tọa độ nên $c=0$. Vậy $a+b+c+d=-1+0+0+1=0$."
+    }
+  ],
+  "_boQua": [
+    "Câu 1: đồ thị chỉ cho hình dạng định tính, không có số liệu để dựng lại chính xác bằng data-mathviz mà không đoán hệ số",
+    "Câu 2: đồ thị chỉ cho hình dạng định tính, không có số liệu để dựng lại chính xác bằng data-mathviz mà không đoán hệ số",
+    "Câu 3: đồ thị chỉ cho hình dạng định tính, không có số liệu để dựng lại chính xác bằng data-mathviz mà không đoán hệ số"
+  ]
+}

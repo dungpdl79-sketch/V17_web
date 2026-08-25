@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e3a8a'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23fbbf24' font-family='sans-serif' font-weight='bold'%3E%C4%90%3C/text%3E%3C/svg%3E">
+<title>Đỉnh Cao Trí Tuệ V15 — Xưởng Thiết Kế Offline</title>
+
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: { typeset: false }
+};
+</script>
+<script id="MathJax-script" async crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Nunito:wght@400;600;800&display=swap');
+
+:root{
+  --primary-dark:#0f172a; --primary-blue:#1e3a8a; --accent-blue:#3b82f6;
+  --accent-gold:#fbbf24; --accent-red:#ef4444; --accent-green:#10b981;
+  --bg-light:#f8fafc; --text-light:#fff; --text-dark:#1e293b; --line:#e2e8f0;
+}
+*{box-sizing:border-box}
+
+body{ margin:0;padding:0;font-family:'Nunito',sans-serif; background:#f8fafc!important; display:flex; flex-direction:row; min-height:100vh; color:var(--text-dark); align-items: flex-start; }
+
+#login-wrapper { display: none !important; }
+
+.sidebar { width: 280px !important; min-width: 280px !important; background: #153d8a !important; color: #fff !important; display: flex !important; flex-direction: column !important; position: sticky !important; top: 0 !important; height: 100vh !important; overflow-y: auto !important; z-index: 50 !important; padding: 0 !important; box-shadow: 4px 0 15px rgba(0,0,0,0.2) !important; }
+.sidebar-btn { background: transparent; color: #cbd5e1; border: 1px solid transparent; padding: 12px 14px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; text-align: left; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; gap: 10px; flex-shrink: 0; width: 100%; }
+.sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+.sidebar-btn.active { background: #2563eb !important; color: white !important; box-shadow: none !important; border-color: #60a5fa !important; transform: none !important; }
+.ui-menu-label { padding: 14px 10px 6px; color: #93c5fd; font: 900 12px/1 'Montserrat', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 5px; border-top: none !important; }
+
+.main-content { display: block !important; padding: 30px 40px !important; flex: 1; overflow-y: auto; }
+.container { width:100%; max-width:1000px; margin:0 auto }
+.game-panel { background:#fff; border-radius:20px; padding:34px 26px; box-shadow:0 10px 25px rgba(0,0,0,.05); display:none; animation:slideUp .4s ease-out; position:relative; border: 1px solid var(--line); }
+.active-panel { display:block }
+@keyframes slideUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+h1{font-family:'Montserrat',sans-serif;text-align:center;text-transform:uppercase;margin:0 0 6px;font-weight:900}
+.title-teacher{color:var(--primary-blue);font-size:1.9em}
+.subtitle{text-align:center;color:#64748b;font-size:1.05em;margin-bottom:22px;font-weight:700}
+.select-box,.input-box{width:100%;max-width:560px;padding:12px 18px;font-size:1.05em;font-family:'Nunito',sans-serif; border:2px solid #cbd5e1;border-radius:12px;outline:none;margin:0 auto 14px;display:block;text-align:center; font-weight:600;color:var(--primary-dark);background:#f8fafc;cursor:pointer}
+.input-box{cursor:text;text-align:left}
+textarea.input-box{resize:vertical;min-height:130px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;font-weight:400}
+.btn{font-family:'Montserrat',sans-serif;font-size:1.05em;font-weight:700;padding:14px 30px;border:none;border-radius:12px; cursor:pointer;display:inline-block;margin:8px;text-transform:uppercase;transition:.15s;color:#fff;letter-spacing:.5px}
+.btn-sm{padding:10px 14px;font-size:.82em;margin:4px}
+.btn-teacher{background:var(--primary-blue);box-shadow:0 5px 0 #1e40af}
+.btn-play{background:var(--accent-gold);color:#78350f;box-shadow:0 5px 0 #d97706}
+.btn-green{background:var(--accent-green);box-shadow:0 5px 0 #047857}
+.btn-orange{background:#f97316;box-shadow:0 5px 0 #c2410c}
+.btn-purple{background:#8b5cf6;box-shadow:0 5px 0 #5b21b6}
+.btn-gray{background:#64748b;box-shadow:0 5px 0 #475569}
+.btn-red{background:var(--accent-red);box-shadow:0 5px 0 #991b1b}
+.btn:active{transform:translateY(5px);box-shadow:none!important}
+.btn-container{text-align:center;margin-top:18px}
+.admin-form{background:#f1f5f9;padding:24px;border-radius:16px;border:2px dashed #94a3b8;margin-bottom:20px;display:none}
+.form-row{display:flex;gap:12px;margin-bottom:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.hint{font-size:.85em;color:#475569;text-align:center;line-height:1.5;flex-shrink:0;}
+.matrix-box{background:#e2e8f0;padding:14px;border-radius:12px;margin-bottom:14px;border:1px solid #cbd5e1}
+.matrix-input{width:78px;padding:8px;border-radius:6px;border:1px solid #94a3b8;text-align:center;font-weight:700;font-size:1.05em}
+.matrix-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;background:#fff;padding:10px 14px;border-radius:8px}
+.opt-toggle{display:flex;align-items:center;gap:8px;background:#fff;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-weight:600}
+.opt-toggle input[type=checkbox]{width:20px;height:20px}
+.stats-table{width:100%;border-collapse:collapse;text-align:center;background:#fff;margin-top:10px;font-size:.92em}
+.stats-table th{background:#e2e8f0;padding:9px;border:1px solid #cbd5e1;color:var(--primary-blue);font-size:.9em}
+.stats-table td{padding:8px;border:1px solid #cbd5e1}
+.preview-item{border:2px solid #cbd5e1;border-radius:12px;padding:18px;margin-bottom:18px;background:#f8fafc;position:relative}
+.action-badges{position:absolute;top:-14px;right:16px;display:flex;gap:8px}
+.badge-edit{background:#fbbf24;color:#78350f;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.badge-move{background:#3b82f6;color:#fff;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.badge-delete{background:#ef4444;color:#fff;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:2px solid #fff}
+.tag-pill{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:99px;padding:2px 10px;font-size:.75em;font-weight:700;margin-left:6px}
+
+/* STUDIO CSS */
+.ds-step{border:1px solid var(--line)!important;border-radius:13px!important;background:#fff!important;box-shadow:0 4px 14px rgba(15,23,42,.04);padding:20px!important;margin-bottom:16px!important}
+.ds-step h4{margin:0 0 12px!important;color:#173676!important;font-size:1.1em!important;letter-spacing:.25px; font-family:'Montserrat'}
+.ds-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ds-tabs button{flex:1 1 120px;padding:10px;border:2px solid var(--line);background:#f8fafc;border-radius:10px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif}
+.ds-tabs button.on{background:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}
+.ds-table{width:100%;border-collapse:collapse;font-size:.9em;min-width:520px}
+.ds-table th{background:#e2e8f0;border:1px solid #cbd5e1;padding:8px;color:var(--primary-blue)}
+.ds-table td{border:1px solid #cbd5e1;padding:6px;text-align:center}
+.ds-table td.name{text-align:left;font-weight:600;font-size:.95em;min-width:170px}
+.ds-cell{width:60px;padding:8px 4px;border:1px solid #cbd5e1;border-radius:6px;text-align:center;font-weight:700}
+.ds-cell.over{border-color:var(--accent-red);background:#fee2e2;color:#991b1b}
+.ds-avail{display:block;font-size:.75em;color:#94a3b8;font-weight:600;margin-top:4px}
+.ds-scope{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:260px;overflow:auto;padding:6px}
+.ds-scope label{display:flex;gap:8px;align-items:center;font-size:.9em;background:#f8fafc;padding:8px 10px;border-radius:8px;cursor:pointer; border:1px solid var(--line);}
+.ds-scope label.empty{opacity:.45}
+.ds-scope label:hover{border-color:#93c5fd;background:#eff6ff}
+.ds-scope label:has(input:checked){border-color:#3b82f6;background:#dbeafe;box-shadow:0 0 0 2px rgba(59,130,246,.08)}
+.ds-pick{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.ds-pick label{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:.9em}
+.ds-pick label:hover{background:#eff6ff}
+.ds-cart{list-style:none;padding:0;max-height:260px;overflow:auto}
+.ds-cart li{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:.9em}
+.ds-sum{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-top:10px;font-size:.95em;line-height:1.6}
+.mini{width:76px;padding:8px;border:1px solid #94a3b8;border-radius:6px;text-align:center;font-weight:700}
+
+@media(max-width:800px){
+  .sidebar { transform: translateX(-100%); position: fixed !important; }
+  .sidebar.mobile-open { transform: translateX(0); }
+  .main-content { padding: 15px 10px !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="login-wrapper"></div>
+
+<!-- SIDEBAR V15 -->
+<nav id="app-sidebar" class="sidebar">
+  <div style="padding:24px 20px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1)">
+      <h2 style="color:#fbbf24; font-size:24px; font-weight:900; margin:0 0 8px; text-transform:uppercase; line-height:1.2; text-shadow:0 2px 4px rgba(0,0,0,0.3); font-family:'Montserrat', sans-serif;">ĐỈNH CAO<br>TRÍ TUỆ</h2>
+      <p style="color:#fbbf24; font-size:14px; font-weight:bold; margin:0; text-transform:uppercase;">ADMIN • Quản Trị</p>
+  </div>
+  <div style="padding:16px 12px; flex:1; display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
+      <div>
+          <div class="ui-menu-label">BIÊN SOẠN HỌC LIỆU</div>
+          <button type="button" class="sidebar-btn active" data-target="manual" onclick="clearEditState(); toggleAdminForm('manual')"><span style="font-size:18px">📝</span> Nhập / Sửa Câu Hỏi</button>
+          <button type="button" class="sidebar-btn" data-target="bulk" onclick="toggleAdminForm('bulk')"><span style="font-size:18px">🤖</span> Nạp Hàng Loạt (AI)</button>
+          <button type="button" class="sidebar-btn" data-target="anhhtml" onclick="toggleAdminForm('anhhtml')"><span style="font-size:18px">🖼️</span> Xưởng Ảnh → HTML</button>
+      </div>
+      <div>
+          <div class="ui-menu-label">THIẾT KẾ & TRỰC QUAN</div>
+          <button type="button" class="sidebar-btn" data-target="designer" onclick="toggleAdminForm('designer')"><span style="font-size:18px">📐</span> Studio Thiết Kế Đề</button>
+          <button type="button" class="sidebar-btn" data-target="desmos" onclick="toggleAdminForm('desmos')"><span style="font-size:18px">📈</span> Studio Vẽ Đồ Thị</button>
+          <button type="button" class="sidebar-btn" data-target="quickexam" onclick="toggleAdminForm('quickexam')"><span style="font-size:18px">🚀</span> Tạo Đề Nhanh</button>
+      </div>
+      <div>
+          <div class="ui-menu-label">QUẢN LÝ NGÂN HÀNG</div>
+          <button type="button" class="sidebar-btn" data-target="stats" onclick="toggleAdminForm('stats')"><span style="font-size:18px">📊</span> Thống Kê Ngân Hàng</button>
+          <button type="button" class="sidebar-btn" data-target="duplicates" onclick="toggleAdminForm('duplicates')"><span style="font-size:18px">🔍</span> Lọc Câu Trùng</button>
+          <button type="button" class="sidebar-btn" data-target="curriculum" onclick="toggleAdminForm('curriculum')"><span style="font-size:18px">📚</span> Danh Mục Bài Học</button>
+          <button type="button" class="sidebar-btn" data-target="backup" onclick="toggleAdminForm('backup')"><span style="font-size:18px">💾</span> Cấu hình & Backup</button>
+      </div>
+  </div>
+  <div style="padding:20px; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.1)">
+      <div id="storage-info" style="color:#93c5fd; margin-bottom:10px; font-size:12px; text-align:center; font-weight:bold;">Đang tải...</div>
+      <button type="button" class="sidebar-btn" style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; justify-content:center; margin-bottom:0; font-weight:bold;" onclick="clearCustomData()">🗑️ Xóa Ngân Hàng</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="app-main" class="main-content">
+<div class="container">
+<div id="teacher-screen" class="game-panel active-panel" style="display: block;">
+
+  <div id="admin-form-anhhtml" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🖼️ Xưởng Ảnh → HTML</h3>
+    <p class="hint">Dán ảnh bảng biến thiên trong đề, hoặc gõ hàm số để dựng tự động. Xong bấm <b>Chép thẻ HTML</b> rồi dán vào ô nội dung câu hỏi.</p>
+    <div class="btn-container" style="margin-top:0">
+      <button type="button" class="btn btn-purple btn-sm" onclick="window.open('xuong-anh.html','_blank','noopener')">↗ Mở ở tab riêng</button>
+      <button type="button" class="btn btn-gray btn-sm" onclick="var f=document.getElementById('khungXuong'); f.src=f.src">⟳ Tải lại xưởng</button>
+    </div>
+    <iframe id="khungXuong" src="xuong-anh.html" title="Xưởng dựng hình" allow="clipboard-write" loading="lazy" style="width:100%;height:800px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;margin-top:15px;"></iframe>
+  </div>
+
+  <div id="admin-form-designer" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📐 Studio thiết kế đề</h3>
+    <p class="hint">Bạn tự quyết định mọi thứ: bài nào, mức độ nào, bao nhiêu câu, chấm mấy điểm, xếp theo thứ tự gì. Làm xong có thể lưu lại thành mẫu để năm sau dùng lại.</p>
+
+    <div class="ds-step">
+      <h4>Bước 1 — Chọn phạm vi kiến thức</h4>
+      <div class="form-row" style="margin-bottom:8px">
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectAll(true)">Chọn tất cả</button>
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectAll(false)">Bỏ chọn hết</button>
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="dsSelectNonEmpty()">Chỉ bài đã có câu hỏi</button>
+        <select id="ds-chuong-quick" class="select-box" style="margin:0;max-width:250px;padding:8px" onchange="dsSelectChuong(this.value)">
+          <option value="">— Chọn nhanh cả chương —</option>
+        </select>
+      </div>
+      <div id="ds-scope" class="ds-scope"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 2 — Ma trận số câu theo bài và mức độ</h4>
+      <div class="ds-tabs">
+        <button type="button" id="ds-tab-mcq" class="on" onclick="dsTab('mcq')">Phần I — Trắc nghiệm</button>
+        <button type="button" id="ds-tab-tf" onclick="dsTab('tf')">Phần II — Đúng / Sai</button>
+        <button type="button" id="ds-tab-sa" onclick="dsTab('sa')">Phần III — Trả lời ngắn</button>
+      </div>
+      <div class="form-row" style="margin-bottom:8px">
+        <button type="button" class="btn btn-purple btn-sm" style="margin:0" onclick="dsQuickFill()">⚡ Điền nhanh theo tỉ lệ</button>
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="dsFillMax()">Lấy tối đa đang có</button>
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="dsClearMatrix()">Xóa ô của phần này</button>
+      </div>
+      <div style="overflow-x:auto"><div id="ds-matrix"></div></div>
+      <div id="ds-summary" class="ds-sum"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 3 — Chỉ định tay câu hỏi cụ thể <span style="font-weight:400;text-transform:none">(không bắt buộc)</span></h4>
+      <div class="form-row">
+        <select id="ds-pick-tag" class="select-box" style="margin:0;max-width:280px;padding:8px" onchange="dsRenderPicker()"></select>
+        <select id="ds-pick-type" class="select-box" style="margin:0;max-width:170px;padding:8px" onchange="dsRenderPicker()">
+          <option value="mcq">Trắc nghiệm</option><option value="tf">Đúng / Sai</option><option value="sa">Trả lời ngắn</option>
+        </select>
+        <select id="ds-pick-lvl" class="select-box" style="margin:0;max-width:150px;padding:8px" onchange="dsRenderPicker()">
+          <option value="0">Mọi mức độ</option><option value="1">Nhận biết</option><option value="2">Thông hiểu</option>
+          <option value="3">Vận dụng</option><option value="4">Vận dụng cao</option>
+        </select>
+      </div>
+      <input type="text" id="ds-pick-search" class="input-box" placeholder="Tìm trong nội dung câu hỏi…" oninput="dsRenderPicker()">
+      <div id="ds-picker" class="ds-pick"></div>
+      <div style="margin-top:12px"><b id="ds-cart-title">Đã chọn tay: 0 câu</b></div>
+      <ul id="ds-cart" class="ds-cart"></ul>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 4 — Thang điểm</h4>
+      <div class="matrix-row"><span>Điểm mỗi câu trắc nghiệm</span><input type="number" id="sc-mcq" class="mini" step="0.05" min="0" value="0.25" oninput="dsSync()"></div>
+      <div class="matrix-row"><span>Điểm mỗi câu trả lời ngắn</span><input type="number" id="sc-sa" class="mini" step="0.05" min="0" value="0.5" oninput="dsSync()"></div>
+      <div class="matrix-row" style="flex-wrap:wrap"><span>Câu đúng/sai — điểm khi làm đúng 1 / 2 / 3 / 4 ý</span>
+        <span style="display:flex;gap:5px">
+          <input type="number" id="sc-tf1" class="mini" style="width:62px" step="0.05" min="0" value="0.1" oninput="dsSync()">
+          <input type="number" id="sc-tf2" class="mini" style="width:62px" step="0.05" min="0" value="0.25" oninput="dsSync()">
+          <input type="number" id="sc-tf3" class="mini" style="width:62px" step="0.05" min="0" value="0.5" oninput="dsSync()">
+          <input type="number" id="sc-tf4" class="mini" style="width:62px" step="0.05" min="0" value="1" oninput="dsSync()">
+        </span></div>
+      <div class="opt-toggle"><input type="checkbox" id="sc-scale10" checked onchange="dsSync()"><label for="sc-scale10">Quy đổi kết quả về thang 10</label></div>
+      <div id="ds-score-note" class="hint" style="text-align:left"></div>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 5 — Thứ tự câu trong đề</h4>
+      <select id="ds-order" class="select-box" style="max-width:100%" onchange="dsSync()">
+        <option value="lvl">Trong mỗi phần: từ dễ đến khó</option>
+        <option value="lvl_desc">Trong mỗi phần: từ khó đến dễ</option>
+        <option value="bai">Trong mỗi phần: theo thứ tự bài học trong sách</option>
+        <option value="random">Trong mỗi phần: xáo trộn hoàn toàn</option>
+        <option value="manual">Giữ nguyên: câu chọn tay lên trước, rồi đến câu bốc theo ma trận</option>
+      </select>
+    </div>
+
+    <div class="ds-step">
+      <h4>Bước 6 — Mẫu ma trận dùng lại</h4>
+      <div class="form-row">
+        <input type="text" id="ds-tpl-name" class="input-box" style="margin:0;max-width:280px" placeholder="Tên mẫu, ví dụ: Giữa kỳ I – 12A">
+        <button type="button" class="btn btn-green btn-sm" style="margin:0" onclick="dsSaveTemplate()">💾 Lưu mẫu</button>
+      </div>
+      <div class="form-row">
+        <select id="ds-tpl-list" class="select-box" style="margin:0;max-width:280px;padding:8px"></select>
+        <button type="button" class="btn btn-teacher btn-sm" style="margin:0" onclick="dsLoadTemplate()">Nạp mẫu</button>
+        <button type="button" class="btn btn-red btn-sm" style="margin:0" onclick="dsDeleteTemplate()">Xóa mẫu</button>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button type="button" class="btn btn-teacher" onclick="generateGame()">▶ TẠO ĐỀ JSON</button>
+    </div>
+  </div>
+
+  <div id="admin-form-manual" class="admin-form active-panel">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0" id="manual-form-title">Nhập câu hỏi mới</h3>
+    <input type="hidden" id="editing-q-id"><input type="hidden" id="editing-q-cat">
+    <div class="form-row">
+      <select id="new-q-type" class="select-box" style="margin:0;max-width:300px" onchange="renderAddForm()">
+        <option value="mcq">Trắc nghiệm (4 phương án)</option><option value="tf">Đúng / Sai (4 ý)</option><option value="sa">Trả lời ngắn</option>
+      </select>
+      <select id="new-q-lvl" class="select-box" style="margin:0;max-width:190px">
+        <option value="1">Mức 1: Nhận biết</option><option value="2">Mức 2: Thông hiểu</option><option value="3">Mức 3: Vận dụng</option><option value="4">Mức 4: Vận dụng cao</option>
+      </select>
+    </div>
+    <select id="new-q-tag" class="select-box"></select>
+    
+    <div style="background:#e2e8f0;padding:10px;border-radius:8px;margin-bottom:14px;border:1px solid #cbd5e1">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="table-template-select" class="select-box" style="margin:0;flex:1 1 200px;padding:8px">
+          <option value="">— Chọn loại bảng mẫu —</option><option value="bac3_2cuctri">Biến thiên: bậc 3 có 2 cực trị</option><option value="bac3_nghichbien">Biến thiên: bậc 3 (hệ số a &lt; 0)</option><option value="phanthuc">Biến thiên: hàm phân thức</option><option value="bang_xet_dau">Bảng xét dấu f'(x)</option>
+        </select>
+        <button type="button" class="btn btn-purple btn-sm" style="margin:0" onclick="insertTableTemplate()">Chèn Code</button>
+      </div>
+    </div>
+    <textarea id="new-q-content" class="input-box" placeholder="Nội dung câu hỏi (Dán ảnh Ctrl+V vào đây tự nén WebP)"></textarea>
+    <div id="dynamic-form-area"></div>
+    <textarea id="new-q-exp" class="input-box" placeholder="Lời giải chi tiết"></textarea>
+    
+    <div class="btn-container" id="save-btn-container">
+      <button type="button" id="btn-back-preview" class="btn btn-gray btn-sm" style="display:none;" onclick="goBackToPreview()">⬅ Quay lại danh sách</button>
+      <button type="button" class="btn btn-green btn-sm" onclick="saveCustomQuestion()">💾 LƯU CÂU HỎI</button>
+    </div>
+  </div>
+
+  <div id="admin-form-quickexam" class="admin-form">
+    <h4 style="text-align:center;color:var(--primary-blue);margin-top:0;font-size:24px;">🚀 TẠO ĐỀ NHANH MỘT NỐT NHẠC</h4>
+    <select id="mode-select" class="select-box" onchange="toggleCustomMatrix()">
+      <option value="1">Chế độ 1 — Trắc nghiệm tốc độ (10 câu)</option><option value="2">Chế độ 2 — Ôn tập chương (12 TN + 4 Đ/S + 3 ngắn)</option><option value="3">Chế độ 3 — Thi học kỳ (12 TN + 4 Đ/S + 6 ngắn)</option><option value="custom">⚙️ Chế độ 4 — Tùy chỉnh</option>
+    </select>
+    <div id="custom-matrix-box" class="matrix-box" style="display:none">
+      <div class="matrix-row"><span>Trắc nghiệm</span><input type="number" id="custom-num-mcq" class="matrix-input" value="12" min="0"></div>
+      <div class="matrix-row"><span>Đúng/Sai</span><input type="number" id="custom-num-tf" class="matrix-input" value="4" min="0"></div>
+      <div class="matrix-row"><span>Trả lời ngắn</span><input type="number" id="custom-num-sa" class="matrix-input" value="6" min="0"></div>
+    </div>
+    <select id="topic-select" class="select-box" style="font-weight:700"></select>
+    <div class="btn-container"><button type="button" class="btn btn-teacher" onclick="generateGame()">TẠO ĐỀ JSON</button></div>
+  </div>
+
+  <div id="admin-form-bulk" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🤖 Trạm nhận dữ liệu từ AI</h3>
+    <div class="btn-container" style="margin-top:6px"><button type="button" class="btn btn-purple btn-sm" onclick="copyAIPrompt()">📋 Chép lệnh AI</button></div>
+    <textarea id="bulk-import-data" class="input-box" placeholder='Dán khối JSON tại đây...' style="margin-bottom:10px;"></textarea>
+    
+    <div class="btn-container" style="margin-top:6px">
+      <button type="button" class="btn btn-purple btn-sm" onclick="previewBulkData()">👀 XEM TRƯỚC DỮ LIỆU</button>
+    </div>
+    <div id="bulk-report" class="hint" style="margin-top:10px; color:var(--accent-green); font-weight:bold;"></div>
+    
+    <div id="bulk-preview-area" style="margin-top: 20px;"></div>
+  </div>
+
+  <div id="admin-form-duplicates" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🔍 Lọc Câu Hỏi Trùng Lặp</h3>
+    <div class="btn-container"><button type="button" class="btn btn-purple btn-sm" onclick="scanDuplicates()">🚀 Bắt Đầu Quét</button></div>
+    <div id="duplicate-results" style="margin-top: 15px; max-height: 500px; overflow-y: auto; padding-right: 5px;"></div>
+  </div>
+
+  <div id="admin-form-desmos" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📈 Công cụ vẽ đồ thị</h3>
+    <div class="btn-container"><button type="button" class="btn btn-purple btn-sm" onclick="window.open('https://www.desmos.com/calculator','_blank')">📈 Mở Desmos</button> <button type="button" class="btn btn-teacher btn-sm" onclick="window.open('https://www.geogebra.org/graphing','_blank')">📐 Mở GeoGebra</button></div>
+  </div>
+
+  <div id="admin-form-backup" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">💾 Cấu hình & Backup</h3>
+    <div class="btn-container">
+      <button type="button" class="btn btn-green btn-sm" onclick="exportBank()">⬇️ Tải file Backup (.json)</button>
+      <button type="button" class="btn btn-teacher btn-sm" onclick="document.getElementById('restore-file').click()">⬆️ Khôi phục từ file Backup</button>
+    </div>
+    <input type="file" id="restore-file" accept=".json,application/json" style="display:none" onchange="restoreBank(this)">
+    <div class="matrix-box" style="margin-top:14px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:10px">
+      <div class="opt-toggle"><input type="radio" name="restore-mode" id="restore-merge" checked><label for="restore-merge">Gộp thêm vào ngân hàng hiện có (bỏ qua câu trùng)</label></div>
+      <div class="opt-toggle"><input type="radio" name="restore-mode" id="restore-replace"><label for="restore-replace">Thay thế toàn bộ ngân hàng</label></div>
+    </div>
+  </div>
+
+  <div id="admin-form-preview" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0" id="preview-title">👁️ Xem trước câu hỏi</h3>
+    <div style="text-align:center;margin-bottom:15px"><button type="button" class="btn btn-gray btn-sm" onclick="toggleAdminForm('stats')">⬅ QUAY LẠI BẢNG THỐNG KÊ</button></div>
+    <div id="preview-content-area"></div>
+  </div>
+
+  <div id="admin-form-stats" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📊 Thống kê ngân hàng Offline</h3>
+    <div id="stats-content" style="max-height:600px;overflow:auto;background:#fff;padding:10px;border-radius:8px;border:1px solid #cbd5e1"></div>
+  </div>
+
+  <div id="admin-form-curriculum" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">📚 Danh mục bài học</h3>
+    <div class="btn-container" style="margin-top:0">
+      <button type="button" class="btn btn-gray btn-sm" onclick="dmLayMacDinh()">Khôi phục danh mục mặc định</button>
+      <button type="button" class="btn btn-green btn-sm" onclick="dmLuu()">💾 Lưu danh mục</button>
+    </div>
+    <div id="dm-bang"></div>
+  </div>
+
+</div>
+</div>
+</main>
+
+<script>
+// =========================================================
+// MÃ LÕI DATABASE
+// =========================================================
+let memoryDB = { mcq: [], tf: [], sa: [] };
+let idSeq=0; function newId(){ return 'q_'+Date.now().toString(36)+'_'+(idSeq++)+Math.random().toString(36).slice(2,6); }
+
+async function initStorage() {
+    try {
+        const saved = localStorage.getItem('dctt_v15_db');
+        if (saved && saved !== "undefined" && saved !== "null") { memoryDB = JSON.parse(saved); }
+    } catch (e) {}
+    if (!memoryDB || typeof memoryDB !== 'object') memoryDB = {};
+    if (!Array.isArray(memoryDB.mcq)) memoryDB.mcq = [];
+    if (!Array.isArray(memoryDB.tf)) memoryDB.tf = [];
+    if (!Array.isArray(memoryDB.sa)) memoryDB.sa = [];
+}
+async function saveDB(db, silent) {
+    memoryDB = db;
+    try { localStorage.setItem('dctt_v15_db', JSON.stringify(db)); updateStorageInfo(); return true;
+    } catch (e) { if (!silent) alert('❌ Trình duyệt hết bộ nhớ lưu trữ! Hãy tải file Backup về máy tính.'); return false; }
+}
+function loadDB() { return memoryDB; }
+
+const CURRICULUM = [
+  { chuong:'chuong1', ten:'Chương I — Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số', tap:'Tập 1', bai:[
+    ['chuong1_bai1','Bài 1: Tính đơn điệu và cực trị của hàm số'], ['chuong1_bai2','Bài 2: Giá trị lớn nhất và giá trị nhỏ nhất của hàm số'], ['chuong1_bai3','Bài 3: Đường tiệm cận của đồ thị hàm số'], ['chuong1_bai4','Bài 4: Khảo sát sự biến thiên và vẽ đồ thị của hàm số'], ['chuong1_bai5','Bài 5: Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn']
+  ]},
+  { chuong:'chuong2', ten:'Chương II — Vectơ và hệ trục tọa độ trong không gian', tap:'Tập 1', bai:[
+    ['chuong2_bai6','Bài 6: Vectơ trong không gian'], ['chuong2_bai7','Bài 7: Hệ trục tọa độ trong không gian'], ['chuong2_bai8','Bài 8: Biểu thức tọa độ của các phép toán vectơ']
+  ]},
+  { chuong:'chuong3', ten:'Chương III — Các số đặc trưng đo mức độ phân tán của mẫu số liệu ghép nhóm', tap:'Tập 1', bai:[
+    ['chuong3_bai9','Bài 9: Khoảng biến thiên và khoảng tứ phân vị'], ['chuong3_bai10','Bài 10: Phương sai và độ lệch chuẩn']
+  ]},
+  { chuong:'chuong4', ten:'Chương IV — Nguyên hàm và tích phân', tap:'Tập 2', bai:[
+    ['chuong4_bai11','Bài 11: Nguyên hàm'],
+    ['chuong4_bai12','Bài 12: Tích phân'],
+    ['chuong4_bai13','Bài 13: Ứng dụng hình học của tích phân']
+  ]},
+  { chuong:'chuong5', ten:'Chương V — Phương pháp tọa độ trong không gian', tap:'Tập 2', bai:[
+    ['chuong5_bai14','Bài 14: Phương trình mặt phẳng'],
+    ['chuong5_bai15','Bài 15: Phương trình đường thẳng trong không gian'],
+    ['chuong5_bai16','Bài 16: Công thức tính góc trong không gian'],
+    ['chuong5_bai17','Bài 17: Phương trình mặt cầu']
+  ]},
+  { chuong:'chuong6', ten:'Chương VI — Xác suất có điều kiện', tap:'Tập 2', bai:[
+    ['chuong6_bai18','Bài 18: Xác suất có điều kiện'],
+    ['chuong6_bai19','Bài 19: Công thức xác suất toàn phần và công thức Bayes']
+  ]}
+];
+
+// Khởi tạo các biến danh mục quan trọng
+let ObjectKeys = Object.keys;
+let TAG_NAME = {}; 
+CURRICULUM.forEach(function(c){ c.bai.forEach(function(b){ TAG_NAME[b[0]] = b[1]; }); });
+const LVL_NAME = {1:'Nhận biết',2:'Thông hiểu',3:'Vận dụng',4:'Vận dụng cao'};
+let TAG_ORDER={}; 
+(function(){ let i=0; CURRICULUM.forEach(function(c){ c.bai.forEach(function(b){ TAG_ORDER[b[0]]=i++; }); }); })();
+
+const TPL_KEY='dcttTemplatesV12';
+const LABEL={mcq:'trắc nghiệm', tf:'đúng/sai', sa:'trả lời ngắn'};
+const PART_NAME={mcq:'Phần I', tf:'Phần II', sa:'Phần III'};
+const SC_DEFAULT={ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true };
+
+// BIẾN TOÀN CỤC CỦA STUDIO THIẾT KẾ ĐỀ
+let DS = { scope:[], cells:{}, tab:'mcq', manual:{mcq:[],tf:[],sa:[]}, scoring:{ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true }, order:'lvl', name:'' };
+let dsReady=false;
+
+function buildDropdowns(){
+  let a='', b='<option value="all">TỔNG ÔN TẤT CẢ</option>';
+  CURRICULUM.forEach(function(c){ 
+      a += '<optgroup label="'+c.ten+'">'; 
+      b += '<optgroup label="'+c.ten+'"><option value="'+c.chuong+'">► Ôn '+c.ten+'</option>'; 
+      c.bai.forEach(function(bArr){ a+='<option value="'+bArr[0]+'">'+bArr[1]+'</option>'; b+='<option value="'+bArr[0]+'">'+bArr[1]+'</option>'; }); 
+      a+='</optgroup>'; b+='</optgroup>'; 
+  });
+  const tg = document.getElementById('new-q-tag'), ts = document.getElementById('topic-select');
+  if(tg) tg.innerHTML=a; if(ts) ts.innerHTML=b;
+}
+
+function show(id){
+  ['teacher-screen','student-start-screen','quiz-screen','result-screen','review-screen'].forEach(function(s){ document.getElementById(s).classList.remove('active-panel'); });
+  document.getElementById(id).classList.add('active-panel'); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleAdminForm(type){
+  try {
+      ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam'].forEach(function(t){ const el = document.getElementById('admin-form-'+t); if(el) el.style.display='none'; });
+      const el = document.getElementById('admin-form-'+type); if(el) el.style.display='block';
+      document.querySelectorAll('.sidebar-btn').forEach(function(btn) { btn.classList.remove('active'); if(btn.getAttribute('data-target') === type) btn.classList.add('active'); });
+      if(type==='stats') { setTimeout(renderStats, 100); }
+      if(type==='designer') { if(typeof dsOpen === 'function') dsOpen(); }
+  } catch(e) { console.error(e); }
+}
+
+function updateStorageInfo() {
+    const el = document.getElementById('storage-info'); if(!el) return;
+    const n = (memoryDB.mcq?memoryDB.mcq.length:0) + (memoryDB.tf?memoryDB.tf.length:0) + (memoryDB.sa?memoryDB.sa.length:0);
+    el.innerHTML = 'Đã lưu <b>'+n+'</b> câu hỏi vào bộ nhớ.';
+}
+
+function typeset(el){ if(window.MathJax && MathJax.typesetPromise){ try{ MathJax.typesetPromise(el?[el]:undefined).catch(function(){}); }catch(e){} } }
+function cleanText(t){ return typeof t==='string' ? t.replace(/\[cite[^\]]*\]/g,'').trim() : (t||''); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function stripTags(html) { return (new DOMParser().parseFromString(String(html == null ? "" : html), "text/html").body.textContent || "").replace(/\s+/g, " ").trim(); }
+function safeHtml(t){ return cleanText(t); }
+function normalizeForDup(text) { return String(text || '').replace(/\s+/g, '').replace(/<[^>]*>?/gm, '').toLowerCase(); }
+
+const AI_PROMPT = 'Bạn là giáo viên Toán 12. Hãy soạn câu hỏi và TRẢ VỀ DUY NHẤT KHỐI JSON: {"mcq":[{"tag":"chuong1_bai1","lvl":2,"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"..."}],"tf":[{"tag":"chuong1_bai1","lvl":3,"q":"...","stmts":[{"t":"Ý a","ans":true},{"t":"Ý b","ans":false},{"t":"Ý c","ans":true},{"t":"Ý d","ans":false}],"exp":"..."}],"sa":[{"tag":"chuong1_bai1","lvl":4,"q":"...","ans":"12","exp":"..."}]}';
+function copyAIPrompt(){ navigator.clipboard.writeText(AI_PROMPT).then(function(){alert("Đã copy lệnh AI!");}); }
+
+function validateQ(q, cat) {
+    if (!q || typeof q !== "object") return "không phải đối tượng";
+    if (!q.q || typeof q.q !== "string") return 'thiếu nội dung "q"';
+    if (cat === "mcq" && (!Array.isArray(q.opts) || q.opts.length !== 4)) return "cần 4 phương án";
+    if (cat === "tf" && (!Array.isArray(q.stmts) || q.stmts.length !== 4)) return "cần 4 ý";
+    if (cat === "sa" && (q.ans === undefined || String(q.ans).trim() === "")) return 'thiếu "ans"';
+    return null;
+}
+function chuanHoa(s) { return String(s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
+
+let bulkDraftData = null;
+let bulkEditState = null;
+
+function previewBulkData() {
+    try {
+        var oRaw = document.getElementById("bulk-import-data"), bao = document.getElementById("bulk-report");
+        var raw = oRaw.value.trim();
+        if (!raw) { bao.innerHTML = '<span style="color:#ef4444">Chưa dán dữ liệu JSON.</span>'; return; }
+        var data;
+        try { data = JSON.parse(raw.replace(/^```(?:json)?/i, "").replace(/

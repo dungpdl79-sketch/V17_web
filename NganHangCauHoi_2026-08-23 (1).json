@@ -1,0 +1,448 @@
+{
+ "mcq": [
+  {
+   "id": "q_mt5f07e4_0hbqh",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y=(x-2)^{-4}\\). Tập xác định của hàm số là:",
+   "exp": "Vì số mũ là \\(-4\\) (số nguyên âm) nên điều kiện xác định của hàm số là cơ số khác \\(0\\).<br>Ta có: \\(x-2 \\neq 0 \\Leftrightarrow x \\neq 2\\).<br>Vậy tập xác định của hàm số là \\(D = \\mathbb{R}\\setminus\\{2\\}\\).",
+   "error": "",
+   "opts": [
+    "\\(\\mathbb{R}\\setminus\\{2\\}\\)",
+    "\\((2;+\\infty)\\)",
+    "\\([2;+\\infty)\\)",
+    "\\(\\mathbb{R}\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_1lc0x",
+   "tag": "chuong1_bai4",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y=f(x)\\) xác định, liên tục trên \\(\\mathbb{R}\\) và có bảng biến thiên như sau: <div data-mathviz='{\"type\":\"bbt\",\"nodes\":[\"-oo\",\"-1\",\"1\",\"+oo\"],\"marks\":[\"\",\"0\",\"0\",\"\"],\"signs\":[\"+\",\"-\",\"+\"],\"vals\":[{\"t\":\"-oo\",\"p\":\"b\"},{\"t\":\"3\",\"p\":\"t\"},{\"t\":\"-1\",\"p\":\"b\"},{\"t\":\"+oo\",\"p\":\"t\"}]}'></div> Tìm điều kiện của tham số \\(m\\) để phương trình \\(f(x)=m\\) có 3 nghiệm phân biệt.",
+   "exp": "Số nghiệm của phương trình \\(f(x)=m\\) là số giao điểm của đồ thị hàm số \\(y=f(x)\\) và đường thẳng nằm ngang \\(y=m\\).<br>Dựa vào bảng biến thiên, để đường thẳng \\(y=m\\) cắt đồ thị hàm số tại 3 điểm phân biệt thì đường thẳng này phải nằm giữa giá trị cực tiểu và cực đại của hàm số.<br>Do đó: \\(-1 < m < 3\\).",
+   "error": "",
+   "opts": [
+    "\\(-1 < m < 3\\)",
+    "\\(m < -1\\) hoặc \\(m > 3\\)",
+    "\\(-1 \\le m \\le 3\\)",
+    "\\(m > 3\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_2e2ld",
+   "tag": "chuong1_bai2",
+   "lvl": 2,
+   "q": "Giá trị nhỏ nhất của hàm số \\(y=x^3-3x+1\\) trên đoạn \\([0;2]\\) bằng:",
+   "exp": "Xét hàm số \\(y=x^3-3x+1\\) trên đoạn \\([0;2]\\).<br>Ta có: \\(y' = 3x^2-3\\).<br>\\(y'=0 \\Leftrightarrow 3x^2-3=0 \\Leftrightarrow x = 1\\) hoặc \\(x = -1\\) (loại vì không thuộc \\([0;2]\\)).<br>Tính các giá trị đầu mút và điểm cực trị:<br>+ \\(y(0) = 0^3-3(0)+1 = 1\\).<br>+ \\(y(1) = 1^3-3(1)+1 = -1\\).<br>+ \\(y(2) = 2^3-3(2)+1 = 3\\).<br>So sánh các giá trị trên, ta thấy giá trị nhỏ nhất của hàm số trên đoạn \\([0;2]\\) là \\(-1\\) tại \\(x=1\\).",
+   "error": "",
+   "opts": [
+    "\\(-1\\)",
+    "\\(1\\)",
+    "\\(3\\)",
+    "\\(-3\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_3sg08",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Đường thẳng đi qua hai điểm cực trị của đồ thị hàm số \\(y=x^3-3x^2+1\\) có phương trình là:",
+   "exp": "Ta có: \\(y' = 3x^2-6x\\).<br>\\(y'=0 \\Leftrightarrow 3x^2-6x=0 \\Leftrightarrow x=0\\) hoặc \\(x=2\\).<br>Tọa độ hai điểm cực trị của đồ thị hàm số là:<br>+ Với \\(x=0 \\Rightarrow y=1 \\Rightarrow A(0;1)\\).<br>+ Với \\(x=2 \\Rightarrow y=2^3-3(2^2)+1=-3 \\Rightarrow B(2;-3)\\).<br>Đường thẳng \\(AB\\) đi qua hai điểm cực trị có dạng \\(y = ax+b\\).<br>Ta có hệ phương trình:<br>\\(\\begin{cases} b = 1 \\\\ 2a+b = -3 \\end{cases} \\Leftrightarrow \\begin{cases} a = -2 \\\\ b = 1 \\end{cases}\\).<br>Vậy phương trình đường thẳng qua hai cực trị là \\(y = -2x+1\\).",
+   "error": "",
+   "opts": [
+    "\\(y = -2x+1\\)",
+    "\\(y = 2x+1\\)",
+    "\\(y = -2x-1\\)",
+    "\\(y = 2x-1\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_45v7h",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Biết rằng đồ thị hàm số \\(y=x^3-3mx^2+3(m^2-1)x-m^3+m\\) (với \\(m\\) là tham số thực) luôn có hai điểm cực trị \\(A\\) và \\(B\\). Hãy tính khoảng cách từ gốc tọa độ \\(O(0;0)\\) đến đường thẳng \\(AB\\).",
+   "exp": "Ta tìm phương trình đường thẳng \\(AB\\) đi qua hai điểm cực trị của đồ thị hàm số bậc ba.<br>Thực hiện phép chia đa thức \\(y\\) cho \\(y'\\) (hoặc đơn giản hóa):<br>Ta có: \\(y' = 3x^2-6mx+3(m^2-1) = 3[x^2-2mx+(m^2-1)]\\).<br>Chia \\(y\\) cho \\(x^2-2mx+(m^2-1)\\) ta được:<br>\\(y = (x-m)[x^2-2mx+(m^2-1)] - 2x\\).<br>Do đó, tại các điểm cực trị (nơi \\(x^2-2mx+(m^2-1) = 0\\)), ta có: \\(y = -2x\\).<br>Như vậy, đường thẳng \\(AB\\) đi qua hai cực trị luôn có phương trình cố định là \\(y = -2x \\Leftrightarrow 2x+y=0\\), không phụ thuộc vào \\(m\\).<br>Khoảng cách từ gốc tọa độ \\(O(0;0)\\) đến đường thẳng \\(AB\\) là: \\(d(O, AB) = \\frac{|2(0) + 0|}{\\sqrt{2^2+1^2}} = 0\\).",
+   "error": "",
+   "opts": [
+    "\\(0\\)",
+    "\\(1\\)",
+    "\\(2\\)",
+    "\\(3\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_5j676",
+   "tag": "chuong1_bai3",
+   "lvl": 3,
+   "q": "Cho hàm số \\(y = \\frac{x^2+mx-1}{x-1}\\). Tìm hoành độ của điểm cực đại của đồ thị hàm số, biết đường tiệm cận xiên của đồ thị đi qua điểm \\(I(2;5)\\).",
+   "exp": "Ta viết lại hàm số dưới dạng: \\(y = \\frac{x(x-1) + (m+1)x - 1}{x-1} = x + m + 1 + \\frac{m}{x-1}\\).<br>Đường tiệm cận xiên của đồ thị hàm số là \\(y = x+m+1\\).<br>Vì tiệm cận xiên đi qua điểm \\(I(2;5)\\) nên: \\(5 = 2+m+1 \\Rightarrow m=2\\).<br>Khi đó, hàm số trở thành \\(y = \\frac{x^2+2x-1}{x-1}\\).<br>Đạo hàm: \\(y' = \\frac{(2x+2)(x-1) - (x^2+2x-1)}{(x-1)^2} = \\frac{x^2-2x-1}{(x-1)^2}\\).<br>\\(y'=0 \\Leftrightarrow x^2-2x-1=0 \\Leftrightarrow x = 1-\\sqrt{2}\\) hoặc \\(x = 1+\\sqrt{2}\\).<br>Bảng xét dấu của \\(y'\\) cho thấy \\(y'\\) đổi dấu từ dương sang âm khi qua điểm \\(x = 1-\\sqrt{2}\\).<br>Do đó, hoành độ điểm cực đại của hàm số là \\(x = 1-\\sqrt{2}\\).",
+   "error": "",
+   "opts": [
+    "\\(1-\\sqrt{2}\\)",
+    "\\(1+\\sqrt{2}\\)",
+    "\\(-1-\\sqrt{2}\\)",
+    "\\(-1+\\sqrt{2}\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e5_6r13e",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Cho hàm số \\(y = \\frac{x^2+2mx+2}{x+m}\\). Tìm tất cả các giá trị của tham số \\(m\\) để hàm số có cực đại và cực tiểu.",
+   "exp": "Tập xác định: \\(D = \\mathbb{R}\\setminus\\{-m\\}\\).<br>Ta có: \\(y' = \\frac{(2x+2m)(x+m) - (x^2+2mx+2)}{(x+m)^2} = \\frac{x^2+2mx+2m^2-2}{(x+m)^2}\\).<br>Để hàm số có cực đại và cực tiểu, phương trình \\(y'=0\\) hay \\(g(x) = x^2+2mx+2m^2-2 = 0\\) phải có hai nghiệm phân biệt khác \\(-m\\).<br>Điều kiện là:<br>1) \\(\\Delta' = m^2 - (2m^2-2) = 2-m^2 > 0 \\Leftrightarrow m^2 < 2 \\Leftrightarrow -\\sqrt{2} < m < \\sqrt{2}\\).<br>2) \\(g(-m) = (-m)^2+2m(-m)+2m^2-2 = m^2-2 \\neq 0 \\Leftrightarrow m \\neq \\pm\\sqrt{2}\\) (luôn đúng do điều kiện 1).<br>Vậy tập hợp các giá trị cần tìm là \\(-\\sqrt{2} < m < \\sqrt{2}\\).",
+   "error": "",
+   "opts": [
+    "\\(-\\sqrt{2} < m < \\sqrt{2}\\)",
+    "\\(m < -\\sqrt{2}\\) hoặc \\(m > \\sqrt{2}\\)",
+    "\\(-2 < m < 2\\)",
+    "\\(m \\neq \\pm \\sqrt{2}\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e6_73mjp",
+   "tag": "chuong1_bai4",
+   "lvl": 2,
+   "q": "Phương trình tiếp tuyến của đồ thị hàm số \\(y = \\frac{x-1}{x+1}\\) tại điểm có tung độ \\(y = -1\\) là:",
+   "exp": "Gọi \\(M(x_0; y_0)\\) là tiếp điểm, ta có \\(y_0 = -1\\).<br>Suy ra: \\(\\frac{x_0-1}{x_0+1} = -1 \\Leftrightarrow x_0-1 = -x_0-1 \\Leftrightarrow 2x_0 = 0 \\Leftrightarrow x_0 = 0\\).<br>Vậy tiếp điểm là \\(M(0;-1)\\).<br>Đạo hàm của hàm số: \\(y' = \\frac{2}{(x+1)^2}\\).<br>Hệ số góc của tiếp tuyến tại \\(x_0 = 0\\) là: \\(k = y'(0) = \\frac{2}{(0+1)^2} = 2\\).<br>Phương trình tiếp tuyến cần tìm là:<br>\\(y - y_0 = k(x - x_0) \\Leftrightarrow y - (-1) = 2(x - 0) \\Leftrightarrow y = 2x-1\\).",
+   "error": "",
+   "opts": [
+    "\\(y = 2x-1\\)",
+    "\\(y = 2x+1\\)",
+    "\\(y = -2x-1\\)",
+    "\\(y = -2x+1\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e6_8n54g",
+   "tag": "chuong1_bai4",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y = \\frac{2x-1}{x-1}\\). Có bao nhiêu điểm thuộc đồ thị hàm số sao cho tiếp tuyến của đồ thị tại các điểm đó song song với đường thẳng \\(y = -x+2025\\)?",
+   "exp": "Tập xác định: \\(D = \\mathbb{R}\\setminus\\{1\\}\\).<br>Ta có: \\(y' = \\frac{-1}{(x-1)^2}\\).<br>Vì tiếp tuyến song song với đường thẳng \\(y = -x+2025\\) nên hệ số góc của tiếp tuyến bằng hệ số góc của đường thẳng đó, tức là \\(k = -1\\).<br>Ta giải phương trình: \\(y' = -1 \\Leftrightarrow \\frac{-1}{(x-1)^2} = -1 \\Leftrightarrow (x-1)^2 = 1 \\Leftrightarrow x-1 = 1\\) hoặc \\(x-1 = -1 \\Leftrightarrow x = 2\\) hoặc \\(x = 0\\) (cả hai đều thuộc \\(D\\)).<br>Với mỗi hoành độ ta có đúng một điểm trên đồ thị. Vậy có \\(2\\) điểm thỏa mãn yêu cầu bài toán.",
+   "error": "",
+   "opts": [
+    "\\(2\\)",
+    "\\(1\\)",
+    "\\(0\\)",
+    "\\(4\\)"
+   ],
+   "ans": 0
+  },
+  {
+   "id": "q_mt5f07e6_9qkoy",
+   "tag": "chuong1_bai4",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y = \\frac{2x+1}{x-1}\\). Tiếp tuyến của đồ thị hàm số vuông góc với đường thẳng \\(y = 3x+5\\) tại điểm có hoành độ là:",
+   "exp": "Tập xác định: \\(D = \\mathbb{R}\\setminus\\{1\\}\\).<br>Ta có: \\(y' = \\frac{-3}{(x-1)^2}\\).<br>Vì tiếp tuyến vuông góc với đường thẳng \\(y = 3x+5\\) (có hệ số góc bằng \\(3\\)) nên hệ số góc của tiếp tuyến là: \\(k = -\\frac{1}{3}\\).<br>Ta giải phương trình: \\(y' = -\\frac{1}{3} \\Leftrightarrow \\frac{-3}{(x-1)^2} = -\\frac{1}{3} \\Leftrightarrow (x-1)^2 = 9 \\Leftrightarrow x-1 = 3\\) hoặc \\(x-1 = -3 \\Leftrightarrow x = 4\\) hoặc \\(x = -2\\) (cả hai đều thuộc \\(D\\)).<br>Vậy tiếp tuyến vuông góc tại các điểm có hoành độ \\(x = 4\\) hoặc \\(x = -2\\).",
+   "error": "",
+   "opts": [
+    "\\(x = 4\\) hoặc \\(x = -2\\)",
+    "\\(x = 2\\) hoặc \\(x = -1\\)",
+    "\\(x = 3\\) hoặc \\(x = -3\\)",
+    "\\(x = 1\\) hoặc \\(x = 0\\)"
+   ],
+   "ans": 0
+  }
+ ],
+ "tf": [],
+ "sa": [
+  {
+   "id": "q_mt5fsyjf_10ua37",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "Cho hàm số \\(y=\\dfrac{x^2+3x+3}{x+1}\\) có đồ thị \\((C)\\). Gọi \\(d\\) là khoảng cách giữa hai điểm cực trị của \\((C)\\) và \\(d_1\\) là khoảng cách từ điểm cực đại của \\((C)\\) đến gốc tọa độ \\(O(0;0)\\). Giá trị của \\(P = d^2+d_1^2\\) bằng bao nhiêu?",
+   "exp": "Hàm số \\(y = \\dfrac{x^2+3x+3}{x+1} = x + 2 + \\dfrac{1}{x+1}\\).<br>Tập xác định: \\(D = \\mathbb{R}\\setminus\\{-1\\}\\).<br>Đạo hàm: \\(y' = 1 - \\dfrac{1}{(x+1)^2} = \\dfrac{x^2+2x}{(x+1)^2}\\).<br>\\(y' = 0 \\Leftrightarrow x^2+2x = 0 \\Leftrightarrow x = 0\\) hoặc \\(x = -2\\).<br>Tọa độ các cực trị:<br>+ Với \\(x = 0 \\Rightarrow y = 3 \\Rightarrow A(0;3)\\) (điểm cực tiểu).<br>+ Với \\(x = -2 \\Rightarrow y = -1 \\Rightarrow B(-2;-1)\\) (điểm cực đại).<br>Khoảng cách giữa hai cực trị: \\(d = AB = \\sqrt{(-2-0)^2 + (-1-3)^2} = \\sqrt{4+16} = \\sqrt{20} \\Rightarrow d^2 = 20\\).<br>Khoảng cách từ cực đại \\(B(-2;-1)\\) đến gốc tọa độ \\(O\\): \\(d_1 = OB = \\sqrt{(-2)^2+(-1)^2} = \\sqrt{5} \\Rightarrow d_1^2 = 5\\).<br>Do đó: \\(P = d^2 + d_1^2 = 20 + 5 = 25\\).",
+   "error": "",
+   "ans": "25",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_11pht1",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Hàm số \\(y=\\dfrac{x^2-x+1}{x-1}\\) có giá trị cực đại và giá trị cực tiểu lần lượt là \\(a\\) và \\(b\\). Tính giá trị của biểu thức \\(T = 3a+2b\\).",
+   "exp": "Hàm số \\(y = \\dfrac{x^2-x+1}{x-1} = x + \\dfrac{1}{x-1}\\).<br>Tập xác định: \\(D = \\mathbb{R}\\setminus\\{1\\}\\).<br>Đạo hàm: \\(y' = 1 - \\dfrac{1}{(x-1)^2} = \\dfrac{x^2-2x}{(x-1)^2}\\).<br>\\(y' = 0 \\Leftrightarrow x^2-2x = 0 \\Leftrightarrow x = 0\\) hoặc \\(x = 2\\).<br>Bảng biến thiên:<br>+ Hàm số đạt cực đại tại \\(x = 0\\), giá trị cực đại \\(a = y(0) = -1\\).<br>+ Hàm số đạt cực tiểu tại \\(x = 2\\), giá trị cực tiểu \\(b = y(2) = 3\\).<br>Giá trị của biểu thức: \\(T = 3a+2b = 3(-1) + 2(3) = -3 + 6 = 3\\).",
+   "error": "",
+   "ans": "3",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_12fgax",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y= \\dfrac{2x^2+26x+18}{x+13}\\) có điểm cực tiểu \\(x_1\\) và điểm cực đại \\(x_2\\). Tính giá trị của biểu thức \\(P = -2x_1 + x_2\\).",
+   "exp": "Hàm số \\(y = \\dfrac{2x^2+26x+18}{x+13} = 2x + \\dfrac{18}{x+13}\\).<br>Tập xác định: \\(D = \\mathbb{R}\\setminus\\{-13\\}\\).<br>Đạo hàm: \\(y' = 2 - \\dfrac{18}{(x+13)^2}\\).<br>\\(y' = 0 \\Leftrightarrow (x+13)^2 = 9 \\Leftrightarrow x+13 = 3\\) hoặc \\(x+13 = -3 \\Leftrightarrow x = -10\\) hoặc \\(x = -16\\).<br>Qua bảng biến thiên, ta xác định:<br>+ Hàm số đạt cực tiểu tại \\(x = -10 \\Rightarrow x_1 = -10\\).<br>+ Hàm số đạt cực đại tại \\(x = -16 \\Rightarrow x_2 = -16\\).<br>Do đó: \\(P = -2x_1 + x_2 = -2(-10) + (-16) = 4\\).",
+   "error": "",
+   "ans": "4",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_135t6h",
+   "tag": "chuong1_bai5",
+   "lvl": 3,
+   "q": "Trong hệ trục tọa độ \\(Oxy\\), cho đồ thị hàm số \\((C): y = \\dfrac{x^2+x+1}{x+1}\\) mô tả chuyển động của hai tàu đánh cá \\(A\\) và \\(B\\) (đơn vị trên mỗi trục tọa độ tính bằng km). Biết quỹ đạo chuyển động của hai tàu luôn thuộc về hai nhánh khác nhau của đồ thị \\((C)\\). Tính khoảng cách ngắn nhất (đơn vị km) giữa hai tàu đánh cá \\(A\\) và \\(B\\) (kết quả làm tròn đến hàng phần trăm).",
+   "exp": "Hàm số \\(y = \\dfrac{x^2+x+1}{x+1} = x + \\dfrac{1}{x+1}\\) với \\(x \\neq -1\\).<br>Đồ thị có tiệm cận đứng là \\(x = -1\\), chia đồ thị làm hai nhánh: nhánh trái ứng với \\(x < -1\\) và nhánh phải ứng với \\(x > -1\\).<br>Gọi tàu \\(A\\) thuộc nhánh phải (\\(x_A > -1\\)) và tàu \\(B\\) thuộc nhánh trái (\\(x_B < -1\\)).<br>Đặt \\(x_A = -1 + a\\) (\\(a > 0\\)) và \\(x_B = -1 - b\\) (\\(b > 0\\)).<br>Khi đó:<br>\\(y_A = a - 1 + \\dfrac{1}{a}\\) và \\(y_B = -b - 1 - \\dfrac{1}{b}\\).<br>Khoảng cách bình phương giữa hai tàu:<br>\\(AB^2 = (x_A - x_B)^2 + (y_A - y_B)^2 = (a+b)^2 + \\left(a+b + \\dfrac{1}{a} + \\dfrac{1}{b}\\right)^2\\)<br>Đặt \\(S = a+b > 0\\) và \\(P = ab > 0\\). Ta có \\(S \\ge 2\\sqrt{P} \\Leftrightarrow P \\le \\dfrac{S^2}{4}\\).<br>\\(y_A - y_B = S + \\dfrac{S}{P} = S\\left(1 + \\dfrac{1}{P}\\right)\\).<br>Do đó: \\(AB^2 = S^2 + S^2\\left(1 + \\dfrac{1}{P}\\right)^2\\).<br>Áp dụng bất đẳng thức \\(P \\le \\dfrac{S^2}{4}\\):<br>\\(AB^2 \\ge S^2 \\left[1 + \\left(1 + \\dfrac{4}{S^2}\\right)^2\\right] = S^2 \\left[2 + \\dfrac{8}{S^2} + \\dfrac{16}{S^4}\\right] = 2S^2 + 8 + \\dfrac{16}{S^2}\\).<br>Theo bất đẳng thức Cauchy: \\(2S^2 + \\dfrac{16}{S^2} \\ge 2\\sqrt{2S^2 \\cdot \\dfrac{16}{S^2}} = 8\\sqrt{2}\\).<br>Suy ra \\(AB^2 \\ge 8\\sqrt{2} + 8\\).<br>Do đó khoảng cách ngắn nhất là \\(AB = \\sqrt{8\\sqrt{2}+8} \\approx 4,39\\) km.",
+   "error": "",
+   "ans": "4.39|4,39",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_14mdao",
+   "tag": "chuong1_bai5",
+   "lvl": 4,
+   "q": "Một máy bay trình diễn có đường bay gắn với hệ trục \\(Oxy\\) được mô phỏng như hình vẽ, trục \\(Ox\\) gắn với mặt đất. Đường bay có dạng là một phần của đồ thị hàm phân thức bậc hai trên bậc nhất \\(y = f(x)\\) có đường tiệm cận đứng là \\(x = 2\\). Điểm \\(G\\) là giao điểm của đường tiệm cận xiên của đồ thị hàm số \\(y=f(x)\\) và trục \\(Ox\\) được gọi là điểm giới hạn. Biết rằng máy bay xuất phát tại vị trí \\(A\\) cách gốc tọa độ \\(O\\) một khoảng 2,5 đơn vị và máy bay khi ở vị trí cao nhất cách điểm xuất phát 1,5 đơn vị theo phương song song với trục \\(Ox\\) và cách mặt đất 4,5 đơn vị. Vị trí máy bay tiếp đất cách điểm giới hạn một khoảng bằng bao nhiêu?",
+   "exp": "Đường bay là một phần của đồ thị hàm phân thức bậc hai trên bậc nhất có tiệm cận đứng \\(x = 2\\), có dạng \\(y = \\dfrac{ax^2+bx+c}{x-2}\\).<br>+ Máy bay xuất phát tại vị trí \\(A\\) cách gốc tọa độ \\(2,5\\) đơn vị nên \\(A(2,5; 0)\\), suy ra \\(f(2,5) = 0 \\Leftrightarrow 6,25a + 2,5b + c = 0\\) (1).<br>+ Khi máy bay ở vị trí cao nhất (điểm cực đại \\(B\\) của đồ thị) thì hoành độ \\(x_B = x_A + 1,5 = 2,5 + 1,5 = 4\\) và tung độ \\(y_B = 4,5\\). Vậy \\(B(4; 4,5)\\) là điểm cực đại.<br>Do \\(B(4; 4,5)\\) thuộc đồ thị nên \\(f(4) = 4,5 \\Leftrightarrow 16a + 4b + c = 9\\) (2).<br>Đạo hàm: \\(f'(x) = \\dfrac{ax^2-4ax-2b-c}{(x-2)^2}\\). Vì \\(x=4\\) là điểm cực trị nên \\(f'(4) = 0 \\Leftrightarrow 2b + c = 0 \\Leftrightarrow c = -2b\\) (3).<br>Giải hệ phương trình (1), (2), (3) ta được: \\(a = -1\\), \\(b = 12,5\\), \\(c = -25\\).<br>Hàm số biểu diễn đường bay là: \\(y = \\dfrac{-x^2+12,5x-25}{x-2} = -x + 10,5 - \\dfrac{4}{x-2}\\).<br>Đường tiệm cận xiên là \\(y = -x + 10,5\\).<br>Giao điểm \\(G\\) của tiệm cận xiên và trục \\(Ox\\) (\\(y=0\\)) là: \\(x_G = 10,5 \\Rightarrow G(10,5; 0)\\).<br>Vị trí máy bay tiếp đất là giao điểm \\(C\\) của đồ thị hàm số và trục \\(Ox\\) (\\(y=0\\) và \\(x > 2\\)):<br>\\(-x^2+12,5x-25 = 0 \\Leftrightarrow x = 10\\) hoặc \\(x = 2,5\\) (điểm xuất phát \\(A\\)). Vậy vị trí tiếp đất là \\(C(10; 0)\\).<br>Khoảng cách từ điểm tiếp đất \\(C\\) đến điểm giới hạn \\(G\\) là: \\(CG = |10,5 - 10| = 0,5\\).",
+   "error": "",
+   "ans": "0.5|0,5",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_15rcqx",
+   "tag": "chuong1_bai5",
+   "lvl": 3,
+   "q": "Trong một công viên có một hồ nước và một đường đi lát gạch hoa. Thiết lập hệ trục \\(Oxy\\) như hình vẽ dưới, kiến trúc sư thấy rằng bờ hồ có thể coi như một nhánh của đồ thị hàm số \\(y = \\dfrac{2x+1}{x-1}\\) và đường đi khi đó ứng với đường thẳng \\((d): y = -x+4\\). Để đảm bảo ánh sáng, kiến trúc sư muốn đặt 2 cột đèn trên bờ hồ và 2 cột đèn trên đường đi sao cho 4 cột đèn này tạo thành một hình vuông. Tính khoảng cách giữa hai cột đèn trên bờ hồ (làm tròn đến hàng phần trăm).",
+   "exp": "Bờ hồ là đồ thị hàm số \\(y = \\dfrac{2x+1}{x-1}\\) (\\(x \\neq 1\\)) và đường đi là \\((d): y = -x+4 \\Leftrightarrow x+y-4=0\\).<br>Gọi hai điểm đặt đèn trên bờ hồ là \\(M, N\\) và trên đường đi là \\(P, Q\\). Để \\(MNPQ\\) tạo thành một hình vuông thì đường thẳng \\(MN\\) phải song song với \\((d)\\).<br>Do đó đường thẳng \\(MN\\) có dạng \\((d'): y = -x+m\\) (\\(m \\neq 4\\)).<br>Phương trình hoành độ giao điểm của \\((d')\\) và đồ thị bờ hồ:<br>\\(\\dfrac{2x+1}{x-1} = -x+m \\Leftrightarrow x^2 + (1-m)x + (m+1) = 0\\) (*).<br>Để có hai giao điểm phân biệt thì phương trình (*) phải có \\(\\Delta > 0 \\Leftrightarrow (1-m)^2 - 4(m+1) > 0 \\Leftrightarrow m^2 - 6m - 3 > 0\\).<br>Gọi hoành độ của \\(M, N\\) là \\(x_1, x_2\\), theo hệ thức Vi-ét ta có: \\(x_1+x_2 = m-1\\) và \\(x_1x_2 = m+1\\).<br>Độ dài đoạn \\(MN\\) là:<br>\\(MN^2 = (x_2-x_1)^2 + (y_2-y_1)^2 = 2(x_2-x_1)^2 = 2[(x_1+x_2)^2 - 4x_1x_2] = 2(m^2-6m-3)\\).<br>Khoảng cách giữa hai đường thẳng song song \\((d)\\) và \\((d')\\) là: \\(h = d(d, d') = \\dfrac{|m-4|}{\\sqrt{1^2+1^2}} = \\dfrac{|m-4|}{\\sqrt{2}}\\).<br>Vì \\(MNPQ\\) là hình vuông nên \\(MN = h \\Leftrightarrow MN^2 = h^2 \\Leftrightarrow 2(m^2-6m-3) = \\dfrac{(m-4)^2}{2}\\)<br>\\(\\Leftrightarrow 4(m^2-6m-3) = (m-4)^2 \\Leftrightarrow 3m^2-16m-28=0 \\Leftrightarrow m=14\\) hoặc \\(m=-\\dfrac{4}{3}\\).<br>+ Với \\(m=14 \\Rightarrow MN = \\dfrac{|14-4|}{\\sqrt{2}} = 5\\sqrt{2} \\approx 7,07\\).<br>+ Với \\(m=-\\dfrac{4}{3} \\Rightarrow MN = \\dfrac{|-4/3-4|}{\\sqrt{2}} = \\dfrac{8\\sqrt{2}}{3} \\approx 3,77\\).",
+   "error": "",
+   "ans": "7.07|7,07|3.77|3,77",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5fsyjf_166vwu",
+   "tag": "chuong1_bai4",
+   "lvl": 2,
+   "q": "Cho hàm số \\(y=f(x)= \\dfrac{ax+b}{cx+1}\\) với \\(a,b,c \\in \\mathbb{R}\\) có đồ thị như hình vẽ dưới đây. Tính giá trị biểu thức \\(P = a+b+c\\).",
+   "exp": "Dựa vào đồ thị hàm số \\(y = \\dfrac{ax+b}{cx+1}\\), ta có:<br>+ Đường tiệm cận đứng là \\(x = 1 \\Rightarrow -\\dfrac{1}{c} = 1 \\Leftrightarrow c = -1\\).<br>+ Đường tiệm cận ngang là \\(y = -1 \\Rightarrow \\dfrac{a}{c} = -1 \\Rightarrow a = -c = 1\\).<br>+ Đồ thị cắt trục hoành tại điểm \\((2;0)\\) nên: \\(0 = \\dfrac{2a+b}{2c+1} \\Rightarrow 2a+b = 0 \\Rightarrow b = -2a = -2\\).<br>(Kiểm tra lại: đồ thị cắt trục tung tại điểm \\((0;-2)\\), ta có \\(f(0) = b = -2\\), hoàn toàn chính xác).<br>Vậy \\(a=1, b=-2, c=-1\\).<br>Giá trị biểu thức: \\(P = a+b+c = 1 + (-2) + (-1) = -2\\).",
+   "error": "",
+   "ans": "-2",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_0iv0l",
+   "tag": "chuong1_bai4",
+   "lvl": 3,
+   "q": "Đồ thị trong hình vẽ là đồ thị của hàm số $y=\\dfrac{ax^2+bx+1}{cx+d}$. Hỏi có bao nhiêu số dương trong các số $a,\\,b,\\,c,\\,d$? <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(x^2-3*x+1)/(x-1)\",\"from\":-4.5,\"to\":0.88},{\"fn\":\"(x^2-3*x+1)/(x-1)\",\"from\":1.14,\"to\":5.5},{\"fn\":\"x-2\",\"from\":-4.5,\"to\":5.5}],\"asymptotes\":{\"v\":[1]},\"xmin\":-4.5,\"xmax\":5.5,\"ymin\":-8,\"ymax\":8,\"xticks\":[],\"yticks\":[]}'></div>",
+   "exp": "Đồ thị cắt trục tung tại điểm nằm dưới gốc toạ độ nên $y(0)=\\dfrac{1}{d}<0$, suy ra $d<0$. Tiệm cận đứng $x=-\\dfrac{d}{c}>0$ nên $\\dfrac{d}{c}<0$; kết hợp $d<0$ được $c>0$. Tiệm cận xiên đi lên nên hệ số góc $\\dfrac{a}{c}>0$, suy ra $a>0$. Chia đa thức được tiệm cận xiên $y=\\dfrac{a}{c}x+\\dfrac{bc-ad}{c^2}$. Đường này cắt trục tung tại điểm có tung độ âm nên $bc-ad<0$. Vì $a>0$ và $d<0$ nên $ad<0$, do đó $bc<ad<0$; mà $c>0$ nên $b<0$. Vậy chỉ có $a$ và $c$ dương, có $2$ số dương.",
+   "error": "",
+   "ans": "2",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_19k1g",
+   "tag": "chuong1_bai4",
+   "lvl": 3,
+   "q": "Cho hàm số $y=\\dfrac{ax^2+bx+c}{x+d}$ với $a,b,c,d\\in\\mathbb{R}$ có đồ thị như hình vẽ. Có bao nhiêu số dương trong các số $a,\\,b,\\,c,\\,d$? <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(-x^2-2*x-1.25)/(x+1)\",\"from\":-5,\"to\":-1.06},{\"fn\":\"(-x^2-2*x-1.25)/(x+1)\",\"from\":-0.94,\"to\":3},{\"fn\":\"-x-1\",\"from\":-5,\"to\":3}],\"asymptotes\":{\"v\":[-1]},\"xmin\":-5,\"xmax\":3,\"ymin\":-5,\"ymax\":5,\"xticks\":[],\"yticks\":[]}'></div>",
+   "exp": "Tiệm cận đứng là $x=-d$ và nằm bên trái gốc toạ độ nên $-d<0$, suy ra $d>0$. Tiệm cận xiên $y=ax+(b-ad)$ đi xuống nên $a<0$. Đồ thị cắt trục tung tại điểm có tung độ âm: $y(0)=\\dfrac{c}{d}<0$; vì $d>0$ nên $c<0$. Tiệm cận xiên cũng cắt trục tung tại điểm có tung độ âm nên $b-ad<0$, tức $b<ad$. Vì $a<0$ và $d>0$ nên $ad<0$, do đó $b<0$. Vậy chỉ có $d$ dương, có $1$ số dương.",
+   "error": "",
+   "ans": "1",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_2oti6",
+   "tag": "chuong1_bai4",
+   "lvl": 3,
+   "q": "Cho hàm số $y=\\dfrac{ax^2+bx+1}{cx+d}$ với $a,b,c,d\\in\\mathbb{R}$ có đồ thị như hình vẽ. Có bao nhiêu số dương trong các số $a,\\,b,\\,c,\\,d$? <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(x^2+3*x+1)/(x+1)\",\"from\":-5,\"to\":-1.2},{\"fn\":\"(x^2+3*x+1)/(x+1)\",\"from\":-0.8,\"to\":3},{\"fn\":\"x+2\",\"from\":-5,\"to\":3}],\"asymptotes\":{\"v\":[-1]},\"xmin\":-5,\"xmax\":3,\"ymin\":-6,\"ymax\":6,\"xticks\":[],\"yticks\":[]}'></div>",
+   "exp": "Đồ thị cắt trục tung tại điểm nằm trên gốc toạ độ nên $y(0)=\\dfrac{1}{d}>0$, suy ra $d>0$. Tiệm cận đứng $x=-\\dfrac{d}{c}<0$ nên $\\dfrac{d}{c}>0$; kết hợp $d>0$ được $c>0$. Tiệm cận xiên đi lên nên $\\dfrac{a}{c}>0$, suy ra $a>0$. Tiệm cận xiên là $y=\\dfrac{a}{c}x+\\dfrac{bc-ad}{c^2}$, cắt trục tung tại điểm có tung độ dương nên $bc-ad>0$, tức $bc>ad>0$; mà $c>0$ nên $b>0$. Vậy cả bốn số đều dương, có $4$ số dương.",
+   "error": "",
+   "ans": "4",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_3rpmp",
+   "tag": "chuong1_bai1",
+   "lvl": 3,
+   "q": "(THPT Triệu Sơn 3 - Thanh Hóa 2025) Cho hàm số $y=\\dfrac{x^2+3x+3}{x+1}$ có đồ thị $(C)$. Gọi $d$ là khoảng cách giữa hai điểm cực trị của $(C)$ và $d_1$ là khoảng cách từ điểm cực đại của $(C)$ đến gốc toạ độ. Giá trị của $d^2+d_1^2$ bằng bao nhiêu?",
+   "exp": "Viết lại $y=x+2+\\dfrac{1}{x+1}$, suy ra $y'=1-\\dfrac{1}{(x+1)^2}$. $y'=0\\Leftrightarrow (x+1)^2=1\\Leftrightarrow x=0$ hoặc $x=-2$. Trên khoảng $(-\\infty;-1)$ đạo hàm đổi dấu từ dương sang âm khi qua $x=-2$ nên điểm cực đại là $A(-2;-1)$; tương tự điểm cực tiểu là $B(0;3)$. Do đó $d^2=AB^2=(0+2)^2+(3+1)^2=20$ và $d_1^2=OA^2=(-2)^2+(-1)^2=5$. Vậy $d^2+d_1^2=20+5=25$.",
+   "error": "",
+   "ans": "25",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_4ge66",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "(Chuyên Phan Bội Châu - Nghệ An 2025) Hàm số $y=\\dfrac{x^2-x+1}{x-1}$ có giá trị cực đại và giá trị cực tiểu lần lượt là $a$ và $b$. Tính $3a+2b$.",
+   "exp": "Viết lại $y=x+\\dfrac{1}{x-1}$, suy ra $y'=1-\\dfrac{1}{(x-1)^2}$. $y'=0\\Leftrightarrow (x-1)^2=1\\Leftrightarrow x=0$ hoặc $x=2$. Qua $x=0$ đạo hàm đổi dấu từ dương sang âm nên hàm số đạt cực đại tại $x=0$ với giá trị cực đại $a=y(0)=-1$. Qua $x=2$ đạo hàm đổi dấu từ âm sang dương nên hàm số đạt cực tiểu tại $x=2$ với giá trị cực tiểu $b=y(2)=3$. Vậy $3a+2b=3\\cdot(-1)+2\\cdot 3=3$.",
+   "error": "",
+   "ans": "3",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hk_5c2yl",
+   "tag": "chuong1_bai1",
+   "lvl": 2,
+   "q": "(THPT Lê Xoay - Vĩnh Phúc 2025) Cho hàm số $y=f(x)=\\dfrac{2x^2+26x+18}{x+13}$ có điểm cực tiểu $x=x_1$ và điểm cực đại $x=x_2$. Tính $P=-2x_1+x_2$.",
+   "exp": "Vì $2x^2+26x+18=2x(x+13)+18$ nên $y=2x+\\dfrac{18}{x+13}$, suy ra $y'=2-\\dfrac{18}{(x+13)^2}$. $y'=0\\Leftrightarrow (x+13)^2=9\\Leftrightarrow x=-10$ hoặc $x=-16$. Trên khoảng $(-13;+\\infty)$ đạo hàm đổi dấu từ âm sang dương khi qua $x=-10$ nên $x_1=-10$ là điểm cực tiểu; trên khoảng $(-\\infty;-13)$ đạo hàm đổi dấu từ dương sang âm khi qua $x=-16$ nên $x_2=-16$ là điểm cực đại. Vậy $P=-2\\cdot(-10)+(-16)=20-16=4$.",
+   "error": "",
+   "ans": "4",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hl_6wgoc",
+   "tag": "chuong1_bai5",
+   "lvl": 4,
+   "q": "(Cụm trường THPT Bắc Ninh 2025) Trong hệ trục toạ độ $Oxy$ cho đồ thị hàm số $(C):y=\\dfrac{x^2+x+1}{x+1}$ mô tả chuyển động của hai tàu đánh cá $A$ và $B$ (đơn vị trên mỗi trục toạ độ tính bằng $km$). Biết quỹ đạo chuyển động của hai tàu luôn thuộc về hai nhánh khác nhau của đồ thị $(C)$. Tính khoảng cách ngắn nhất (đơn vị $km$) giữa hai tàu đánh cá $A$ và $B$ (kết quả làm tròn đến hàng phần trăm). <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(x^2+x+1)/(x+1)\",\"from\":-6,\"to\":-1.15},{\"fn\":\"(x^2+x+1)/(x+1)\",\"from\":-0.85,\"to\":4},{\"fn\":\"x\",\"from\":-6,\"to\":4}],\"asymptotes\":{\"v\":[-1]},\"xmin\":-6,\"xmax\":4,\"ymin\":-8,\"ymax\":6,\"xticks\":[-4,-2,2],\"yticks\":[-4,-2,2,4]}'></div>",
+   "exp": "Ta có $y=x+\\dfrac{1}{x+1}$ nên đồ thị nhận giao điểm hai tiệm cận $I(-1;-1)$ làm tâm đối xứng. Do hai nhánh đối xứng nhau qua $I$, khoảng cách ngắn nhất giữa hai nhánh đạt được tại hai điểm đối xứng nhau qua $I$, khi đó $AB=2IA$. Lấy $A$ thuộc nhánh phải, đặt $u=x+1>0$ thì $A(u-1;\\,u-1+\\tfrac{1}{u})$ và $IA^2=u^2+\\left(u+\\dfrac{1}{u}\\right)^2=2u^2+\\dfrac{1}{u^2}+2$. Theo bất đẳng thức AM-GM, $2u^2+\\dfrac{1}{u^2}\\ge 2\\sqrt{2}$, dấu bằng khi $u^4=\\dfrac{1}{2}$. Suy ra $IA^2_{\\min}=2+2\\sqrt{2}$ và $AB_{\\min}=2\\sqrt{2+2\\sqrt{2}}\\approx 4{,}39$ $km$.",
+   "error": "",
+   "ans": "4,39|4.39",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hl_7gxoy",
+   "tag": "chuong1_bai5",
+   "lvl": 4,
+   "q": "(Sở Hà Tĩnh 2025) Một máy bay trình diễn có đường bay gắn với hệ trục $Oxy$ như hình vẽ, trục $Ox$ gắn với mặt đất. Đường bay có dạng là một phần của đồ thị hàm phân thức bậc hai trên bậc nhất $y=f(x)$ có đường tiệm cận đứng là $x=2$. Điểm $G$ là giao điểm của đường tiệm cận xiên của đồ thị hàm số $y=f(x)$ và trục $Ox$, được gọi là điểm giới hạn. Biết máy bay bay từ vị trí $A$ cách gốc toạ độ $O$ một khoảng $2{,}5$ đơn vị và máy bay khi ở vị trí cao nhất cách điểm xuất phát $A$ một khoảng $1{,}5$ đơn vị theo phương song song với trục $Ox$ và cách mặt đất $4{,}5$ đơn vị. Vị trí máy bay tiếp đất cách điểm giới hạn một khoảng bằng bao nhiêu? <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(-x^2+12.5*x-25)/(x-2)\",\"from\":2.5,\"to\":10.2},{\"fn\":\"-x+10.5\",\"from\":2.05,\"to\":11.5}],\"asymptotes\":{\"v\":[2]},\"xmin\":-0.5,\"xmax\":12,\"ymin\":-1.5,\"ymax\":9,\"xticks\":[],\"yticks\":[]}'></div>",
+   "exp": "Đặt $f(x)=\\dfrac{ax^2+bx+c}{x-2}$. Điểm xuất phát là $A(2{,}5;0)$, điểm cao nhất là $B(4;4{,}5)$. Từ $f(2{,}5)=0$ ta được $6{,}25a+2{,}5b+c=0$; từ $f(4)=4{,}5$ ta được $16a+4b+c=9$. Vì $f'(x)=\\dfrac{(2ax+b)(x-2)-(ax^2+bx+c)}{(x-2)^2}$ và $f'(4)=0$ nên $2(8a+b)=9$. Giải hệ ba phương trình được $a=-1,\\ b=12{,}5,\\ c=-25$, tức $f(x)=\\dfrac{-x^2+12{,}5x-25}{x-2}$. Chia đa thức: $f(x)=-x+10{,}5-\\dfrac{4}{x-2}$ nên tiệm cận xiên là $y=-x+10{,}5$, cắt $Ox$ tại $G(10{,}5;0)$. Vị trí tiếp đất là nghiệm còn lại của $-x^2+12{,}5x-25=0$, tức $C(10;0)$. Vậy $CG=10{,}5-10=0{,}5$ đơn vị.",
+   "error": "",
+   "ans": "0,5|0.5|1/2",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hl_8t01c",
+   "tag": "chuong1_bai5",
+   "lvl": 4,
+   "q": "(Chuyên Hạ Long 2025) Trong một công viên có một hồ nước và một đường đi lát gạch hoa. Thiết lập hệ trục $Oxy$ như hình vẽ, kiến trúc sư thấy rằng bờ hồ có thể coi như một nhánh của đồ thị hàm số $y=\\dfrac{2x+1}{x-1}$ và đường đi khi đó ứng với đường thẳng $(d):y=-x+4$. Để đảm bảo ánh sáng, kiến trúc sư muốn đặt 2 cột đèn trên bờ hồ và 2 cột đèn trên đường đi sao cho 4 cột đèn này tạo thành một hình vuông. Tính khoảng cách giữa hai cột đèn trên bờ hồ (làm tròn đến hàng phần trăm). <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"(2*x+1)/(x-1)\",\"from\":1.6,\"to\":7},{\"fn\":\"-x+4\",\"from\":-0.5,\"to\":5}],\"asymptotes\":{\"v\":[1],\"h\":[2]},\"points\":[{\"x\":2.18,\"y\":4.54},{\"x\":3.54,\"y\":3.18},{\"x\":2.18,\"y\":1.82},{\"x\":0.82,\"y\":3.18}],\"xmin\":-1,\"xmax\":7,\"ymin\":-1,\"ymax\":7,\"xticks\":[1,2,3,4,5,6],\"yticks\":[1,2,3,4,5,6]}'></div>",
+   "exp": "Hai cột đèn trên bờ hồ là hai đỉnh kề nhau $B,C$ của hình vuông nên $BC$ song song với $(d)$, giả sử $BC$ nằm trên đường thẳng $y=-x+m$. Hoành độ giao điểm của đường thẳng này với đồ thị là nghiệm của $(-x+m)(x-1)=2x+1$, tức $x^2-(m-1)x+(m+1)=0$. Theo Vi-ét, $x_B+x_C=m-1$, $x_Bx_C=m+1$, do đó $BC^2=2\\left[(m-1)^2-4(m+1)\\right]=2\\left(m^2-6m-3\\right)$. Cạnh còn lại nằm trên $(d)$ nên $BC$ bằng khoảng cách giữa hai đường thẳng song song: $BC=\\dfrac{|m-4|}{\\sqrt{2}}$. Suy ra $2(m^2-6m-3)=\\dfrac{(m-4)^2}{2}\\Leftrightarrow 3m^2-16m-28=0\\Leftrightarrow m=\\dfrac{8+2\\sqrt{37}}{3}$ (nhận, ứng với hình vẽ) hoặc $m=\\dfrac{8-2\\sqrt{37}}{3}$ (loại vì hình vuông không nằm ở vị trí như hình). Với $m=\\dfrac{8+2\\sqrt{37}}{3}$ ta được $BC=\\dfrac{\\sqrt{82-8\\sqrt{37}}}{3}\\approx 1{,}92$.",
+   "error": "",
+   "ans": "1,92|1.92",
+   "saKind": "auto"
+  },
+  {
+   "id": "q_mt5kb0hm_92s4i",
+   "tag": "chuong1_bai4",
+   "lvl": 3,
+   "q": "(Chuyên Thái Bình 2025) Cho hàm số $y=\\dfrac{ax^2+bx+c}{x+d}$ có đồ thị như hình vẽ dưới đây. Tính $a+b+c+d$. <div data-mathviz='{\"type\":\"dothi\",\"pieces\":[{\"fn\":\"-x^2/(x+1)\",\"from\":-5,\"to\":-1.22},{\"fn\":\"-x^2/(x+1)\",\"from\":-0.85,\"to\":4},{\"fn\":\"-x+1\",\"from\":-5,\"to\":4}],\"asymptotes\":{\"v\":[-1]},\"points\":[{\"x\":-2,\"y\":4},{\"x\":0,\"y\":0}],\"xmin\":-5,\"xmax\":4,\"ymin\":-6,\"ymax\":7,\"xticks\":[-2,-1],\"yticks\":[4]}'></div>",
+   "exp": "Từ đồ thị, tiệm cận đứng là $x=-1$ nên $d=1$. Ta có $y'=\\dfrac{ax^2+2ax+b-c}{(x+1)^2}$. Đồ thị đạt cực tiểu tại điểm $(-2;4)$ nên $y'(-2)=0$, tức $4a-4a+b-c=0$, suy ra $b=c$. Khi đó $y'=\\dfrac{ax(x+2)}{(x+1)^2}$, nên điểm cực trị còn lại có hoành độ $x=0$. Đồ thị cho thấy điểm cực đại là gốc toạ độ $O(0;0)$, do đó $y(0)=\\dfrac{c}{1}=0$, suy ra $c=0$ và $b=0$. Thay $(-2;4)$ vào hàm số: $\\dfrac{4a}{-1}=4\\Rightarrow a=-1$. Vậy hàm số là $y=\\dfrac{-x^2}{x+1}$ và $a+b+c+d=-1+0+0+1=0$.",
+   "error": "",
+   "ans": "0",
+   "saKind": "auto"
+  }
+ ],
+ "_templates": [],
+ "_curriculum": [
+  {
+   "chuong": "chuong1",
+   "ten": "Chương I — Ứng dụng đạo hàm",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong1_bai1",
+     "Bài 1: Tính đơn điệu và cực trị của hàm số"
+    ],
+    [
+     "chuong1_bai2",
+     "Bài 2: Giá trị lớn nhất và nhỏ nhất của hàm số"
+    ],
+    [
+     "chuong1_bai3",
+     "Bài 3: Đường tiệm cận của đồ thị hàm số"
+    ],
+    [
+     "chuong1_bai4",
+     "Bài 4: Khảo sát sự biến thiên và vẽ đồ thị"
+    ],
+    [
+     "chuong1_bai5",
+     "Bài 5: Ứng dụng đạo hàm giải quyết vấn đề thực tiễn"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong2",
+   "ten": "Chương II — Vectơ và tọa độ trong không gian",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong2_bai6",
+     "Bài 6: Vectơ trong không gian"
+    ],
+    [
+     "chuong2_bai7",
+     "Bài 7: Hệ tọa độ trong không gian"
+    ],
+    [
+     "chuong2_bai8",
+     "Bài 8: Biểu thức tọa độ các phép toán vectơ"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong3",
+   "ten": "Chương III — Các số đặc trưng đo mức độ phân tán",
+   "tap": "Tập 1",
+   "bai": [
+    [
+     "chuong3_bai9",
+     "Bài 9: Khoảng biến thiên và khoảng tứ phân vị"
+    ],
+    [
+     "chuong3_bai10",
+     "Bài 10: Phương sai và độ lệch chuẩn"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong4",
+   "ten": "Chương IV — Nguyên hàm và tích phân",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong4_bai11",
+     "Bài 11: Nguyên hàm"
+    ],
+    [
+     "chuong4_bai12",
+     "Bài 12: Tích phân"
+    ],
+    [
+     "chuong4_bai13",
+     "Bài 13: Ứng dụng hình học của tích phân"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong5",
+   "ten": "Chương V — Phương pháp tọa độ trong không gian",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong5_bai14",
+     "Bài 14: Phương trình mặt phẳng"
+    ],
+    [
+     "chuong5_bai15",
+     "Bài 15: Phương trình đường thẳng"
+    ],
+    [
+     "chuong5_bai16",
+     "Bài 16: Công thức tính góc trong không gian"
+    ],
+    [
+     "chuong5_bai17",
+     "Bài 17: Phương trình mặt cầu"
+    ]
+   ]
+  },
+  {
+   "chuong": "chuong6",
+   "ten": "Chương VI — Xác suất có điều kiện",
+   "tap": "Tập 2",
+   "bai": [
+    [
+     "chuong6_bai18",
+     "Bài 18: Xác suất có điều kiện"
+    ],
+    [
+     "chuong6_bai19",
+     "Bài 19: Công thức xác suất toàn phần và công thức Bayes"
+    ]
+   ]
+  }
+ ]
+}
