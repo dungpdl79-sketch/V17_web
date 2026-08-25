@@ -235,8 +235,7 @@
             const container = document.getElementById('eggs-container');
             container.innerHTML = '';
             
-            // --- BẮT ĐẦU PHẦN CODE ĐẢO ĐÁP ÁN ---
-            // 1. Gắn cờ (true/false) để biết đáp án nào là đúng trước khi đảo
+            // 1. Chuẩn bị mảng đáp án
             let shuffledOptions = qData.options.map((opt, index) => {
                 return {
                     text: opt,
@@ -244,19 +243,20 @@
                 };
             });
 
-            // 2. Đảo ngẫu nhiên vị trí các đáp án trong mảng
-            shuffledOptions.sort(() => Math.random() - 0.5);
+            // 2. Thuật toán Fisher-Yates xáo trộn cực mạnh
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
             
-            // 3. Đưa các đáp án đã đảo ra màn hình
+            // 3. Đưa đáp án ra màn hình
             shuffledOptions.forEach((optData) => {
                 const btn = document.createElement('button');
                 btn.className = 'egg-btn';
                 btn.innerHTML = optData.text;
-                // Truyền trực tiếp trạng thái đúng/sai vào hàm checkAnswer
                 btn.onclick = () => checkAnswer(optData.isCorrect, btn);
                 container.appendChild(btn);
             });
-            // --- KẾT THÚC PHẦN CODE ĐẢO ĐÁP ÁN ---
 
             if (window.MathJax && window.MathJax.typesetPromise) {
                 window.MathJax.typesetPromise();
@@ -289,7 +289,6 @@
             }
         }
 
-        // Cập nhật lại hàm checkAnswer để nhận giá trị đúng/sai thay vì số thứ tự
         function checkAnswer(isCorrect, btnElement) {
             document.querySelectorAll('.egg-btn').forEach(btn => btn.disabled = true);
             const feedback = document.getElementById('feedback');
