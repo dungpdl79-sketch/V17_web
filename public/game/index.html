@@ -4,20 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Săn Trứng Khủng Long Toán Học</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=HYYd_NmdcLbcwZaTDU-UJlsbSRTbY4VraByScpb_OZHvjPzGtc1B3x08kMfmP4G2Ikvski56kyimRItMFzDaY3Q9bvRzomshAqEfKKMZP97FhLthI7J5JGNbYEa0GIPghQ516goexaPGPnBw1Jb8qJo215wyGjCK6UCPn6EHkDtGzstVvJLhSg97sF3WnTjzk-a5qt0I75X6VBcWTMUldGjCm5hhG4ph4jpqbua-6rhmsBuZkiloAwoAf0FMCMf5ruDgebBpq800RcEm9D5xfA" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDFmMTg4MjMwYjNlZGU4NzhlMjI1MGJkNyZ0cz00OTY1OTkmcD1mcyZjaWQ9MSZzaWc9YjFiYjZkYzIwNzFmYzVhZjBiNmEzNWY4Mzg3MjliYjZhMzAyODI2NjFlY2ZkMWNiM2JkZjQ3NmRmY2NhMjVhZCZ2PTA"/><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start;
-            min-height: 100vh; width: 100vw; 
-<<<<<<< HEAD
-            overflow-y: auto; /* Cho phép cuộn mượt mà khi xoay ngang */
-=======
-            overflow-y: auto;
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
+            align-items: center; justify-content: center;
+            height: 100vh; width: 100vw; overflow: hidden;
             transition: background 1s ease-in-out;
             color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
@@ -28,100 +23,59 @@
         .bg-desert { background: linear-gradient(to bottom, #b97a00, #ffcc80); }
         .bg-cave { background: linear-gradient(to bottom, #212121, #607d8b); }
 
-<<<<<<< HEAD
-        /* Giao diện tự động co giãn theo chiều ngang/dọc của màn hình */
-=======
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
+        /* Giao diện bung Full 100% màn hình */
         #game-container {
-            width: 100%; max-width: 900px;
-            min-height: 100vh;
+            width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.4);
-            padding: 20px 15px; box-sizing: border-box;
+            padding: 3vh 5vw; box-sizing: border-box;
             display: flex; flex-direction: column;
-            position: relative; justify-content: space-between;
+            position: relative;
         }
 
+        /* Nút Kích hoạt Toàn màn hình */
         #fullscreen-btn {
-            position: absolute; top: 15px; right: 15px;
+            position: absolute; top: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.2); color: white;
-            border: 2px solid white; padding: 6px 12px; border-radius: 8px;
-            font-size: 0.9rem; cursor: pointer; font-weight: bold;
+            border: 2px solid white; padding: 10px 15px; border-radius: 8px;
+            font-size: 1.2em; cursor: pointer; font-weight: bold;
             transition: 0.3s; z-index: 100;
         }
         #fullscreen-btn:hover { background: white; color: black; }
 
-<<<<<<< HEAD
-        /* Tiêu đề và thanh máu tối ưu cho mobile xoay ngang */
-        h1 { text-align: center; font-size: 1.6rem; margin: 10px 0; color: #ffd700; text-shadow: 0 0 10px #ff9800; }
-        #hud { display: flex; justify-content: space-around; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 8px; width: 100%; }
+        /* Phóng to tiêu đề và thanh máu */
+        h1 { text-align: center; font-size: 4vh; margin-top: 0; color: #ffd700; text-shadow: 0 0 15px #ff9800; }
+        #hud { display: flex; justify-content: space-between; font-size: 3vh; font-weight: bold; margin-bottom: 3vh; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 1vh; }
 
-        /* Hộp câu hỏi */
-=======
-        h1 { text-align: center; font-size: 1.6rem; margin: 10px 0; color: #ffd700; text-shadow: 0 0 10px #ff9800; }
-        #hud { display: flex; justify-content: space-around; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed rgba(255,255,255,0.5); padding-bottom: 8px; width: 100%; }
-
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
+        /* Phóng to hộp câu hỏi cho học sinh bàn cuối */
         .question-box {
             background: rgba(255, 255, 255, 0.95);
             color: #111; text-shadow: none;
-            padding: 15px; border-radius: 15px;
-            font-size: 1.2rem; 
+            padding: 4vh 2vw; border-radius: 20px;
+            font-size: 4.5vh; /* Chữ cực lớn */
             font-weight: 600;
             text-align: center;
-            margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.3);
-            width: 100%; box-sizing: border-box;
+            margin-bottom: 5vh; box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.5);
         }
 
-<<<<<<< HEAD
-        /* Khung chứa trứng: Tự động dàn hàng ngang khi xoay ngang điện thoại, xếp lưới khi xoay dọc */
-=======
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
-        .eggs-container { 
-            display: flex; 
-            flex-wrap: wrap;
-            gap: 12px; 
-            justify-content: center; 
-            align-items: center;
-            width: 100%;
-            margin: 0 auto;
-            flex-grow: 1;
-        }
+        .eggs-container { display: flex; gap: 4vw; flex-wrap: wrap; justify-content: center; }
 
-<<<<<<< HEAD
-        /* Trứng Khủng Long linh hoạt theo chiều xoay màn hình */
+        /* Phóng to Trứng Khủng Long */
         .egg-btn {
-            flex: 1 1 42%; /* Mặc định 2 cột trên màn dọc */
-=======
-        .egg-btn {
-            flex: 1 1 42%;
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
-            max-width: 200px;
-            aspect-ratio: 3 / 3.8;
+            width: 16vw; height: 23vw;
+            max-width: 220px; max-height: 300px;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             background: radial-gradient(circle at 30% 30%, #fffde7, #ffd54f, #f57f17);
             border: none; cursor: pointer;
-            box-shadow: -3px 6px 12px rgba(0,0,0,0.4), inset -6px -10px 15px rgba(0,0,0,0.2);
-            color: #3e2723; font-weight: bold; font-size: 1rem; 
+            box-shadow: -5px 10px 15px rgba(0,0,0,0.5), inset -10px -15px 20px rgba(0,0,0,0.2);
+            color: #3e2723; font-weight: bold; font-size: 3.5vh; /* Chữ đáp án to rõ */
             display: flex; align-items: center; justify-content: center;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative; padding: 10px; text-align: center;
-            word-break: break-word;
-        }
-
-<<<<<<< HEAD
-        /* Khi xoay ngang điện thoại (màn hình rộng hơn), trứng sẽ tự dàn đều thành hàng ngang */
-=======
->>>>>>> dbd4bcdc15f53b943cd3c3676c0e53b8bed38313
-        @media (min-width: 600px) {
-            .egg-btn {
-                flex: 1 1 20%;
-                max-width: 160px;
-            }
+            position: relative; padding: 15px; text-align: center;
         }
 
         .egg-btn:hover {
-            transform: translateY(-8px) rotate(3deg);
-            box-shadow: -6px 12px 20px rgba(0,0,0,0.6), inset -6px -10px 15px rgba(0,0,0,0.2);
+            transform: translateY(-15px) rotate(5deg);
+            box-shadow: -10px 20px 30px rgba(0,0,0,0.7), inset -10px -15px 20px rgba(0,0,0,0.2);
         }
 
         .egg-btn[disabled] { cursor: not-allowed; filter: grayscale(80%); opacity: 0.7; }
@@ -134,7 +88,7 @@
         .spin-effect { animation: spinEgg 0.6s ease-in-out forwards; }
 
         .star-particle {
-            position: fixed; font-size: 30px; pointer-events: none; z-index: 1000;
+            position: fixed; font-size: 40px; pointer-events: none; z-index: 1000;
             animation: explode 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
@@ -143,16 +97,16 @@
             100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
         }
 
-        #feedback { margin: 10px 0; font-size: 1.3rem; text-align: center; min-height: 35px; font-weight: bold; z-index: 10; }
-        .correct { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-        .wrong { color: #ff3333; text-shadow: 0 0 10px #ff3333; }
+        #feedback { margin-top: 4vh; font-size: 5vh; text-align: center; min-height: 6vh; font-weight: bold; z-index: 10; }
+        .correct { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
+        .wrong { color: #ff3333; text-shadow: 0 0 20px #ff3333; }
         
         #game-over {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.95); display: none; flex-direction: column;
             align-items: center; justify-content: center; z-index: 100;
         }
-        #game-over button { padding: 12px 30px; font-size: 1.4rem; border-radius: 12px; cursor: pointer; background: #4caf50; color: white; border: none; font-weight: bold; }
+        #game-over button { padding: 2vh 4vw; font-size: 4vh; border-radius: 15px; cursor: pointer; background: #4caf50; color: white; border: none; font-weight: bold; }
     </style>
 </head>
 <body class="bg-jungle" id="body-bg">
@@ -173,12 +127,13 @@
         <div id="feedback"></div>
 
         <div id="game-over">
-            <h2 id="end-title" style="font-size: 2.5rem;">KẾT THÚC</h2>
-            <div id="final-score" style="font-size: 1.3rem; margin-bottom: 20px;">Trứng thu thập: 0</div>
+            <h2 id="end-title" style="font-size: 8vh;">KẾT THÚC</h2>
+            <div id="final-score" style="font-size: 5vh; margin-bottom: 5vh;">Trứng thu thập: 0</div>
             <button onclick="startGame()">CHƠI LẠI</button>
         </div>
     </div>
 
+    <!-- Tải sẵn âm thanh -->
     <audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/1936/1936-preview.mp3" preload="auto"></audio>
     <audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/946/946-preview.mp3" preload="auto"></audio>
 
@@ -219,12 +174,24 @@
         ];
 
         const backgrounds = ['bg-jungle', 'bg-volcano', 'bg-ice', 'bg-desert', 'bg-cave'];
-        let availableQuestions = [];
+        let gameQuestions = [];
+        let currentQuestionIndex = 0;
         let score = 0, hp = 3;
 
         const soundCorrect = document.getElementById('sound-correct');
         const soundWrong = document.getElementById('sound-wrong');
 
+        // Trộn một bản sao của mảng để không làm thay đổi dữ liệu gốc.
+        function shuffleArray(items) {
+            const shuffled = [...items];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Hàm bật/tắt chế độ toàn màn hình
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -241,7 +208,9 @@
 
         function startGame() {
             hp = 3; score = 0;
-            availableQuestions = [...questions];
+            currentQuestionIndex = 0;
+            // Mỗi lượt chơi có một thứ tự câu hỏi mới.
+            gameQuestions = shuffleArray(questions);
             document.getElementById('hp').innerText = hp;
             document.getElementById('score').innerText = score;
             document.getElementById('game-over').style.display = 'none';
@@ -250,41 +219,34 @@
         }
 
         function nextQuestion() {
-            if (hp <= 0 || availableQuestions.length === 0) {
+            if (hp <= 0 || currentQuestionIndex >= gameQuestions.length) {
                 endGame(hp > 0); return;
             }
 
             document.getElementById('body-bg').className = backgrounds[Math.floor(Math.random() * backgrounds.length)];
             document.getElementById('feedback').innerText = '';
 
-            const randIndex = Math.floor(Math.random() * availableQuestions.length);
-            const qData = availableQuestions.splice(randIndex, 1)[0];
+            const qData = gameQuestions[currentQuestionIndex];
+            currentQuestionIndex++;
 
             document.getElementById('question-text').innerHTML = qData.q;
             
             const container = document.getElementById('eggs-container');
             container.innerHTML = '';
             
-            // 1. Chuẩn bị mảng đáp án
-            let shuffledOptions = qData.options.map((opt, index) => {
-                return {
-                    text: opt,
-                    isCorrect: index === qData.correctIndex
-                };
-            });
+            // Gắn cờ đáp án đúng trước khi trộn để luôn chấm chính xác.
+            const shuffledOptions = shuffleArray(
+                qData.options.map((text, originalIndex) => ({
+                    text,
+                    isCorrect: originalIndex === qData.correctIndex
+                }))
+            );
 
-            // 2. Thuật toán Fisher-Yates xáo trộn cực mạnh
-            for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-            }
-            
-            // 3. Đưa đáp án ra màn hình
-            shuffledOptions.forEach((optData) => {
+            shuffledOptions.forEach((option) => {
                 const btn = document.createElement('button');
                 btn.className = 'egg-btn';
-                btn.innerHTML = optData.text;
-                btn.onclick = () => checkAnswer(optData.isCorrect, btn);
+                btn.innerHTML = option.text;
+                btn.onclick = () => checkAnswer(option.isCorrect, btn);
                 container.appendChild(btn);
             });
 
@@ -298,17 +260,17 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 20; i++) {
                 const star = document.createElement('div');
                 star.innerHTML = ['⭐', '🌟', '✨'][Math.floor(Math.random() * 3)];
                 star.className = 'star-particle';
                 document.body.appendChild(star);
 
-                star.style.left = `${centerX - 15}px`;
-                star.style.top = `${centerY - 15}px`;
+                star.style.left = `${centerX - 20}px`;
+                star.style.top = `${centerY - 20}px`;
 
                 const angle = Math.random() * 2 * Math.PI;
-                const distance = Math.random() * 150 + 50;
+                const distance = Math.random() * 200 + 100;
                 const tx = Math.cos(angle) * distance;
                 const ty = Math.sin(angle) * distance;
 
@@ -332,7 +294,7 @@
                 feedback.className = 'correct';
                 
                 btnElement.style.background = 'radial-gradient(circle at 30% 30%, #fff, #4caf50, #1b5e20)';
-                btnElement.innerHTML = '<span style="font-size: 2.2rem;">🐣</span>';
+                btnElement.innerHTML = '<span style="font-size: 5vh;">🐣</span>';
                 burstStars(btnElement);
                 
                 score++;
