@@ -18,7 +18,7 @@ const localBindingConfig = {
   ? [
       {
         binding: "dinhcaotritue_db",
-                        database_name: "v17-db",
+        database_name: "v17-db",
         database_id: "4e75920f-bd3c-4dee-bceb-58b0f3186a50",
       },
     ]
