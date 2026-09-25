@@ -282,7 +282,7 @@ function ExamTimer({ endTime, onTimeOut }: { endTime: number; onTimeOut: () => v
   );
 }
 
-export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction }: any) {
+export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction, setSharedPasswordAction, isAdmin }: any) {
   const [data, setData] = useState<Data>({ user: { ...initialUser, role: initialUser.role || null }, classes: [], exams: [], attempts: [] });
   const [active, setActive] = useState(initialUser?.role === "student" ? "Bài cần làm" : "Studio đề");
   const [busy, setBusy] = useState(false);
@@ -370,7 +370,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
       <aside style={{ width: "270px", background: "#153d8a", color: "#fff", display: "flex", flexDirection: "column", height: "100vh", overflowY: "auto", flexShrink: 0, borderRight: "1px solid #1e3a8a" }}>
         <div style={{ padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
           <h2 style={{ color: "#fbbf24", fontSize: "24px", fontWeight: 900, margin: "0 0 8px 0", textTransform: "uppercase", lineHeight: "1.2", textShadow: "0 2px 4px rgba(0,0,0,0.3)", fontFamily: "'Montserrat', sans-serif" }}>ĐỈNH CAO<br />TRÍ TUỆ</h2>
-          <p style={{ color: "#fbbf24", fontSize: "14px", fontWeight: "bold", margin: "12px 0 0", textTransform: "uppercase" }}>{teacher ? "ADMIN" : "HỌC SINH"} : {data.user.name}</p>
+          <p style={{ color: "#fbbf24", fontSize: "14px", fontWeight: "bold", margin: "12px 0 0", textTransform: "uppercase" }}>{teacher ? (isAdmin ? "QUẢN TRỊ" : "GIÁO VIÊN") : "HỌC SINH"} : {data.user.name}</p>
         </div>
 
         <nav style={{ padding: "16px 12px", flex: 1, display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -438,7 +438,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
           )}
 
           {teacher ? (
-            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} />
+            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} setSharedPasswordAction={setSharedPasswordAction} isAdmin={isAdmin} />
           ) : (
             <Student active={active} data={data} busy={busy} act={act} answers={answers} setAnswers={setAnswers} triggerMath={triggerMath} />
           )}
@@ -451,7 +451,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
 // ==========================================
 // KHU VỰC GIÁO VIÊN
 // ==========================================
-function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction }: any) {
+function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction, setSharedPasswordAction, isAdmin }: any) {
   const [name, setName] = useState("");
   const [exam, setExam] = useState({ classId: "", duration: 45 });
   const [previewData, setPreviewData] = useState<any>(null);
@@ -821,9 +821,10 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   if (active === "Sao lưu")
     return (
       <div>
+        {isAdmin ? (
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
-          <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>🔑 Cài đặt Mật khẩu Giáo viên</h3>
-          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Bảo vệ tài khoản quản trị. Mật khẩu được mã hóa trên máy chủ.</p>
+          <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>🔑 Mật khẩu Quản trị & Giáo viên</h3>
+          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Mật khẩu được mã hóa trên máy chủ. Giáo viên đăng nhập bằng họ tên + mật khẩu chung bên dưới.</p>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <button
               style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
@@ -843,7 +844,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
                 }
               }}
             >
-              Đổi mật khẩu mới
+              Đổi mật khẩu Quản trị
             </button>
 
             <button
@@ -863,8 +864,33 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
             >
               Khôi phục về mặc định
             </button>
+            <button
+              style={{ background: "#166534", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
+              disabled={busy}
+              onClick={async () => {
+                const newPass = prompt("Đặt MẬT KHẨU CHUNG cho Giáo viên (ít nhất 8 ký tự).\nGửi mật khẩu này cho các thầy cô để đăng nhập:");
+                if (newPass === null) return;
+                if (newPass.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
+                if (typeof setSharedPasswordAction !== "function") return alert("Máy chủ chưa bật chức năng này.");
+                try {
+                  const kq = await setSharedPasswordAction(newPass.trim());
+                  if (kq?.error) return alert("❌ " + kq.error);
+                  alert("✅ Đã đặt mật khẩu chung cho Giáo viên.");
+                } catch {
+                  alert("❌ Không kết nối được máy chủ. Mật khẩu chưa được đặt.");
+                }
+              }}
+            >
+              👨‍🏫 Đặt mật khẩu chung Giáo viên
+            </button>
           </div>
         </div>
+        ) : (
+          <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px" }}>
+            <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>🔑 Mật khẩu</h3>
+            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>Mật khẩu chung Giáo viên do Quản trị quản lý. Cần đổi mật khẩu, thầy cô vui lòng liên hệ Quản trị.</p>
+          </div>
+        )}
 
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
           <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>💾 Sao lưu kết quả lớp học</h3>
@@ -1332,6 +1358,9 @@ function printPdf(rows: any[], exams: any[]) {
 // ==========================================
 // ĐĂNG NHẬP
 // ==========================================
+const loginInput: React.CSSProperties = { width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff", boxSizing: "border-box" };
+const loginTitle: React.CSSProperties = { fontSize: "13px", fontWeight: "bold", color: "#1e3a8a", letterSpacing: "1px", textTransform: "uppercase" };
+
 export function LoginForm({ onLogin }: any) {
   const [name, setName] = useState("");
   const [classCode, setClassCode] = useState("");
@@ -1383,18 +1412,20 @@ export function LoginForm({ onLogin }: any) {
     }
   };
 
-  const handleTeacherLogin = async () => {
+  const [gvName, setGvName] = useState("");
+  const [gvPassword, setGvPassword] = useState("");
+
+  // QUẢN TRỊ: chỉ gửi mật khẩu, máy chủ tự gán tài khoản Quản trị.
+  const handleAdminLogin = async () => {
     setError("");
     if (!password) {
-      setError("❌ Nhập mật khẩu giáo viên vào ô bên trên trước khi bấm nút.");
+      setError("❌ Nhập mật khẩu Quản trị vào ô bên trên trước khi bấm nút.");
       return;
     }
     setBusy(true);
     try {
       const formData = new FormData();
-      formData.append("email", TEACHER_ACCOUNT.email);
-      formData.append("name", TEACHER_ACCOUNT.name);
-      formData.append("roleType", "teacher");
+      formData.append("roleType", "admin");
       formData.append("password", password);
       const res = await onLogin(formData);
       if (res?.error) setError(res.error);
@@ -1405,15 +1436,47 @@ export function LoginForm({ onLogin }: any) {
     }
   };
 
+  // GIÁO VIÊN: họ tên + mật khẩu chung do Quản trị đặt.
+  const handleGvLogin = async () => {
+    setError("");
+    const finalName = gvName.trim().replace(/\s+/g, " ");
+    if (finalName.split(" ").length < 2 || /\d/.test(finalName)) {
+      setError("❌ Họ và tên Giáo viên phải từ 2 chữ trở lên, không có số (ví dụ: Nguyễn Văn An).");
+      return;
+    }
+    const isCapitalized = finalName.split(" ").every((w) => w.length > 0 && w[0] === w[0].toLocaleUpperCase("vi-VN") && w[0] !== w[0].toLocaleLowerCase("vi-VN"));
+    if (!isCapitalized) {
+      setError("❌ Viết hoa chữ cái đầu của mỗi từ trong tên (ví dụ: Nguyễn Văn An).");
+      return;
+    }
+    if (!gvPassword) {
+      setError("❌ Nhập mật khẩu Giáo viên.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const formData = new FormData();
+      formData.append("roleType", "teacher");
+      formData.append("name", finalName);
+      formData.append("password", gvPassword);
+      const res = await onLogin(formData);
+      if (res?.error) setError(res.error);
+    } catch {
+      setError("❌ Không kết nối được máy chủ.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleForgotPassword = () => {
-    // Mật khẩu không còn khôi phục qua cookie (học sinh có thể lợi dụng).
-    // Quản trị viên đặt lại mật khẩu gốc trong Cloudflare.
     alert(
-      "Cách lấy lại mật khẩu Giáo viên:\n\n" +
-        "1. Đăng nhập dash.cloudflare.com (tài khoản quản trị).\n" +
-        "2. Workers & Pages → v17-dinhcaotritue → Settings → Variables and Secrets.\n" +
-        "3. Sửa biến bí mật TEACHER_PASSWORD thành mật khẩu mới rồi bấm Deploy.\n\n" +
-        "Sau đó đăng nhập bằng mật khẩu mới vừa đặt."
+      "QUÊN MẬT KHẨU\n\n" +
+        "• Giáo viên: liên hệ Quản trị để được cấp lại mật khẩu chung Giáo viên.\n\n" +
+        "• Quản trị:\n" +
+        "  1. Đăng nhập dash.cloudflare.com.\n" +
+        "  2. Workers & Pages → v17-dinhcaotritue → Settings → Variables and Secrets.\n" +
+        "  3. Sửa biến bí mật TEACHER_PASSWORD thành mật khẩu mới rồi bấm Deploy.\n" +
+        "  Sau đó đăng nhập Quản trị bằng mật khẩu mới vừa đặt."
     );
   };
 
@@ -1427,22 +1490,36 @@ export function LoginForm({ onLogin }: any) {
 
         {error && <div style={{ background: "#fee2e2", color: "#b91c1c", padding: "14px", borderRadius: "10px", marginBottom: "20px", fontWeight: "bold", border: "1px solid #fca5a5" }}>{error}</div>}
 
-        <div style={{ display: "flex", gap: "16px", marginTop: "20px", marginBottom: "20px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "16px", marginTop: "20px", marginBottom: "12px", flexWrap: "wrap" }}>
           <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#f8fafc", padding: "20px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
+            <div style={loginTitle}>Quản trị</div>
             <input
               type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleTeacherLogin(); }}
-              placeholder="Nhập mật khẩu Giáo viên..."
-              style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff" }}
+              onKeyDown={(e) => { if (e.key === "Enter") handleAdminLogin(); }}
+              placeholder="Nhập mật khẩu Quản trị..."
+              style={loginInput}
             />
-            <button type="button" onClick={handleTeacherLogin} disabled={busy} style={{ width: "100%", padding: "14px", background: "#eff6ff", color: "#1e3a8a", border: "2px solid #1e3a8a", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>👨‍🏫 Quản Trị</button>
+            <button type="button" onClick={handleAdminLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#eff6ff", color: "#1e3a8a", border: "2px solid #1e3a8a", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🛡️ Quản Trị</button>
           </div>
 
-          <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#fef2f2", padding: "20px", borderRadius: "16px", border: "1px solid #fca5a5" }}>
-            <div style={{ height: "46px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "#b91c1c", fontWeight: "bold" }}>Quên mật khẩu Giáo viên?</div>
-            <button type="button" onClick={handleForgotPassword} disabled={busy} style={{ width: "100%", padding: "14px", background: "#fff", color: "#b91c1c", border: "2px solid #b91c1c", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🔑 Quên mật khẩu</button>
+          <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#f0fdf4", padding: "20px", borderRadius: "16px", border: "1px solid #bbf7d0" }}>
+            <div style={{ ...loginTitle, color: "#166534" }}>Giáo viên</div>
+            <input
+              type="text" value={gvName} onChange={(e) => setGvName(e.target.value)}
+              placeholder="Họ và tên Giáo viên"
+              style={loginInput}
+            />
+            <input
+              type="password" value={gvPassword} onChange={(e) => setGvPassword(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleGvLogin(); }}
+              placeholder="Nhập mật khẩu Giáo viên..."
+              style={loginInput}
+            />
+            <button type="button" onClick={handleGvLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#dcfce7", color: "#166534", border: "2px solid #166534", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>👨‍🏫 Giáo viên</button>
           </div>
         </div>
+
+        <button type="button" onClick={handleForgotPassword} disabled={busy} style={{ width: "100%", padding: "12px", marginBottom: "8px", background: "#fff", color: "#b91c1c", border: "2px solid #b91c1c", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", cursor: busy ? "not-allowed" : "pointer" }}>🔑 Quên mật khẩu</button>
 
         <div style={{ display: "flex", alignItems: "center", margin: "24px 0" }}>
           <hr style={{ flex: 1, border: "none", borderTop: "1px solid #cbd5e1" }} />

@@ -28,6 +28,7 @@ export const TEACHER_ACCOUNT = { email: "thuyetdung@gmail.com", name: "Hồ Thuy
 export const SESSION_COOKIE = "user_session";
 export const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 ngày
 const STUDENT_EMAIL_RE = /^[a-z]{2,60}\.(1[0-2]|[6-9])[a-z]{1,5}\d{0,3}@student\.v17$/;
+const TEACHER_EMAIL_RE = /^[a-z]{4,60}@teacher\.v17$/;
 const PBKDF2_ITERATIONS = 100_000; // mức tối đa Cloudflare Workers cho phép
 
 const enc = new TextEncoder();
@@ -163,6 +164,30 @@ export function isValidStudentEmail(email: string) {
   return STUDENT_EMAIL_RE.test(email);
 }
 
+// Giáo viên thường: email nội bộ tạo từ họ tên, ví dụ "nguyenvanan@teacher.v17".
+export function isValidTeacherEmail(email: string) {
+  return TEACHER_EMAIL_RE.test(email);
+}
+
+export function isAdminEmail(email: string | null | undefined) {
+  return String(email || "").toLowerCase() === TEACHER_ACCOUNT.email;
+}
+
+// Họ tên -> email nội bộ (bỏ dấu, bỏ khoảng trắng). Chạy trên máy chủ nên trình duyệt không tự khai được.
+export function teacherEmailFromName(name: string) {
+  const clean = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d").replace(/[^a-zA-Z]/g, "").toLowerCase();
+  return `${clean}@teacher.v17`;
+}
+
+// Kiểm tra họ tên: từ 2 chữ trở lên, không có số, viết hoa chữ cái đầu mỗi từ.
+export function normalizePersonName(raw: string): string | null {
+  const name = String(raw || "").replace(/[<>]/g, "").trim().replace(/\s+/g, " ").slice(0, 100);
+  const words = name.split(" ");
+  if (words.length < 2 || /\d/.test(name)) return null;
+  const ok = words.every((w) => w.length > 0 && w[0] === w[0].toLocaleUpperCase("vi-VN") && w[0] !== w[0].toLocaleLowerCase("vi-VN"));
+  return ok ? name : null;
+}
+
 // ---------------- mật khẩu giáo viên ----------------
 async function pbkdf2(password: string, salt: Uint8Array, iterations: number) {
   const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"]);
@@ -197,20 +222,39 @@ async function storedOverride(): Promise<{ salt: string; hash: string; iter: num
 // Chống dò mật khẩu: đếm số lần sai trong bộ nhớ máy chủ (theo IP).
 const failures = new Map<string, { n: number; until: number }>();
 
+function lockedMessage(ip: string): string | null {
+  const f = failures.get(ip);
+  const now = Date.now();
+  if (f && f.until > now) return `❌ Nhập sai quá nhiều lần. Thử lại sau ${Math.ceil((f.until - now) / 1000)} giây.`;
+  return null;
+}
+
+async function recordResult(ip: string, ok: boolean) {
+  if (ok) {
+    failures.delete(ip);
+    return;
+  }
+  const now = Date.now();
+  const n = (failures.get(ip)?.n || 0) + 1;
+  // Sai 5 lần -> khóa 1 phút, sai tiếp thì thời gian khóa tăng dần (tối đa 30 phút).
+  const until = n >= 5 ? now + Math.min(30 * 60_000, 60_000 * 2 ** (n - 5)) : 0;
+  failures.set(ip, { n, until });
+  if (failures.size > 5000) failures.clear();
+  await new Promise((r) => setTimeout(r, 600));
+}
+
+// Mật khẩu QUẢN TRỊ (tài khoản thuyetdung@gmail.com)
 export async function checkTeacherPassword(password: string, ip: string): Promise<{ ok: true } | { ok: false; error: string }> {
   const envPwd = envPassword();
   if (!envPwd) {
     return {
       ok: false,
       error:
-        "❌ Chưa cài mật khẩu Giáo viên. Quản trị viên vào Cloudflare → v17-dinhcaotritue → Settings → Variables and Secrets, thêm biến bí mật TEACHER_PASSWORD.",
+        "❌ Chưa cài mật khẩu Quản trị. Vào Cloudflare → v17-dinhcaotritue → Settings → Variables and Secrets, thêm biến bí mật TEACHER_PASSWORD.",
     };
   }
-  const now = Date.now();
-  const f = failures.get(ip);
-  if (f && f.until > now) {
-    return { ok: false, error: `❌ Nhập sai quá nhiều lần. Thử lại sau ${Math.ceil((f.until - now) / 1000)} giây.` };
-  }
+  const locked = lockedMessage(ip);
+  if (locked) return { ok: false, error: locked };
 
   let ok = false;
   const override = await storedOverride();
@@ -219,18 +263,34 @@ export async function checkTeacherPassword(password: string, ip: string): Promis
   } else {
     ok = safeEqual(await sha256("v17-pwd:" + password), await sha256("v17-pwd:" + envPwd));
   }
+  await recordResult(ip, ok);
+  return ok ? { ok: true } : { ok: false, error: "❌ Sai mật khẩu Quản trị!" };
+}
 
-  if (ok) {
-    failures.delete(ip);
-    return { ok: true };
+// Mật khẩu CHUNG cho giáo viên (Quản trị đặt trong phần mềm, lưu dạng băm trong D1)
+export async function checkSharedTeacherPassword(password: string, ip: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  const raw = await getSetting("gv_shared_pwd");
+  if (!raw) return { ok: false, error: "❌ Quản trị chưa đặt mật khẩu chung cho Giáo viên. Hãy liên hệ Quản trị." };
+  const locked = lockedMessage(ip);
+  if (locked) return { ok: false, error: locked };
+  let ok = false;
+  try {
+    const o = JSON.parse(raw);
+    ok = safeEqual(await pbkdf2(password, fromB64url(o.salt), o.iter), o.hash);
+  } catch {
+    ok = false;
   }
-  const n = (f?.n || 0) + 1;
-  // Sai 5 lần -> khóa 1 phút, sai tiếp thì thời gian khóa tăng dần (tối đa 30 phút).
-  const until = n >= 5 ? now + Math.min(30 * 60_000, 60_000 * 2 ** (n - 5)) : 0;
-  failures.set(ip, { n, until });
-  if (failures.size > 5000) failures.clear();
-  await new Promise((r) => setTimeout(r, 600));
-  return { ok: false, error: "❌ Sai mật khẩu Giáo viên!" };
+  await recordResult(ip, ok);
+  return ok ? { ok: true } : { ok: false, error: "❌ Sai mật khẩu Giáo viên!" };
+}
+
+export async function setSharedTeacherPassword(newPass: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (newPass.length < 8) return { ok: false, error: "Mật khẩu cần ít nhất 8 ký tự." };
+  const salt = new Uint8Array(16);
+  crypto.getRandomValues(salt);
+  const hash = await pbkdf2(newPass, salt, PBKDF2_ITERATIONS);
+  await setSetting("gv_shared_pwd", JSON.stringify({ salt: b64url(salt), hash, iter: PBKDF2_ITERATIONS }));
+  return { ok: true };
 }
 
 export async function setTeacherPassword(newPass: string): Promise<{ ok: true } | { ok: false; error: string }> {
