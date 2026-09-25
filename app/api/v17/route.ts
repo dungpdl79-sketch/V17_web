@@ -2,6 +2,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { attempts, classes, exams, memberships, users } from "../../../db/schema";
+import { sessionFromRequest } from "../../auth";
 
 const now = () => new Date().toISOString();
 const makeCode = () =>
@@ -25,18 +26,12 @@ const TEACHER_EMAILS = (() => {
 })();
 const isTeacherEmail = (email: string) => TEACHER_EMAILS.includes(String(email || "").toLowerCase());
 
+// Phiên đăng nhập được ký bằng khóa bí mật (xem app/auth.ts).
+// Cookie bị sửa tay -> chữ ký sai -> coi như chưa đăng nhập.
 async function getAuthFromRequest(req?: Request) {
-  try {
-    if (req) {
-      const cookieHeader = req.headers.get("cookie") || "";
-      const match = cookieHeader.match(/user_session=([^;]+)/);
-      if (match) {
-        const session = JSON.parse(decodeURIComponent(match[1]));
-        if (session.email && session.name) return { email: String(session.email), displayName: String(session.name) };
-      }
-    }
-  } catch { /* cookie hỏng thì coi như chưa đăng nhập */ }
-  return null;
+  if (!req) return null;
+  const s = await sessionFromRequest(req);
+  return s ? { email: s.email, displayName: s.name, sessionRole: s.role } : null;
 }
 
 // =====================================================================
@@ -282,7 +277,7 @@ export async function POST(req: Request) {
       const name = clean(b.name || auth.displayName, 100);
       const muonLamGV = b.role !== "student";
       // Quyền teacher chỉ cấp cho email trong danh sách, không cấp theo yêu cầu của trình duyệt.
-      const role = muonLamGV && isTeacherEmail(auth.email) ? "teacher" : "student";
+      const role = muonLamGV && auth.sessionRole === "teacher" && isTeacherEmail(auth.email) ? "teacher" : "student";
 
       if (profile) {
         // Đã có hồ sơ thì chỉ cho đổi tên hiển thị, KHÔNG cho tự nâng quyền.
