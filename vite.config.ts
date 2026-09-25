@@ -18,9 +18,8 @@ const localBindingConfig = {
   ? [
       {
         binding: "dinhcaotritue_db",
-                database_name: "v17-db",
-        database_id: "DÁN-DATABASE-ID-MỚI-VÀO-ĐÂY",
-        database_id: "1a78b0e0-0cff-4339-871d-82dfb5c3efe1",
+                        database_name: "v17-db",
+        database_id: "4e75920f-bd3c-4dee-bceb-58b0f3186a50",
       },
     ]
   : [],
