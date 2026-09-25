@@ -267,29 +267,94 @@ export async function checkTeacherPassword(password: string, ip: string): Promis
   return ok ? { ok: true } : { ok: false, error: "❌ Sai mật khẩu Quản trị!" };
 }
 
-// Mật khẩu CHUNG cho giáo viên (Quản trị đặt trong phần mềm, lưu dạng băm trong D1)
-export async function checkSharedTeacherPassword(password: string, ip: string): Promise<{ ok: true } | { ok: false; error: string }> {
-  const raw = await getSetting("gv_shared_pwd");
-  if (!raw) return { ok: false, error: "❌ Quản trị chưa đặt mật khẩu chung cho Giáo viên. Hãy liên hệ Quản trị." };
-  const locked = lockedMessage(ip);
-  if (locked) return { ok: false, error: locked };
-  let ok = false;
+// ---------------- mật khẩu GIÁO VIÊN ----------------
+// - Mật khẩu BAN ĐẦU: Quản trị đặt một lần, dùng chung để thầy cô đăng nhập LẦN ĐẦU.
+// - Mật khẩu RIÊNG: lần đầu đăng nhập, thầy cô bắt buộc tự đặt. Từ đó chỉ mật khẩu riêng mới dùng được,
+//   mật khẩu ban đầu không còn tác dụng với người đó. Quản trị cũng không biết mật khẩu riêng
+//   (chỉ lưu dạng băm PBKDF2), nhưng có thể "cấp lại" để thầy cô đặt lại từ đầu.
+async function hashRecord(pwd: string) {
+  const salt = new Uint8Array(16);
+  crypto.getRandomValues(salt);
+  return JSON.stringify({ salt: b64url(salt), hash: await pbkdf2(pwd, salt, PBKDF2_ITERATIONS), iter: PBKDF2_ITERATIONS });
+}
+
+async function matchRecord(raw: string | null, pwd: string) {
+  if (!raw) return false;
   try {
     const o = JSON.parse(raw);
-    ok = safeEqual(await pbkdf2(password, fromB64url(o.salt), o.iter), o.hash);
+    return safeEqual(await pbkdf2(pwd, fromB64url(o.salt), o.iter), o.hash);
   } catch {
-    ok = false;
+    return false;
   }
+}
+
+const personalKey = (email: string) => "gvpwd:" + email.toLowerCase();
+
+export async function teacherHasPersonalPassword(email: string) {
+  return (await getSetting(personalKey(email))) !== null;
+}
+
+type LoginResult = { ok: true } | { ok: false; needChange: true } | { ok: false; error: string; needChange?: false };
+
+// Đăng nhập Giáo viên: trả về needChange nếu đây là lần đầu (đang dùng mật khẩu ban đầu).
+export async function checkTeacherLogin(email: string, password: string, ip: string): Promise<LoginResult> {
+  const locked = lockedMessage(ip);
+  if (locked) return { ok: false, error: locked };
+
+  const personal = await getSetting(personalKey(email));
+  if (personal) {
+    const ok = await matchRecord(personal, password);
+    await recordResult(ip, ok);
+    return ok ? { ok: true } : { ok: false, error: "❌ Sai mật khẩu Giáo viên!" };
+  }
+
+  const initial = await getSetting("gv_shared_pwd");
+  if (!initial) return { ok: false, error: "❌ Quản trị chưa đặt mật khẩu ban đầu cho Giáo viên. Hãy liên hệ Quản trị." };
+  const ok = await matchRecord(initial, password);
   await recordResult(ip, ok);
-  return ok ? { ok: true } : { ok: false, error: "❌ Sai mật khẩu Giáo viên!" };
+  return ok ? { ok: false, needChange: true } : { ok: false, error: "❌ Sai mật khẩu Giáo viên!" };
+}
+
+// Lần đầu: kiểm tra lại mật khẩu ban đầu rồi lưu mật khẩu riêng.
+export async function completeTeacherFirstLogin(
+  email: string,
+  initialPassword: string,
+  newPassword: string,
+  ip: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (await teacherHasPersonalPassword(email)) return { ok: false, error: "❌ Tài khoản này đã có mật khẩu riêng. Hãy đăng nhập bằng mật khẩu riêng." };
+  const kq = await checkTeacherLogin(email, initialPassword, ip);
+  if (!("needChange" in kq) || !kq.needChange) return { ok: false, error: "error" in kq ? kq.error : "❌ Không hợp lệ." };
+  const err = await validateNewTeacherPassword(newPassword);
+  if (err) return { ok: false, error: err };
+  await setSetting(personalKey(email), await hashRecord(newPassword));
+  return { ok: true };
+}
+
+async function validateNewTeacherPassword(newPassword: string): Promise<string | null> {
+  if (newPassword.length < 8) return "❌ Mật khẩu mới cần ít nhất 8 ký tự.";
+  if (await matchRecord(await getSetting("gv_shared_pwd"), newPassword)) return "❌ Mật khẩu mới phải KHÁC mật khẩu ban đầu do Quản trị cấp.";
+  return null;
+}
+
+// Giáo viên tự đổi mật khẩu riêng (đã đăng nhập)
+export async function setTeacherPersonalPassword(email: string, newPassword: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  const err = await validateNewTeacherPassword(newPassword);
+  if (err) return { ok: false, error: err };
+  await setSetting(personalKey(email), await hashRecord(newPassword));
+  return { ok: true };
+}
+
+// Quản trị cấp lại: xóa mật khẩu riêng -> thầy cô đăng nhập lại bằng mật khẩu ban đầu và đặt mật khẩu mới.
+export async function resetTeacherPersonalPassword(email: string): Promise<boolean> {
+  const had = await teacherHasPersonalPassword(email);
+  await deleteSetting(personalKey(email));
+  return had;
 }
 
 export async function setSharedTeacherPassword(newPass: string): Promise<{ ok: true } | { ok: false; error: string }> {
   if (newPass.length < 8) return { ok: false, error: "Mật khẩu cần ít nhất 8 ký tự." };
-  const salt = new Uint8Array(16);
-  crypto.getRandomValues(salt);
-  const hash = await pbkdf2(newPass, salt, PBKDF2_ITERATIONS);
-  await setSetting("gv_shared_pwd", JSON.stringify({ salt: b64url(salt), hash, iter: PBKDF2_ITERATIONS }));
+  await setSetting("gv_shared_pwd", await hashRecord(newPass));
   return { ok: true };
 }
 

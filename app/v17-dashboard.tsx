@@ -282,7 +282,7 @@ function ExamTimer({ endTime, onTimeOut }: { endTime: number; onTimeOut: () => v
   );
 }
 
-export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction, setSharedPasswordAction, isAdmin }: any) {
+export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction, setSharedPasswordAction, resetTeacherPwdAction, isAdmin }: any) {
   const [data, setData] = useState<Data>({ user: { ...initialUser, role: initialUser.role || null }, classes: [], exams: [], attempts: [] });
   const [active, setActive] = useState(initialUser?.role === "student" ? "Bài cần làm" : "Studio đề");
   const [busy, setBusy] = useState(false);
@@ -438,7 +438,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
           )}
 
           {teacher ? (
-            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} setSharedPasswordAction={setSharedPasswordAction} isAdmin={isAdmin} />
+            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} setSharedPasswordAction={setSharedPasswordAction} resetTeacherPwdAction={resetTeacherPwdAction} isAdmin={isAdmin} />
           ) : (
             <Student active={active} data={data} busy={busy} act={act} answers={answers} setAnswers={setAnswers} triggerMath={triggerMath} />
           )}
@@ -451,7 +451,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
 // ==========================================
 // KHU VỰC GIÁO VIÊN
 // ==========================================
-function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction, setSharedPasswordAction, isAdmin }: any) {
+function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction, setSharedPasswordAction, resetTeacherPwdAction, isAdmin }: any) {
   const [name, setName] = useState("");
   const [exam, setExam] = useState({ classId: "", duration: 45 });
   const [previewData, setPreviewData] = useState<any>(null);
@@ -824,7 +824,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
         {isAdmin ? (
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
           <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>🔑 Mật khẩu Quản trị & Giáo viên</h3>
-          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Mật khẩu được mã hóa trên máy chủ. Giáo viên đăng nhập bằng họ tên + mật khẩu chung bên dưới.</p>
+          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Mật khẩu được mã hóa trên máy chủ. Giáo viên đăng nhập LẦN ĐẦU bằng họ tên + mật khẩu ban đầu, sau đó tự đặt mật khẩu riêng.</p>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <button
               style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
@@ -868,27 +868,67 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
               style={{ background: "#166534", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
               disabled={busy}
               onClick={async () => {
-                const newPass = prompt("Đặt MẬT KHẨU CHUNG cho Giáo viên (ít nhất 8 ký tự).\nGửi mật khẩu này cho các thầy cô để đăng nhập:");
+                const newPass = prompt("Đặt MẬT KHẨU BAN ĐẦU cho Giáo viên (ít nhất 8 ký tự).\nGửi mật khẩu này cho các thầy cô để đăng nhập LẦN ĐẦU (sau đó họ tự đặt mật khẩu riêng):");
                 if (newPass === null) return;
                 if (newPass.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
                 if (typeof setSharedPasswordAction !== "function") return alert("Máy chủ chưa bật chức năng này.");
                 try {
                   const kq = await setSharedPasswordAction(newPass.trim());
                   if (kq?.error) return alert("❌ " + kq.error);
-                  alert("✅ Đã đặt mật khẩu chung cho Giáo viên.");
+                  alert("✅ Đã đặt mật khẩu ban đầu cho Giáo viên.");
                 } catch {
                   alert("❌ Không kết nối được máy chủ. Mật khẩu chưa được đặt.");
                 }
               }}
             >
-              👨‍🏫 Đặt mật khẩu chung Giáo viên
+              👨‍🏫 Đặt mật khẩu ban đầu Giáo viên
+            </button>
+
+            <button
+              style={{ background: "#fff7ed", color: "#9a3412", border: "1px solid #fdba74", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
+              disabled={busy}
+              onClick={async () => {
+                const name = prompt("CẤP LẠI MẬT KHẨU cho Giáo viên quên mật khẩu.\nNhập đúng họ tên Giáo viên (ví dụ: Nguyễn Văn An):");
+                if (name === null || !name.trim()) return;
+                if (typeof resetTeacherPwdAction !== "function") return alert("Máy chủ chưa bật chức năng này.");
+                try {
+                  const kq = await resetTeacherPwdAction(name.trim());
+                  if (kq?.error) return alert("❌ " + kq.error);
+                  alert(`✅ Đã cấp lại. "${name.trim()}" đăng nhập bằng mật khẩu BAN ĐẦU rồi đặt mật khẩu riêng mới.`);
+                } catch {
+                  alert("❌ Không kết nối được máy chủ.");
+                }
+              }}
+            >
+              ♻️ Cấp lại mật khẩu cho 1 Giáo viên
             </button>
           </div>
         </div>
         ) : (
           <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px" }}>
-            <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>🔑 Mật khẩu</h3>
-            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>Mật khẩu chung Giáo viên do Quản trị quản lý. Cần đổi mật khẩu, thầy cô vui lòng liên hệ Quản trị.</p>
+            <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>🔑 Mật khẩu của tôi</h3>
+            <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "16px" }}>Mật khẩu riêng chỉ thầy/cô biết (được mã hóa, Quản trị cũng không xem được). Quên mật khẩu thì nhờ Quản trị cấp lại.</p>
+            <button
+              style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
+              disabled={busy}
+              onClick={async () => {
+                const p1 = prompt("Nhập mật khẩu riêng MỚI (ít nhất 8 ký tự):");
+                if (p1 === null) return;
+                if (p1.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
+                const p2 = prompt("Nhập lại mật khẩu mới:");
+                if (p2 === null) return;
+                if (p1.trim() !== p2.trim()) return alert("❌ Hai lần nhập không khớp.");
+                try {
+                  const kq = await changePasswordAction(p1.trim());
+                  if (kq?.error) return alert("❌ " + kq.error);
+                  alert("✅ Đã đổi mật khẩu riêng.");
+                } catch {
+                  alert("❌ Không kết nối được máy chủ. Mật khẩu chưa được đổi.");
+                }
+              }}
+            >
+              Đổi mật khẩu của tôi
+            </button>
           </div>
         )}
 
@@ -1361,7 +1401,7 @@ function printPdf(rows: any[], exams: any[]) {
 const loginInput: React.CSSProperties = { width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff", boxSizing: "border-box" };
 const loginTitle: React.CSSProperties = { fontSize: "13px", fontWeight: "bold", color: "#1e3a8a", letterSpacing: "1px", textTransform: "uppercase" };
 
-export function LoginForm({ onLogin }: any) {
+export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
   const [name, setName] = useState("");
   const [classCode, setClassCode] = useState("");
   const [password, setPassword] = useState("");
@@ -1460,6 +1500,23 @@ export function LoginForm({ onLogin }: any) {
       formData.append("name", finalName);
       formData.append("password", gvPassword);
       const res = await onLogin(formData);
+      if (res?.needChange) {
+        // LẦN ĐẦU ĐĂNG NHẬP: bắt buộc đặt mật khẩu riêng
+        const p1 = prompt(`Chào ${finalName}!\nĐây là lần đầu đăng nhập. Hãy đặt MẬT KHẨU RIÊNG (ít nhất 8 ký tự, khác mật khẩu ban đầu).\nChỉ thầy/cô biết mật khẩu này:`);
+        if (p1 === null) return setError("⚠️ Cần đặt mật khẩu riêng để vào lần đầu.");
+        if (p1.trim().length < 8) return setError("❌ Mật khẩu mới cần ít nhất 8 ký tự.");
+        const p2 = prompt("Nhập lại mật khẩu riêng vừa đặt:");
+        if (p2 === null) return setError("⚠️ Cần đặt mật khẩu riêng để vào lần đầu.");
+        if (p1.trim() !== p2.trim()) return setError("❌ Hai lần nhập mật khẩu không khớp. Thử lại.");
+        const fd = new FormData();
+        fd.append("name", finalName);
+        fd.append("password", gvPassword);
+        fd.append("newPassword", p1.trim());
+        const r2 = await onTeacherFirstLogin(fd);
+        if (r2?.error) setError(r2.error);
+        else alert("✅ Đã đặt mật khẩu riêng. Từ lần sau, đăng nhập bằng họ tên và mật khẩu riêng này.");
+        return;
+      }
       if (res?.error) setError(res.error);
     } catch {
       setError("❌ Không kết nối được máy chủ.");
@@ -1471,7 +1528,7 @@ export function LoginForm({ onLogin }: any) {
   const handleForgotPassword = () => {
     alert(
       "QUÊN MẬT KHẨU\n\n" +
-        "• Giáo viên: liên hệ Quản trị để được cấp lại mật khẩu chung Giáo viên.\n\n" +
+        "• Giáo viên: liên hệ Quản trị để được CẤP LẠI mật khẩu. Sau đó đăng nhập bằng mật khẩu ban đầu và đặt mật khẩu riêng mới.\n\n" +
         "• Quản trị:\n" +
         "  1. Đăng nhập dash.cloudflare.com.\n" +
         "  2. Workers & Pages → v17-dinhcaotritue → Settings → Variables and Secrets.\n" +
