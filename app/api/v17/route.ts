@@ -2,7 +2,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { attempts, classes, exams, memberships, users } from "../../../db/schema";
-import { sessionFromRequest } from "../../auth";
+import { isValidTeacherEmail, sessionFromRequest } from "../../auth";
 
 const now = () => new Date().toISOString();
 const makeCode = () =>
@@ -277,7 +277,7 @@ export async function POST(req: Request) {
       const name = clean(b.name || auth.displayName, 100);
       const muonLamGV = b.role !== "student";
       // Quyền teacher chỉ cấp cho email trong danh sách, không cấp theo yêu cầu của trình duyệt.
-      const role = muonLamGV && auth.sessionRole === "teacher" && isTeacherEmail(auth.email) ? "teacher" : "student";
+      const role = muonLamGV && auth.sessionRole === "teacher" && (isTeacherEmail(auth.email) || isValidTeacherEmail(auth.email)) ? "teacher" : "student";
 
       if (profile) {
         // Đã có hồ sơ thì chỉ cho đổi tên hiển thị, KHÔNG cho tự nâng quyền.
