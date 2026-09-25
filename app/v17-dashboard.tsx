@@ -831,7 +831,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
               onClick={async () => {
                 const newPass = prompt("Nhập mật khẩu MỚI:");
                 if (newPass === null) return;
-                if (newPass.trim().length < 6) return alert("Mật khẩu cần ít nhất 6 ký tự.");
+                if (newPass.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
                 if (typeof changePasswordAction !== "function") return alert("Máy chủ chưa bật chức năng đổi mật khẩu.");
                 // LỖI CŨ: báo "✅ Đã đổi mật khẩu" kể cả khi máy chủ trả lỗi
                 try {
@@ -850,12 +850,12 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
               style={{ background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
               disabled={busy}
               onClick={async () => {
-                if (!confirm("Khôi phục mật khẩu về mặc định (123456)?")) return;
+                if (!confirm("Khôi phục về mật khẩu gốc (TEACHER_PASSWORD cài trong Cloudflare)?")) return;
                 if (typeof resetPasswordAction !== "function") return alert("Máy chủ chưa bật chức năng khôi phục.");
                 try {
                   const kq = await resetPasswordAction();
                   if (kq?.error) return alert("❌ " + kq.error);
-                  alert("✅ Đã khôi phục mật khẩu về: 123456");
+                  alert("✅ Đã khôi phục về mật khẩu gốc cài trong Cloudflare.");
                 } catch {
                   alert("❌ Không kết nối được máy chủ. Mật khẩu chưa đổi.");
                 }
@@ -1332,7 +1332,7 @@ function printPdf(rows: any[], exams: any[]) {
 // ==========================================
 // ĐĂNG NHẬP
 // ==========================================
-export function LoginForm({ onLogin, onSendCode, onVerifyReset }: any) {
+export function LoginForm({ onLogin }: any) {
   const [name, setName] = useState("");
   const [classCode, setClassCode] = useState("");
   const [password, setPassword] = useState("");
@@ -1405,43 +1405,16 @@ export function LoginForm({ onLogin, onSendCode, onVerifyReset }: any) {
     }
   };
 
-  const handleForgotPassword = async () => {
-    // LỖI CŨ: gọi thẳng onSendCode() / onVerifyReset() mà không kiểm tra -> TypeError trắng nút
-    if (typeof onSendCode !== "function" || typeof onVerifyReset !== "function") {
-      alert("Máy chủ chưa bật chức năng khôi phục mật khẩu.");
-      return;
-    }
-    setBusy(true);
-    try {
-      await onSendCode();
-    } catch {
-      setBusy(false);
-      alert("❌ Không gửi được mã xác minh. Kiểm tra kết nối rồi thử lại.");
-      return;
-    } finally {
-      setBusy(false);
-    }
-
-    alert("Đã gửi mã xác minh 6 số đến email quản trị (mã cũng hiện trên cửa sổ máy chủ Node/Vercel).");
-
-    const code = prompt("Nhập mã xác minh 6 chữ số:");
-    if (!code || !code.trim()) return;
-
-    const newPass = prompt("Tạo mật khẩu MỚI (ít nhất 6 ký tự):");
-    if (newPass === null) return;
-    if (newPass.trim().length < 6) {
-      alert("❌ Mật khẩu mới cần ít nhất 6 ký tự.");
-      return;
-    }
-
-    setBusy(true);
-    try {
-      const res = await onVerifyReset(code.trim(), newPass.trim());
-      if (res?.error) alert(res.error);
-      else alert("✅ Đã đổi mật khẩu. Dùng mật khẩu mới để đăng nhập quản trị.");
-    } finally {
-      setBusy(false);
-    }
+  const handleForgotPassword = () => {
+    // Mật khẩu không còn khôi phục qua cookie (học sinh có thể lợi dụng).
+    // Quản trị viên đặt lại mật khẩu gốc trong Cloudflare.
+    alert(
+      "Cách lấy lại mật khẩu Giáo viên:\n\n" +
+        "1. Đăng nhập dash.cloudflare.com (tài khoản quản trị).\n" +
+        "2. Workers & Pages → v17-dinhcaotritue → Settings → Variables and Secrets.\n" +
+        "3. Sửa biến bí mật TEACHER_PASSWORD thành mật khẩu mới rồi bấm Deploy.\n\n" +
+        "Sau đó đăng nhập bằng mật khẩu mới vừa đặt."
+    );
   };
 
   return (
@@ -1466,7 +1439,7 @@ export function LoginForm({ onLogin, onSendCode, onVerifyReset }: any) {
           </div>
 
           <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#fef2f2", padding: "20px", borderRadius: "16px", border: "1px solid #fca5a5" }}>
-            <div style={{ height: "46px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "#b91c1c", fontWeight: "bold" }}>Khôi phục qua email quản trị</div>
+            <div style={{ height: "46px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "#b91c1c", fontWeight: "bold" }}>Quên mật khẩu Giáo viên?</div>
             <button type="button" onClick={handleForgotPassword} disabled={busy} style={{ width: "100%", padding: "14px", background: "#fff", color: "#b91c1c", border: "2px solid #b91c1c", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🔑 Quên mật khẩu</button>
           </div>
         </div>
