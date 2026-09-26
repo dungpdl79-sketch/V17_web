@@ -215,6 +215,18 @@ function taoMotMaDe(cauHoiGoc: any[]) {
 
 // =====================================================================
 export async function GET(req: Request) {
+  // Nút "Đăng Xuất" trong Xưởng (/v17.html) gọi /api/v17?action=logout:
+  // xoá cookie phiên rồi quay về trang đăng nhập.
+  if (new URL(req.url).searchParams.get("action") === "logout") {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+        "Set-Cookie": "user_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax",
+        "Cache-Control": "no-store",
+      },
+    });
+  }
   try {
     const auth = await getAuthFromRequest(req);
     if (!auth) return Response.json({ error: "Chưa đăng nhập" }, { status: 401 });
