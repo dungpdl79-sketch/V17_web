@@ -1560,5 +1560,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 </script>
+<script>
+// Mở thẳng chức năng theo đường dẫn, ví dụ /v17.html#bulk (nút bên phần mềm V17 gửi sang).
+(function () {
+  var OK = ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam'];
+  function openFromHash() {
+    var t = (location.hash || '').replace('#', '');
+    if (OK.indexOf(t) >= 0 && typeof toggleAdminForm === 'function') toggleAdminForm(t);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(openFromHash, 50); });
+  else setTimeout(openFromHash, 50);
+  window.addEventListener('hashchange', openFromHash);
+})();
+</script>
 </body>
 </html>
