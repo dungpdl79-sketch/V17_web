@@ -1427,6 +1427,33 @@ function printPdf(rows: any[], exams: any[]) {
 const loginInput: React.CSSProperties = { width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff", boxSizing: "border-box" };
 const loginTitle: React.CSSProperties = { fontSize: "13px", fontWeight: "bold", color: "#1e3a8a", letterSpacing: "1px", textTransform: "uppercase" };
 
+// Ô mật khẩu có nút 👁 ẩn/hiện để thầy cô kiểm tra mình gõ đúng chưa.
+function PasswordInput({ value, onChange, onEnter, placeholder }: any) {
+  const [show, setShow] = useState(false);
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <input
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        onKeyDown={(e) => { if (e.key === "Enter" && onEnter) onEnter(); }}
+        placeholder={placeholder}
+        autoComplete="current-password"
+        style={{ ...loginInput, paddingLeft: "44px", paddingRight: "44px" }}
+      />
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        title={show ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+        aria-label={show ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+        style={{ position: "absolute", right: "6px", top: "50%", transform: "translateY(-50%)", width: "34px", height: "34px", border: "none", background: "transparent", cursor: "pointer", fontSize: "18px", lineHeight: 1, borderRadius: "8px", opacity: show ? 1 : 0.65 }}
+      >
+        {show ? "🙈" : "👁️"}
+      </button>
+    </div>
+  );
+}
+
 export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
   const [name, setName] = useState("");
   const [classCode, setClassCode] = useState("");
@@ -1576,11 +1603,10 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
         <div style={{ display: "flex", gap: "16px", marginTop: "20px", marginBottom: "12px", flexWrap: "wrap" }}>
           <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#f8fafc", padding: "20px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
             <div style={loginTitle}>Quản trị</div>
-            <input
-              type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleAdminLogin(); }}
+            <PasswordInput
+              value={password} onChange={(e: any) => setPassword(e.target.value)}
+              onEnter={handleAdminLogin}
               placeholder="Nhập mật khẩu Quản trị..."
-              style={loginInput}
             />
             <button type="button" onClick={handleAdminLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#eff6ff", color: "#1e3a8a", border: "2px solid #1e3a8a", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🛡️ Quản Trị</button>
           </div>
@@ -1592,11 +1618,10 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
               placeholder="Họ và tên Giáo viên"
               style={loginInput}
             />
-            <input
-              type="password" value={gvPassword} onChange={(e) => setGvPassword(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleGvLogin(); }}
+            <PasswordInput
+              value={gvPassword} onChange={(e: any) => setGvPassword(e.target.value)}
+              onEnter={handleGvLogin}
               placeholder="Nhập mật khẩu Giáo viên..."
-              style={loginInput}
             />
             <button type="button" onClick={handleGvLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#dcfce7", color: "#166534", border: "2px solid #166534", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>👨‍🏫 Giáo viên</button>
           </div>
