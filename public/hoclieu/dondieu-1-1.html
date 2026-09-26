@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vượt ải đơn điệu · Chương 1 Bài 1</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",Arial,sans-serif;
+       padding:8px;color:#14532d}
+</style>
+</head>
+<body>
+<div class="dcg" id="dcg-root">
+<style>
+.dcg{--g-ink:#14532d;--g-deep:#166534;--g-line:#bbf7d0;--g-mint:#dcfce7;--g-grass:#16a34a;--g-warn:#b45309;--g-bad:#b91c1c;
+  color:var(--g-ink);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.dcg *{box-sizing:border-box}
+.dcg-card{border:1px solid var(--g-line);border-radius:14px;background:#fff;overflow:hidden}
+.dcg-top{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;justify-content:space-between;
+  padding:.7em 1em;background:linear-gradient(180deg,#f0fdf4,#fff);border-bottom:1px solid var(--g-line)}
+.dcg-brand{font-weight:800;letter-spacing:.01em;color:var(--g-ink)}
+.dcg-brand span{display:block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#15803d;opacity:.75}
+.dcg-hud{display:flex;gap:.9em;align-items:center;font-variant-numeric:tabular-nums;font-size:.88rem;font-weight:700}
+.dcg-hud b{font-weight:800}
+.dcg-hearts{letter-spacing:.08em;color:#dc2626}
+.dcg-hearts i{font-style:normal;opacity:.22}
+.dcg-track{padding:.5em 1em 0}
+.dcg-track svg{display:block;width:100%;height:56px}
+.dcg-timebar{height:5px;background:var(--g-mint)}
+.dcg-timebar i{display:block;height:100%;width:100%;background:var(--g-grass);transition:width .12s linear}
+.dcg-timebar.low i{background:#dc2626}
+.dcg-body{padding:1em}
+.dcg-meta{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;margin-bottom:.55em}
+.dcg-tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.16em .55em;border-radius:5px;background:var(--g-mint);color:#15803d}
+.dcg-tag.ai{background:#fff;border:1px solid var(--g-line);color:var(--g-deep)}
+.dcg-stem{margin:.2em 0 .7em}
+.dcg-stem p{margin:.35em 0}
+.dcg-opts{display:grid;gap:.5em}
+@media(min-width:620px){.dcg-opts{grid-template-columns:1fr 1fr}}
+.dcg-opt{display:flex;gap:.6em;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;
+  border:1px solid var(--g-line);border-left:4px solid #86efac;border-radius:9px;background:#fff;padding:.6em .8em;cursor:pointer}
+.dcg-opt:hover:not(:disabled){background:#f0fdf4}
+.dcg-opt:disabled{cursor:default}
+.dcg-opt kbd{flex:0 0 auto;font:800 .8rem/1 inherit;background:var(--g-mint);color:#15803d;border-radius:4px;padding:.32em .45em}
+.dcg-opt.ok{border-color:var(--g-grass);border-left-color:var(--g-grass);background:#f0fdf4}
+.dcg-opt.no{border-color:#fecaca;border-left-color:var(--g-bad);background:#fef2f2}
+.dcg-ds{display:grid;gap:.45em;margin:.2em 0 .8em}
+.dcg-ds-row{display:flex;gap:.6em;align-items:center;border:1px solid var(--g-line);border-radius:9px;padding:.5em .7em;background:#fff}
+.dcg-ds-row .t{flex:1}
+.dcg-ds-row .k{font-weight:800;color:var(--g-deep);flex:0 0 1.2em}
+.dcg-ds-row .btns{display:flex;gap:.3em;flex:0 0 auto}
+.dcg-ds-row button{font:800 .85rem/1 inherit;border:1px solid var(--g-line);background:#fff;color:var(--g-deep);
+  border-radius:6px;width:2.1em;height:2.1em;cursor:pointer}
+.dcg-ds-row button[aria-pressed="true"]{background:var(--g-deep);color:#fff;border-color:var(--g-deep)}
+.dcg-ds-row.ok{background:#f0fdf4;border-color:var(--g-grass)}
+.dcg-ds-row.no{background:#fef2f2;border-color:#fecaca}
+.dcg-input{display:flex;gap:.5em;flex-wrap:wrap;margin:.2em 0 .8em}
+.dcg-input input{font:700 1.05rem/1 inherit;padding:.6em .8em;border:1px solid var(--g-line);border-radius:9px;width:11em;color:var(--g-ink)}
+.dcg-btn{font:800 .95rem/1 inherit;border:0;border-radius:9px;padding:.72em 1.15em;background:var(--g-deep);color:#fff;cursor:pointer}
+.dcg-btn:hover{background:#14532d}
+.dcg-btn.ghost{background:#fff;color:var(--g-deep);border:1px solid var(--g-line)}
+.dcg-btn:disabled{opacity:.45;cursor:default}
+.dcg-row{display:flex;gap:.5em;flex-wrap:wrap;align-items:center}
+.dcg-hint{margin:.6em 0 0;padding:.55em .8em;border-radius:8px;background:#fffbeb;border:1px solid #fde68a;color:var(--g-warn);font-size:.93rem}
+.dcg-fb{margin-top:.9em;border-radius:10px;padding:.75em .9em;border:1px solid var(--g-line);background:#f0fdf4}
+.dcg-fb.no{background:#fef2f2;border-color:#fecaca}
+.dcg-fb h4{margin:0 0 .3em;font-size:1rem;color:var(--g-deep)}
+.dcg-fb.no h4{color:var(--g-bad)}
+.dcg-fb p{margin:.3em 0;font-size:.95rem}
+.dcg-scroll{overflow-x:auto;margin:.6em 0}
+.dcg-bbt{border-collapse:collapse;margin:0 auto;font-size:.93rem;text-align:center;background:#fff}
+.dcg-bbt th,.dcg-bbt td{border:1px solid var(--g-deep);padding:.3em .75em;white-space:nowrap}
+.dcg-bbt th{background:var(--g-mint);width:44px}
+.dcg-intro h3{margin:.1em 0 .5em;font-size:1.15rem;color:var(--g-ink)}
+.dcg-intro ul{margin:.4em 0 .9em;padding-left:1.2em}
+.dcg-intro li{margin:.25em 0}
+.dcg-modes{display:grid;gap:.6em;margin:.9em 0}
+@media(min-width:560px){.dcg-modes{grid-template-columns:1fr 1fr}}
+.dcg-mode{text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;
+  border:1px solid var(--g-line);border-left:4px solid var(--g-grass);border-radius:11px;padding:.8em .9em}
+.dcg-mode:hover{background:#f0fdf4}
+.dcg-mode b{display:block;font-size:1.02rem;color:var(--g-deep);margin-bottom:.15em}
+.dcg-mode span{font-size:.9rem;opacity:.85}
+.dcg-cfg{display:grid;gap:.5em;margin:.5em 0}
+@media(min-width:560px){.dcg-cfg{grid-template-columns:repeat(2,1fr)}}
+.dcg-cfg label{display:flex;gap:.6em;align-items:center;justify-content:space-between;
+  border:1px solid var(--g-line);border-radius:8px;padding:.45em .7em;font-size:.92rem;background:#fff}
+.dcg-cfg input{font:700 .95rem/1 inherit;width:4.2em;text-align:center;padding:.4em;border:1px solid var(--g-line);border-radius:6px;color:var(--g-ink)}
+.dcg-grid{display:grid;gap:.6em;margin:.8em 0}
+@media(min-width:560px){.dcg-grid{grid-template-columns:repeat(4,1fr)}}
+.dcg-stat{border:1px solid var(--g-line);border-radius:10px;padding:.6em .7em;background:#f0fdf4;text-align:center}
+.dcg-stat b{display:block;font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--g-deep)}
+.dcg-stat span{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.dcg-rank{text-align:center;margin:.6em 0 .2em;font-size:1.25rem;font-weight:800;color:var(--g-deep)}
+.dcg-rev{border:1px solid var(--g-line);border-radius:9px;padding:.6em .8em;margin:.5em 0;background:#fff}
+.dcg-rev summary{cursor:pointer;font-weight:700;color:var(--g-deep);list-style:none}
+.dcg-rev summary::-webkit-details-marker{display:none}
+.dcg-rev summary::before{content:"\25b6 ";font-size:.75em}
+.dcg-rev[open] summary::before{content:"\25bc "}
+.dcg-rev .noi{margin-top:.5em;font-size:.94rem}
+.dcg-note{font-size:.88rem;opacity:.8;margin:.5em 0 0}
+.dcg *:focus-visible{outline:3px solid #4ade80;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.dcg *{transition:none!important;animation:none!important}}
+</style>
+
+<div class="dcg-card">
+  <div class="dcg-top">
+    <div class="dcg-brand">Vượt ải đơn điệu<span>Chương 1 &middot; Bài 1 &middot; Tính đơn điệu của hàm số</span></div>
+    <div class="dcg-hud" id="dcg-hud"></div>
+  </div>
+  <div class="dcg-track"><svg id="dcg-svg" viewBox="0 0 320 56" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+  <div class="dcg-timebar" id="dcg-timebar"><i></i></div>
+  <div class="dcg-body" id="dcg-body"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ==================================================================
+     KHỐI CẤU HÌNH — giáo viên chỉnh ở đây, không cần đụng phần dưới
+     ================================================================== */
+  var CAUHINH = {
+    soCau: { 1:2, 2:3, 3:3, 4:2 },   // số câu của Ải 1, 2, 3, 4 (đặt 0 để bỏ hẳn một ải)
+    mang: 3,                          // số mạng ở chế độ Vượt ải
+    vdcSoCau: 6,                      // số câu của chế độ Luyện VDC
+    vdcMang: 5,                       // số mạng ở chế độ Luyện VDC
+    thoiGian: { NB:45, TH:70, VD:100, VDC:130 },   // giây cho mỗi câu, theo mức độ
+    diemGoc:  { NB:100, TH:150, VD:220, VDC:350 }, // điểm gốc mỗi câu
+    choPhepTuyChinh: true             // đặt false để ẩn bảng "Tuỳ chỉnh số câu" của học sinh
+  };
+  /* ================================================================== */
+
+  var MI='\u2212', INF='\u221e', R='\u211d', SM='\u2216', PR='\u2032';
+  var NI=MI+INF, PIF='+'+INF;
+
+  /* ---------- tiện ích ---------- */
+  function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  function pick(a){return a[Math.floor(Math.random()*a.length)];}
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function num(v){return v<0?MI+Math.abs(v):''+v;}
+  function iv(a,b){return '('+a+'; '+b+')';}
+  function ivn(a,b){return iv(typeof a==='number'?num(a):a, typeof b==='number'?num(b):b);}
+
+  /* đa thức: hệ số theo bậc giảm dần, ví dụ [1,-3,-9,1] -> x³ − 3x² − 9x + 1 */
+  function poly(c,v){
+    v=v||'x';
+    var pw=[],n=c.length-1,s='';
+    for(var d=n;d>=0;d--) pw.push(d===0?'':(d===1?v:v+(d===2?'\u00b2':d===3?'\u00b3':'^'+d)));
+    for(var i=0;i<c.length;i++){
+      var val=c[i]; if(val===0) continue;
+      var a=Math.abs(val), body=(a===1&&i<c.length-1)?'':a;
+      if(s===''){ s=(val<0?MI:'')+body+pw[i]; }
+      else { s+=(val<0?' '+MI+' ':' + ')+body+pw[i]; }
+    }
+    return s===''?'0':s;
+  }
+  /* nhân tử (x - r), rút gọn khi r = 0 */
+  function fac(r){ return r===0? 'x' : '(x '+(r<0?'+ '+Math.abs(r):MI+' '+r)+')'; }
+  function facs(r1,r2){ return r2===0? fac(r2)+fac(r1) : fac(r1)+fac(r2); }
+  /* (m - k) dạng chuỗi */
+  function bieuThucM(k){ return 'm '+(k<0?'+ '+Math.abs(k):MI+' '+k); }
+  function ngoacM(k){ return '('+bieuThucM(k)+')'; }
+  /* dấu < trần trong chuỗi HTML sinh ra */
+  function safe(h){ return String(h).replace(/<(?![a-zA-Z\/!])/g,'&lt;'); }
+
+  function mcOpts(correctText, wrongTexts){
+    var arr=[{t:correctText,ok:true}];
+    for(var i=0;i<wrongTexts.length;i++) arr.push({t:wrongTexts[i],ok:false});
+    shuffle(arr);
+    var idx=0; for(var j=0;j<arr.length;j++) if(arr[j].ok) idx=j;
+    return {options:arr.map(function(o){return o.t;}), correct:idx};
+  }
+  /* mỗi ý có sẵn một biến thể đúng và một biến thể sai; đảm bảo câu nào cũng có cả Đ lẫn S */
+  function chonY(cap){
+    var out=cap.map(function(c){ return Math.random()<0.5? {t:c[0],ok:true} : {t:c[1],ok:false}; });
+    var d=0,i; for(i=0;i<out.length;i++) if(out[i].ok) d++;
+    if(d===0){ i=ri(0,cap.length-1); out[i]={t:cap[i][0],ok:true}; }
+    else if(d===cap.length){ i=ri(0,cap.length-1); out[i]={t:cap[i][1],ok:false}; }
+    return out;
+  }
+
+  /* ---------- BỘ SINH CÂU HỎI ---------- */
+
+  /* 1. Đọc bảng xét dấu đạo hàm (NB) */
+  function qBangXetDau(){
+    var r=shuffle([-3,-2,-1,1,2,3]).slice(0,3).sort(function(a,b){return a-b;});
+    var cur=Math.random()<0.5?'+':MI;
+    var flat=Math.random()<0.45?ri(0,2):-1;
+    var s=[cur],i,j,k;
+    for(i=0;i<3;i++){ if(i!==flat) cur=(cur==='+'?MI:'+'); s.push(cur); }
+    var target=Math.random()<0.5?'+':MI;
+    if(s.indexOf(target)<0) target=(target==='+'?MI:'+');
+    var word=(target==='+')?'đồng biến':'nghịch biến';
+    var edge=[NI,num(r[0]),num(r[1]),num(r[2]),PIF];
+    var good=[],bad=[];
+    for(i=0;i<4;i++) for(j=i;j<4;j++){
+      var all=true; for(k=i;k<=j;k++) if(s[k]!==target) all=false;
+      (all?good:bad).push({i:i,j:j,t:iv(edge[i],edge[j+1])});
+    }
+    good.sort(function(a,b){return (b.j-b.i)-(a.j-a.i);});
+    var corr=good[0], wr=shuffle(bad).slice(0,3).map(function(o){return o.t;});
+    var m=mcOpts(corr.t,wr);
+    var maxi=[],st0=0;
+    for(i=1;i<=4;i++){ if(i===4||s[i]!==s[st0]){ maxi.push({s:s[st0],t:iv(edge[st0],edge[i])}); st0=i; } }
+    var gplus=maxi.filter(function(o){return o.s==='+';}).map(function(o){return o.t;}).join(' và ');
+    var gminus=maxi.filter(function(o){return o.s===MI;}).map(function(o){return o.t;}).join(' và ');
+    var tbl='<div class="dcg-scroll"><table class="dcg-bbt">'+
+      '<tr><th>x</th><td>'+NI+'</td><td></td><td>'+num(r[0])+'</td><td></td><td>'+num(r[1])+'</td><td></td><td>'+num(r[2])+'</td><td></td><td>'+PIF+'</td></tr>'+
+      '<tr><th>f'+PR+'(x)</th><td></td><td>'+s[0]+'</td><td>0</td><td>'+s[1]+'</td><td>0</td><td>'+s[2]+'</td><td>0</td><td>'+s[3]+'</td><td></td></tr>'+
+      '</table></div>';
+    return {level:'NB',type:'mc',
+      stem:'<p>Cho hàm số y = f(x) có bảng xét dấu đạo hàm như sau:</p>'+tbl+'<p>Hàm số đã cho <b>'+word+'</b> trên khoảng nào dưới đây?</p>',
+      options:m.options,correct:m.correct,
+      hint:'Chỉ gom các khoảng liền nhau mang cùng một dấu. Nghiệm mà f'+PR+' <b>không đổi dấu</b> thì không cắt khoảng đơn điệu.',
+      giai:'<p>Đồng biến trên mỗi khoảng '+(gplus||'(không có)')+'; nghịch biến trên mỗi khoảng '+(gminus||'(không có)')+'.</p>'+
+        (flat>=0?'<p>Tại x = '+num(r[flat])+' đạo hàm bằng 0 nhưng <b>không đổi dấu</b>, nên không tách khoảng đơn điệu tại điểm này.</p>':'')+
+        '<p>Phương án đúng phải nằm <b>trọn</b> trong một khoảng '+word+'.</p>'};
+  }
+
+  /* 2. Hàm bậc ba (TH) */
+  function qBac3(){
+    var r1=ri(-3,1), gap=pick([2,4]), r2=r1+gap, a=pick([1,-1]);
+    var S=r1+r2, P=r1*r2, d=ri(-3,5);
+    var c=[a, -1.5*a*S, 3*a*P, d];
+    var dc=[3*a, -3*a*S, 3*a*P];
+    var word=(a===1)?'nghịch biến':'đồng biến';
+    var m=mcOpts(ivn(r1,r2),[ivn(NI,r1), ivn(r2,PIF), ivn(NI,r2)]);
+    return {level:'TH',type:'mc',
+      stem:'<p>Hàm số y = '+poly(c)+' <b>'+word+'</b> trên khoảng nào dưới đây?</p>',
+      options:m.options,correct:m.correct,
+      hint:'Tính y'+PR+', phân tích thành nhân tử rồi xét dấu tam thức bậc hai với hệ số a = '+num(3*a)+'.',
+      giai:'<p>y'+PR+' = '+poly(dc)+' = '+num(3*a)+facs(r1,r2)+'; y'+PR+' = 0 '+'\u21d4'+' x = '+num(r1)+' hoặc x = '+num(r2)+'.</p>'+
+        '<p>Hệ số bậc cao nhất '+(a===1?'dương':'âm')+' nên y'+PR+' '+(a===1?'âm':'dương')+' trên '+ivn(r1,r2)+', tức hàm '+word+' trên khoảng này.</p>'};
+  }
+
+  /* 3. Hàm nhất biến (TH) */
+  function qNhatBien(){
+    var a=pick([1,2,3,-1,-2,-3]), d=pick([-3,-2,-1,1,2,3]), b=ri(-4,4);
+    if(a*d-b===0) b=b+1;
+    var K=a*d-b, pole=-d;
+    var word=(K>0)?'đồng biến':'nghịch biến';
+    var left=Math.random()<0.5;
+    var corr= left? ivn(NI,pole) : ivn(pole,PIF);
+    var strad= left? ivn(NI,pole+2) : ivn(pole-2,PIF);
+    var m=mcOpts(corr,[R, R+' '+SM+' {'+num(pole)+'}', strad]);
+    return {level:'TH',type:'mc',
+      stem:'<p>Hàm số y = ('+poly([a,b])+') / (x '+(d<0?MI+' '+Math.abs(d):'+ '+d)+') <b>'+word+'</b> trên khoảng nào dưới đây?</p>',
+      options:m.options,correct:m.correct,
+      hint:'Với y = (ax + b)/(cx + d), dấu của y'+PR+' chỉ phụ thuộc ad '+MI+' bc và hàm không đổi dấu trên mỗi khoảng xác định.',
+      giai:'<p>Tập xác định '+R+' '+SM+' {'+num(pole)+'}; ad '+MI+' bc = '+num(K)+' nên y'+PR+' = '+num(K)+'/(x '+(d<0?MI+' '+Math.abs(d):'+ '+d)+')'+'\u00b2'+' '+(K>0?'>':'<')+' 0 với mọi x '+'\u2260'+' '+num(pole)+'.</p>'+
+        '<p>Vậy hàm '+word+' trên <b>mỗi khoảng</b> '+ivn(NI,pole)+' và '+ivn(pole,PIF)+'. Không được viết kết luận trên '+R+' hay '+R+' '+SM+' {'+num(pole)+'} vì đó không phải một khoảng; khoảng chứa x = '+num(pole)+' cũng bị loại vì hàm không xác định tại đó.</p>'};
+  }
+
+  /* 4. Bẫy lí thuyết (NB–TH) */
+  var LT=[
+    {stem:'Mệnh đề nào sau đây <b>đúng</b>?',
+     ok:'Nếu f'+PR+'(x) > 0 với mọi x thuộc khoảng K thì f đồng biến trên K.',
+     wr:['Nếu f đồng biến trên K thì f'+PR+'(x) > 0 với mọi x thuộc K.',
+         'Nếu f'+PR+'(x) = 0 tại một điểm của K thì f không đơn điệu trên K.',
+         'Nếu f'+PR+'(x) '+'\u2265'+' 0 với mọi x thuộc K thì f nghịch biến trên K.'],
+     giai:'Chiều thuận của định lí là đúng. Chiều ngược lại chỉ ở dạng yếu: f đồng biến trên K '+'\u21d2'+' f'+PR+'(x) '+'\u2265'+' 0, <b>không</b> suy ra f'+PR+'(x) > 0. Đạo hàm bằng 0 tại hữu hạn điểm thì hàm vẫn đơn điệu.'},
+    {stem:'Cho hàm số y = (x '+MI+' 2)/(x + 1). Kết luận nào <b>đúng</b>?',
+     ok:'Hàm số đồng biến trên mỗi khoảng '+ivn(NI,-1)+' và '+ivn(-1,PIF)+'.',
+     wr:['Hàm số đồng biến trên '+R+' '+SM+' {'+MI+'1}.',
+         'Hàm số đồng biến trên '+ivn(NI,-1)+' '+'\u222a'+' '+ivn(-1,PIF)+'.',
+         'Hàm số nghịch biến trên mỗi khoảng xác định.'],
+     giai:'y'+PR+' = 3/(x + 1)'+'\u00b2'+' > 0 với mọi x '+'\u2260'+' '+MI+'1. Kết luận phải nối bằng chữ <b>và</b> trên từng khoảng, không dùng dấu hợp và không viết trên '+R+' '+SM+' {'+MI+'1}.'},
+    {stem:'Cho y = '+MI+'x'+'\u00b3'+'/3 + x'+'\u00b2'+' '+MI+' x + 5. Kết luận nào <b>đúng</b>?',
+     ok:'Hàm số nghịch biến trên '+R+'.',
+     wr:['Hàm số đồng biến trên '+R+'.',
+         'Hàm số nghịch biến trên '+ivn(NI,1)+' và đồng biến trên '+ivn(1,PIF)+'.',
+         'Hàm số không đơn điệu vì y'+PR+' = 0 tại x = 1.'],
+     giai:'y'+PR+' = '+MI+'x'+'\u00b2'+' + 2x '+MI+' 1 = '+MI+'(x '+MI+' 1)'+'\u00b2'+' '+'\u2264'+' 0 với mọi x, chỉ bằng 0 tại x = 1 (một điểm). Vậy hàm nghịch biến trên '+R+'.'},
+    {stem:'Điều kiện để hàm số y = ax'+'\u00b3'+' + bx'+'\u00b2'+' + cx + d (a '+'\u2260'+' 0) đồng biến trên '+R+' là:',
+     ok:'a > 0 và '+'\u0394'+' của y'+PR+' '+'\u2264'+' 0.',
+     wr:['a > 0 và '+'\u0394'+' của y'+PR+' < 0.',
+         'a > 0 và '+'\u0394'+' của y'+PR+' '+'\u2265'+' 0.',
+         'a < 0 và '+'\u0394'+' của y'+PR+' '+'\u2264'+' 0.'],
+     giai:'Cần y'+PR+' = 3ax'+'\u00b2'+' + 2bx + c '+'\u2265'+' 0 với mọi x. Dấu "=" được phép xảy ra tại hữu hạn điểm nên '+'\u0394'+' '+'\u2264'+' 0. Khi hệ số bậc ba chứa tham số, phải xét thêm trường hợp a = 0.'},
+    {stem:'Cho y = (ax + b)/(cx + d) với c '+'\u2260'+' 0 và ad '+MI+' bc = 0. Khẳng định nào <b>đúng</b>?',
+     ok:'Hàm số là hằng số trên mỗi khoảng xác định nên không đơn điệu.',
+     wr:['Hàm số đồng biến trên mỗi khoảng xác định.',
+         'Hàm số nghịch biến trên mỗi khoảng xác định.',
+         'Hàm số đồng biến trên '+R+'.'],
+     giai:'y'+PR+' = (ad '+MI+' bc)/(cx + d)'+'\u00b2'+' = 0 nên hàm không đổi trên mỗi khoảng xác định. Vì thế ở dạng tham số của hàm nhất biến <b>không có dấu "="</b>.'},
+    {stem:'Cho hàm số y = f(x) có đồ thị của y = f'+PR+'(x) nằm phía <b>dưới</b> trục hoành với mọi x thuộc (1; 4). Khi đó:',
+     ok:'f nghịch biến trên khoảng (1; 4).',
+     wr:['f đồng biến trên khoảng (1; 4).',
+         'f có giá trị âm trên khoảng (1; 4).',
+         'f không xác định trên khoảng (1; 4).'],
+     giai:'Đồ thị f'+PR+' nằm dưới trục hoành nghĩa là f'+PR+'(x) < 0, tức f nghịch biến. Đừng nhầm dấu của <b>đạo hàm</b> với dấu của <b>hàm số</b>.'}
+  ];
+  function qLyThuyet(){
+    var it=pick(LT), m=mcOpts(it.ok,it.wr.slice());
+    return {level:'TH',type:'mc',stem:'<p>'+it.stem+'</p>',options:m.options,correct:m.correct,
+      hint:'Bám sát định lí về dấu đạo hàm và cách viết kết luận theo <b>từng khoảng</b>.',
+      giai:'<p>'+it.giai+'</p>'};
+  }
+
+  /* 5. Đúng – sai: cho trước f'(x) (VD) */
+  function qDSDaoHam(){
+    var p=ri(1,3), q=p+ri(2,4);
+    var e=pick([2,4]);
+    var fp='x'+(e===2?'\u00b2':'\u2074')+'(x '+MI+' '+p+')(x '+MI+' '+q+')';
+    var u=p+1, v=Math.min(q-1,u+1); if(v<=u) v=u+1;
+    var items=chonY([
+      ['f'+PR+'(x) = 0 có ba nghiệm phân biệt.',
+       'f'+PR+'(x) '+'\u2265'+' 0 với mọi x thuộc '+R+'.'],
+      ['Hàm số nghịch biến trên khoảng ('+p+'; '+q+').',
+       'Hàm số đồng biến trên khoảng ('+p+'; '+q+').'],
+      ['Hàm số đồng biến trên khoảng '+ivn(NI,p)+'.',
+       'Hàm số nghịch biến trên khoảng '+ivn(NI,0)+'.'],
+      ['f('+u+') > f('+v+').',
+       'f('+u+') &lt; f('+v+').']
+    ]);
+    return {level:'VD',type:'ds',
+      stem:'<p>Cho hàm số y = f(x) có đạo hàm f'+PR+'(x) = '+fp+' với mọi x thuộc '+R+'. Xét tính đúng '+MI+' sai của các mệnh đề sau.</p>',
+      items:items,
+      hint:'x'+(e===2?'\u00b2':'\u2074')+' '+'\u2265'+' 0 nên dấu của f'+PR+' chính là dấu của (x '+MI+' '+p+')(x '+MI+' '+q+'); nghiệm x = 0 không làm đổi dấu.',
+      giai:'<p>f'+PR+'(x) = 0 '+'\u21d4'+' x = 0, x = '+p+', x = '+q+': ba nghiệm phân biệt.</p>'+
+        '<p>Dấu của f'+PR+' là dấu của (x '+MI+' '+p+')(x '+MI+' '+q+'): dương trên '+ivn(NI,p)+' và '+ivn(q,PIF)+', âm trên ('+p+'; '+q+').</p>'+
+        '<p>Tại x = 0 đạo hàm bằng 0 nhưng không đổi dấu nên hàm vẫn đồng biến trên cả '+ivn(NI,p)+'. Trên ('+p+'; '+q+') hàm nghịch biến nên '+u+' < '+v+' kéo theo f('+u+') > f('+v+').</p>'};
+  }
+
+  /* 6. Đúng – sai: hàm bậc ba (VD) */
+  function qDSBac3(){
+    var r1=ri(-3,0), gap=pick([2,4]), r2=r1+gap, d=ri(-2,4);
+    var S=r1+r2,P=r1*r2;
+    var c=[1,-1.5*S,3*P,d], dc=[3,-3*S,3*P];
+    var inA=r1+1, inB=Math.min(r2-1,inA+1); if(inB<=inA) inB=inA+1;
+    var items=chonY([
+      ['y'+PR+' = '+poly(dc)+'.',
+       'y'+PR+' = '+poly([3,-3*S,3*P+3])+'.'],
+      ['Hàm số nghịch biến trên khoảng '+ivn(r1,r2)+'.',
+       'Hàm số đồng biến trên khoảng '+ivn(r1,r2)+'.'],
+      ['Hàm số đồng biến trên khoảng '+ivn(r2+1,PIF)+'.',
+       'Hàm số nghịch biến trên khoảng '+ivn(r2+1,PIF)+'.'],
+      ['Hàm số nghịch biến trên khoảng '+ivn(inA,inB)+'.',
+       'Hàm số đồng biến trên '+ivn(NI,r1)+' '+'\u222a'+' '+ivn(r2,PIF)+'.']
+    ]);
+    return {level:'VD',type:'ds',
+      stem:'<p>Cho hàm số y = '+poly(c)+'. Xét tính đúng '+MI+' sai của các mệnh đề sau.</p>',
+      items:items,
+      hint:'Tính y'+PR+' rồi phân tích thành nhân tử; nhớ rằng khoảng con của một khoảng đơn điệu vẫn là khoảng đơn điệu, còn kết luận nối bằng dấu hợp là sai.',
+      giai:'<p>y'+PR+' = '+poly(dc)+' = 3'+facs(r1,r2)+'.</p>'+
+        '<p>y'+PR+' > 0 trên '+ivn(NI,r1)+' và '+ivn(r2,PIF)+'; y'+PR+' < 0 trên '+ivn(r1,r2)+'.</p>'+
+        '<p>Vậy hàm đồng biến trên mỗi khoảng '+ivn(NI,r1)+' và '+ivn(r2,PIF)+', nghịch biến trên '+ivn(r1,r2)+'. Mọi khoảng con của chúng đều giữ nguyên chiều biến thiên, nhưng không được viết kết luận bằng dấu hợp '+'\u222a'+'.</p>'};
+  }
+
+  /* 7. Trả lời ngắn – vận tốc (VD) */
+  function qVanToc(){
+    var u=pick([1,2,3]), k=pick([1,2,4,5]), T=u+ri(1,3);
+    var s=[-1,3*u,k,0];
+    return {level:'VD',type:'short',answer:3*u*u+k,
+      stem:'<p>Một chất điểm chuyển động theo phương trình s(t) = '+poly(s,'t')+', trong đó t tính bằng giây (0 '+'\u2264'+' t '+'\u2264'+' '+T+') và s tính bằng mét.</p><p>Vận tốc tức thời của chất điểm đạt giá trị lớn nhất bằng bao nhiêu m/s?</p>',
+      hint:'Vận tốc v(t) = s'+PR+'(t) là một parabol có bề lõm quay xuống; giá trị lớn nhất đạt tại đỉnh nếu đỉnh thuộc đoạn đã cho.',
+      giai:'<p>v(t) = s'+PR+'(t) = '+poly([-3,6*u,k],'t')+'. Đây là parabol bề lõm quay xuống, đỉnh tại t = '+u+' thuộc [0; '+T+'].</p>'+
+        '<p>Vậy v lớn nhất bằng v('+u+') = '+(3*u*u+k)+' (m/s).</p>'};
+  }
+
+  /* 8. Trả lời ngắn – lợi nhuận (VD) */
+  function qLoiNhuan(){
+    var p=ri(2,5), q=p+ri(5,9);
+    var P=[-2,3*(p+q),-6*p*q,1000];
+    return {level:'VD',type:'short',answer:q-p,
+      stem:'<p>Lợi nhuận của một cửa hàng trong ngày thứ x của tháng được cho bởi P(x) = '+poly(P)+' (nghìn đồng), với x nguyên và 1 '+'\u2264'+' x '+'\u2264'+' 30.</p><p>Trong tháng đó có bao nhiêu ngày mà lợi nhuận cao hơn ngày liền trước?</p>',
+      hint:'Lợi nhuận tăng '+'\u21d4'+' P'+PR+'(x) > 0. Sau khi tìm được khoảng tăng, hãy đếm các <b>giá trị nguyên</b> của x trong khoảng đó.',
+      giai:'<p>P'+PR+'(x) = '+poly([-6,6*(p+q),-6*p*q])+' = '+MI+'6(x '+MI+' '+p+')(x '+MI+' '+q+'); P'+PR+'(x) > 0 '+'\u21d4'+' '+p+' < x < '+q+'.</p>'+
+        '<p>Các ngày có lợi nhuận cao hơn ngày liền trước là từ ngày '+(p+1)+' đến ngày '+q+', tức '+q+' '+MI+' '+(p+1)+' + 1 = '+(q-p)+' ngày.</p>'};
+  }
+
+  /* 9. VDC – bậc ba đồng biến trên R (dạng 6.1) */
+  function qVdcBac3(){
+    var t=ri(1,4), k=t*t;
+    return {level:'VDC',type:'short',answer:2*t+1,
+      stem:'<p>Có bao nhiêu giá trị nguyên của tham số m để hàm số y = x'+'\u00b3'+' '+MI+' 3mx'+'\u00b2'+' + '+(3*k)+'x + 1 đồng biến trên '+R+'?</p>',
+      hint:'Đồng biến trên '+R+' '+'\u21d4'+' y'+PR+' '+'\u2265'+' 0 với mọi x. Hệ số bậc hai của y'+PR+' dương nên chỉ cần '+'\u0394'+PR+' '+'\u2264'+' 0 (nhớ dấu "=").',
+      giai:'<p>y'+PR+' = 3x'+'\u00b2'+' '+MI+' 6mx + '+(3*k)+'. Vì hệ số 3 > 0 nên y'+PR+' '+'\u2265'+' 0 với mọi x '+'\u21d4'+' '+'\u0394'+PR+' = 9m'+'\u00b2'+' '+MI+' '+(9*k)+' '+'\u2264'+' 0 '+'\u21d4'+' '+MI+''+t+' '+'\u2264'+' m '+'\u2264'+' '+t+'.</p>'+
+        '<p>Số giá trị nguyên của m là '+(2*t+1)+'. Nếu dùng dấu ">" thay cho "'+'\u2265'+'" sẽ mất hai giá trị biên m = '+MI+t+' và m = '+t+'.</p>'};
+  }
+
+  /* 10. VDC – nhất biến đơn điệu trên một khoảng cho trước (dạng 6.3) */
+  function qVdcNhatBien(){
+    var a=ri(1,4);
+    if(Math.random()<0.5){
+      var k=a+ri(2,5);
+      return {level:'VDC',type:'short',answer:k-a,
+        stem:'<p>Có bao nhiêu giá trị nguyên của tham số m để hàm số y = (x + '+a+')/(x + m) đồng biến trên khoảng '+ivn(NI,-k)+'?</p>',
+        hint:'Hai điều kiện: dấu của đạo hàm, và điểm không xác định x = '+MI+'m phải nằm <b>ngoài</b> khoảng đã cho.',
+        giai:'<p>y'+PR+' = (m '+MI+' '+a+')/(x + m)'+'\u00b2'+'.</p>'+
+          '<p>Điều kiện 1 (dấu đạo hàm): m '+MI+' '+a+' > 0 '+'\u21d4'+' m > '+a+'.</p>'+
+          '<p>Điều kiện 2 (điểm không xác định nằm ngoài khoảng): '+MI+'m '+'\u2209'+' '+ivn(NI,-k)+' '+'\u21d4'+' '+MI+'m '+'\u2265'+' '+MI+k+' '+'\u21d4'+' m '+'\u2264'+' '+k+'.</p>'+
+          '<p>Vậy '+a+' < m '+'\u2264'+' '+k+', có '+(k-a)+' giá trị nguyên. Bỏ quên điều kiện 2 sẽ dẫn tới đáp án "vô số".</p>'};
+    }
+    var al=ri(1,4);
+    return {level:'VDC',type:'short',answer:a+al,
+      stem:'<p>Có bao nhiêu giá trị nguyên của tham số m để hàm số y = (x + '+a+')/(x + m) nghịch biến trên khoảng '+ivn(al,PIF)+'?</p>',
+      hint:'Hai điều kiện: dấu của đạo hàm, và điểm không xác định x = '+MI+'m phải nằm <b>ngoài</b> khoảng đã cho.',
+      giai:'<p>y'+PR+' = (m '+MI+' '+a+')/(x + m)'+'\u00b2'+'.</p>'+
+        '<p>Điều kiện 1: m '+MI+' '+a+' < 0 '+'\u21d4'+' m < '+a+'.</p>'+
+        '<p>Điều kiện 2: '+MI+'m '+'\u2209'+' '+ivn(al,PIF)+' '+'\u21d4'+' '+MI+'m '+'\u2264'+' '+al+' '+'\u21d4'+' m '+'\u2265'+' '+MI+al+'.</p>'+
+        '<p>Vậy '+MI+al+' '+'\u2264'+' m < '+a+', có '+(a+al)+' giá trị nguyên.</p>'};
+  }
+
+  /* 11. VDC – hệ số bậc ba chứa tham số, phải xét riêng a = 0 */
+  function qVdcHeSoA(){
+    var k=ri(-3,3), t=ri(1,4), A=ngoacM(k);
+    return {level:'VDC',type:'short',answer:t+1,
+      stem:'<p>Có bao nhiêu giá trị nguyên của tham số m để hàm số y = '+A+'x'+'\u00b3'+' + 3'+A+'x'+'\u00b2'+' + '+(3*t)+'x + 1 đồng biến trên '+R+'?</p>',
+      hint:'Hệ số bậc ba chứa tham số nên phải <b>xét riêng</b> trường hợp hệ số đó bằng 0 trước khi dùng điều kiện '+'\u0394'+' '+'\u2264'+' 0.',
+      giai:'<p>Đặt A = '+bieuThucM(k)+'. Ta có y'+PR+' = 3Ax'+'\u00b2'+' + 6Ax + '+(3*t)+'.</p>'+
+        '<p>Trường hợp A = 0 (m = '+num(k)+'): y'+PR+' = '+(3*t)+' > 0 nên hàm đồng biến trên '+R+' — <b>nhận</b>.</p>'+
+        '<p>Trường hợp A '+'\u2260'+' 0: cần 3A > 0 và '+'\u0394'+PR+' = 9A'+'\u00b2'+' '+MI+' '+(9*t)+'A '+'\u2264'+' 0 '+'\u21d4'+' 0 < A '+'\u2264'+' '+t+'.</p>'+
+        '<p>Gộp lại 0 '+'\u2264'+' A '+'\u2264'+' '+t+', tức '+num(k)+' '+'\u2264'+' m '+'\u2264'+' '+num(k+t)+': có '+(t+1)+' giá trị nguyên. Quên trường hợp A = 0 sẽ mất đúng một giá trị.</p>'};
+  }
+
+  /* 12. VDC – cô lập tham số trên một khoảng (dạng 6.4) */
+  function qVdcCoLap(){
+    var al=ri(1,3), b=pick([0,3,6]);
+    var G=3*al*al+2*b*al;
+    var ham='x'+'\u00b3'+(b?' + '+b+'x'+'\u00b2':'')+' '+MI+' mx + 1';
+    var g='3x'+'\u00b2'+(b?' + '+(2*b)+'x':'');
+    return {level:'VDC',type:'short',answer:G,
+      stem:'<p>Có bao nhiêu giá trị nguyên dương của tham số m để hàm số y = '+ham+' đồng biến trên khoảng '+ivn(al,PIF)+'?</p>',
+      hint:'Đưa về y'+PR+' '+'\u2265'+' 0 với mọi x trong khoảng rồi <b>cô lập m</b>: m '+'\u2264'+' g(x) với mọi x '+'\u21d4'+' m '+'\u2264'+' giá trị nhỏ nhất của g trên khoảng đó.',
+      giai:'<p>y'+PR+' = '+g+' '+MI+' m. Hàm đồng biến trên '+ivn(al,PIF)+' '+'\u21d4'+' m '+'\u2264'+' g(x) = '+g+' với mọi x > '+al+'.</p>'+
+        '<p>g là hàm đồng biến trên ['+al+'; '+PIF+') nên cận dưới của g trên khoảng đã cho là g('+al+') = '+G+'. Suy ra m '+'\u2264'+' '+G+'.</p>'+
+        '<p>Vậy m nguyên dương thoả mãn là 1, 2, …, '+G+': có '+G+' giá trị.</p>'};
+  }
+
+  /* 13. VDC – nhất biến đơn điệu trên mỗi khoảng xác định (dạng 6.2) */
+  function qVdcKhoangXD(){
+    var k=ri(2,4), k2=k*k;
+    return {level:'VDC',type:'short',answer:2*k-1,
+      stem:'<p>Có bao nhiêu giá trị nguyên của tham số m để hàm số y = (mx + '+k2+')/(x + m) nghịch biến trên mỗi khoảng xác định của nó?</p>',
+      hint:'Chỉ cần dấu của ad '+MI+' bc. Ở dạng này <b>không có dấu "="</b> vì ad '+MI+' bc = 0 làm hàm trở thành hằng số.',
+      giai:'<p>y'+PR+' = (m'+'\u00b2'+' '+MI+' '+k2+')/(x + m)'+'\u00b2'+'.</p>'+
+        '<p>Nghịch biến trên mỗi khoảng xác định '+'\u21d4'+' m'+'\u00b2'+' '+MI+' '+k2+' < 0 '+'\u21d4'+' '+MI+k+' < m < '+k+'.</p>'+
+        '<p>Các giá trị nguyên: m = '+MI+(k-1)+', …, '+(k-1)+', tất cả '+(2*k-1)+' giá trị. Nếu lấy cả m = '+MI+k+' và m = '+k+' thì hàm là hằng số, không đơn điệu.</p>'};
+  }
+
+  /* ---------- kho câu hỏi theo ải ---------- */
+  var VDC_POOL=[qVdcBac3,qVdcNhatBien,qVdcHeSoA,qVdcCoLap,qVdcKhoangXD];
+  var AI=[
+    {no:1,ten:'Đọc dấu',          pool:[qBangXetDau,qLyThuyet,qBangXetDau]},
+    {no:2,ten:'Xét dấu đạo hàm',  pool:[qBac3,qNhatBien,qLyThuyet,qBac3]},
+    {no:3,ten:'Vận dụng',         pool:[qDSDaoHam,qVanToc,qDSBac3,qLoiNhuan]},
+    {no:4,ten:'Tham số m',        pool:VDC_POOL}
+  ];
+
+  /* lấy n bộ sinh khác nhau từ pool; nếu n lớn hơn pool thì quay vòng */
+  function rutGen(pool,n){
+    var out=[],kho=[];
+    while(out.length<n){
+      if(!kho.length) kho=shuffle(pool.slice());
+      out.push(kho.pop());
+    }
+    return out;
+  }
+  function taoCauHoi(che){
+    var out=[];
+    if(che==='vdc'){
+      rutGen(VDC_POOL,CAUHINH.vdcSoCau).forEach(function(gen){
+        var q=gen(); q.nhan='Luyện VDC'; out.push(q);
+      });
+      return out;
+    }
+    AI.forEach(function(a){
+      var n=Math.max(0,parseInt(CAUHINH.soCau[a.no],10)||0);
+      rutGen(a.pool,n).forEach(function(gen){
+        var q=gen(); q.nhan='Ải '+a.no+' \u00b7 '+a.ten; out.push(q);
+      });
+    });
+    return out;
+  }
+  function tongMacDinh(){
+    var s=0; for(var k in CAUHINH.soCau) s+=Math.max(0,parseInt(CAUHINH.soCau[k],10)||0);
+    return s;
+  }
+
+  var body=document.getElementById('dcg-body');
+  var hud=document.getElementById('dcg-hud');
+  var svg=document.getElementById('dcg-svg');
+  var bar=document.getElementById('dcg-timebar');
+  var st=null, tick=null, best=0, bestVDC=0;
+
+  try{
+    best=parseInt(window.localStorage.getItem('dcg-doncdieu-best'),10)||0;
+    bestVDC=parseInt(window.localStorage.getItem('dcg-doncdieu-best-vdc'),10)||0;
+  }catch(e){}
+
+  function soCauVan(){ return st? st.qs.length : Math.max(1,tongMacDinh()); }
+
+  function drawTrack(){
+    var w=320,mid=30,tong=soCauVan(),step=w/Math.max(1,tong),pts='0,'+mid,y=mid,dots='';
+    var arr=st?st.log:[];
+    for(var i=0;i<arr.length;i++){
+      y+= arr[i].ok? -5 : 5; if(y<8)y=8; if(y>48)y=48;
+      var x=(i+1)*step;
+      pts+=' '+x.toFixed(1)+','+y.toFixed(1);
+      dots+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.6" fill="'+(arr[i].ok?'#16a34a':'#dc2626')+'"/>';
+    }
+    svg.innerHTML=
+      '<line x1="0" y1="'+mid+'" x2="'+w+'" y2="'+mid+'" stroke="#dcfce7" stroke-width="1.5" stroke-dasharray="4 4"/>'+
+      '<polyline points="'+pts+'" fill="none" stroke="#166534" stroke-width="2.2" stroke-linejoin="round"/>'+dots;
+  }
+
+  function drawHud(){
+    if(!st){ hud.innerHTML='<span>Kỉ lục <b>'+best+'</b></span>'+(bestVDC?'<span>VDC <b>'+bestVDC+'</b></span>':''); return; }
+    var h=''; for(var i=0;i<st.mangDau;i++) h+= i<st.mang? '\u2665' : '<i>\u2665</i>';
+    hud.innerHTML='<span class="dcg-hearts">'+h+'</span>'+
+      '<span>Câu <b>'+Math.min(st.i+1,st.qs.length)+'</b>/'+st.qs.length+'</span>'+
+      '<span>Điểm <b>'+st.diem+'</b></span>';
+  }
+
+  function setBar(pct,low){
+    bar.firstElementChild.style.width=Math.max(0,Math.min(100,pct))+'%';
+    if(low) bar.classList.add('low'); else bar.classList.remove('low');
+  }
+
+  /* ---------- màn hình đầu ---------- */
+  function manHinhDau(){
+    st=null; drawHud(); drawTrack(); setBar(100,false);
+    var tong=tongMacDinh();
+    var cfg='';
+    if(CAUHINH.choPhepTuyChinh){
+      cfg='<details class="dcg-rev"><summary>Tuỳ chỉnh số câu</summary><div class="noi">'+
+        '<div class="dcg-cfg">'+
+        AI.map(function(a){
+          return '<label>Ải '+a.no+' &middot; '+a.ten+'<input type="number" min="0" max="8" step="1" data-ai="'+a.no+'" value="'+(CAUHINH.soCau[a.no]||0)+'"></label>';
+        }).join('')+
+        '<label>Chế độ Luyện VDC<input type="number" min="1" max="12" step="1" id="dcg-cfg-vdc" value="'+CAUHINH.vdcSoCau+'"></label>'+
+        '<label>Số mạng (Vượt ải)<input type="number" min="1" max="9" step="1" id="dcg-cfg-mang" value="'+CAUHINH.mang+'"></label>'+
+        '</div>'+
+        '<p class="dcg-note">Đặt 0 để bỏ hẳn một ải. Thay đổi ở đây chỉ có hiệu lực trong phiên này; muốn đổi lâu dài thì sửa khối CAUHINH ở đầu thẻ script.</p>'+
+        '</div></details>';
+    }
+    body.innerHTML=
+      '<div class="dcg-intro">'+
+      '<h3>Chọn chế độ chơi</h3>'+
+      '<div class="dcg-modes">'+
+        '<button class="dcg-mode" id="dcg-mode-ai"><b>Vượt 4 ải &middot; <span id="dcg-tong">'+tong+'</span> câu</b>'+
+        '<span>Đọc bảng xét dấu '+'\u2192'+' xét dấu đạo hàm '+'\u2192'+' vận dụng '+'\u2192'+' tham số m. Đủ mạch bài, hợp cho ôn cả bài.</span></button>'+
+        '<button class="dcg-mode" id="dcg-mode-vdc"><b>Luyện riêng VDC &middot; <span id="dcg-tong-vdc">'+CAUHINH.vdcSoCau+'</span> câu</b>'+
+        '<span>Chỉ bài toán tham số m: bậc ba trên '+R+', hệ số bậc ba chứa m, cô lập tham số, hàm nhất biến trên khoảng cho trước và trên mỗi khoảng xác định.</span></button>'+
+      '</div>'+
+      cfg+
+      '<p class="dcg-note">Sai hoặc hết giờ thì mất một mạng. Đúng liên tiếp được nhân điểm tối đa x2. Mỗi câu có một gợi ý, dùng gợi ý thì điểm câu đó giảm 40%. Phím tắt: A/B/C/D hoặc 1'+MI+'4, Enter để nộp.</p>'+
+      '</div>';
+    var boxes=body.querySelectorAll('.dcg-cfg input');
+    function docCauHinh(){
+      for(var i=0;i<boxes.length;i++){
+        var el=boxes[i], v=parseInt(el.value,10);
+        if(el.id==='dcg-cfg-vdc'){ CAUHINH.vdcSoCau=isFinite(v)?Math.max(1,Math.min(12,v)):CAUHINH.vdcSoCau; }
+        else if(el.id==='dcg-cfg-mang'){ CAUHINH.mang=isFinite(v)?Math.max(1,Math.min(9,v)):CAUHINH.mang; }
+        else { CAUHINH.soCau[el.getAttribute('data-ai')]=isFinite(v)?Math.max(0,Math.min(8,v)):0; }
+      }
+    }
+    for(var i=0;i<boxes.length;i++) boxes[i].addEventListener('change',function(){
+      docCauHinh();
+      var t=document.getElementById('dcg-tong'), tv=document.getElementById('dcg-tong-vdc');
+      if(t) t.textContent=tongMacDinh();
+      if(tv) tv.textContent=CAUHINH.vdcSoCau;
+      drawTrack();
+    });
+    document.getElementById('dcg-mode-ai').onclick=function(){
+      docCauHinh();
+      if(tongMacDinh()<1){ alert('Cần ít nhất 1 câu. Hãy tăng số câu của một ải.'); return; }
+      batDau('ai');
+    };
+    document.getElementById('dcg-mode-vdc').onclick=function(){ docCauHinh(); batDau('vdc'); };
+  }
+
+  function batDau(che){
+    var mang=(che==='vdc')?CAUHINH.vdcMang:CAUHINH.mang;
+    st={che:che,qs:taoCauHoi(che),i:0,diem:0,mang:mang,mangDau:mang,streak:0,dung:0,log:[],batDauLuc:Date.now()};
+    drawHud(); drawTrack(); veCau();
+  }
+  function choiLai(){ batDau(st?st.che:'ai'); }
+
+  function dungTimer(){ if(tick){clearInterval(tick);tick=null;} }
+
+  function veCau(){
+    var q=st.qs[st.i];
+    st.daTraLoi=false; st.daGoiY=false; st.ds=[null,null,null,null];
+    var head='<div class="dcg-meta"><span class="dcg-tag ai">'+q.nhan+'</span><span class="dcg-tag">'+q.level+'</span>'+
+      (st.streak>1?'<span class="dcg-tag">Chuỗi '+st.streak+' &middot; x'+(1+0.15*st.streak).toFixed(2)+'</span>':'')+'</div>';
+    var main='<div class="dcg-stem">'+safe(q.stem)+'</div>';
+    var ctrl='';
+    if(q.type==='mc'){
+      var kb=['A','B','C','D'];
+      ctrl='<div class="dcg-opts" id="dcg-opts">';
+      for(var i=0;i<q.options.length;i++)
+        ctrl+='<button class="dcg-opt" data-i="'+i+'"><kbd>'+kb[i]+'</kbd><span>'+safe(q.options[i])+'</span></button>';
+      ctrl+='</div>';
+    } else if(q.type==='ds'){
+      var kk=['a','b','c','d'];
+      ctrl='<div class="dcg-ds" id="dcg-ds">';
+      for(var j=0;j<q.items.length;j++)
+        ctrl+='<div class="dcg-ds-row" data-j="'+j+'"><span class="k">'+kk[j]+')</span><span class="t">'+safe(q.items[j].t)+'</span>'+
+          '<span class="btns"><button data-v="1" aria-pressed="false" aria-label="Đúng">Đ</button>'+
+          '<button data-v="0" aria-pressed="false" aria-label="Sai">S</button></span></div>';
+      ctrl+='</div><div class="dcg-row"><button class="dcg-btn" id="dcg-nop" disabled>Nộp đáp án</button></div>';
+    } else {
+      ctrl='<div class="dcg-input"><input id="dcg-in" type="text" inputmode="numeric" autocomplete="off" placeholder="Nhập một số">'+
+        '<button class="dcg-btn" id="dcg-nop">Nộp đáp án</button></div>';
+    }
+    body.innerHTML=head+main+ctrl+
+      '<div class="dcg-row" style="margin-top:.7em"><button class="dcg-btn ghost" id="dcg-goiy">Xem gợi ý ('+MI+'40% điểm)</button></div>'+
+      '<div id="dcg-hintbox"></div><div id="dcg-fb" aria-live="polite"></div>';
+    drawHud();
+
+    document.getElementById('dcg-goiy').onclick=function(){
+      st.daGoiY=true; this.disabled=true;
+      document.getElementById('dcg-hintbox').innerHTML='<div class="dcg-hint">'+safe(q.hint)+'</div>';
+    };
+    if(q.type==='mc'){
+      document.getElementById('dcg-opts').addEventListener('click',function(e){
+        var b=e.target.closest('.dcg-opt'); if(!b||st.daTraLoi) return;
+        chamMC(parseInt(b.getAttribute('data-i'),10));
+      });
+    } else if(q.type==='ds'){
+      document.getElementById('dcg-ds').addEventListener('click',function(e){
+        var b=e.target.closest('button'); if(!b||st.daTraLoi) return;
+        var row=b.closest('.dcg-ds-row'), j=parseInt(row.getAttribute('data-j'),10);
+        st.ds[j]=b.getAttribute('data-v')==='1';
+        var bs=row.querySelectorAll('button');
+        bs[0].setAttribute('aria-pressed', st.ds[j]?'true':'false');
+        bs[1].setAttribute('aria-pressed', st.ds[j]?'false':'true');
+        document.getElementById('dcg-nop').disabled = st.ds.indexOf(null)>=0;
+      });
+      document.getElementById('dcg-nop').onclick=function(){ if(!st.daTraLoi) chamDS(); };
+    } else {
+      var inp=document.getElementById('dcg-in');
+      inp.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!st.daTraLoi) chamShort(); });
+      document.getElementById('dcg-nop').onclick=function(){ if(!st.daTraLoi) chamShort(); };
+      inp.focus();
+    }
+
+    var tong=CAUHINH.thoiGian[q.level], conLai=tong;
+    setBar(100,false);
+    dungTimer();
+    tick=setInterval(function(){
+      conLai-=0.2;
+      setBar(conLai/tong*100, conLai<=tong*0.2);
+      if(conLai<=0){ dungTimer(); if(!st.daTraLoi) hetGio(); }
+    },200);
+    st.conLai=function(){return conLai;}; st.tong=tong;
+  }
+
+  function diemCau(q,ratio,heSoThoiGian){
+    var base=CAUHINH.diemGoc[q.level];
+    var d=base*ratio + base*0.3*ratio*heSoThoiGian;
+    if(st.daGoiY) d*=0.6;
+    d*= Math.min(2,1+0.15*st.streak);
+    return Math.round(d);
+  }
+
+  function ketThucCau(q,ok,ratio,khoiSai,matMang){
+    if(matMang===undefined) matMang=!ok;
+    dungTimer(); st.daTraLoi=true;
+    var hs=Math.max(0,st.conLai())/st.tong;
+    var duoc=ratio>0? diemCau(q,ratio,hs) : 0;
+    if(ok) st.streak++; else if(matMang) st.streak=0;
+    if(ok) st.dung++;
+    st.diem+=duoc;
+    if(matMang) st.mang--;
+    st.log.push({ok:ok,q:q,duoc:duoc,khoiSai:khoiSai||''});
+    drawHud(); drawTrack();
+    var het=(st.mang<=0)||(st.i+1>=st.qs.length);
+    var fb=document.getElementById('dcg-fb');
+    fb.className='dcg-fb'+(ok?'':' no');
+    fb.innerHTML='<h4>'+(ok?'Chính xác. +'+duoc+' điểm':(duoc>0?'Chưa trọn vẹn. +'+duoc+' điểm':'Chưa đúng.'))+'</h4>'+
+      (khoiSai?'<p>'+safe(khoiSai)+'</p>':'')+safe(q.giai)+
+      '<div class="dcg-row" style="margin-top:.6em"><button class="dcg-btn" id="dcg-next">'+(het?'Xem kết quả':'Câu tiếp theo')+'</button></div>';
+    var nx=document.getElementById('dcg-next');
+    nx.onclick=function(){ if(het){ ketQua(); return; } st.i++; veCau(); };
+    nx.focus();
+  }
+
+  function chamMC(i){
+    var q=st.qs[st.i], ok=(i===q.correct);
+    var btns=document.querySelectorAll('#dcg-opts .dcg-opt');
+    for(var k=0;k<btns.length;k++){
+      btns[k].disabled=true;
+      if(k===q.correct) btns[k].classList.add('ok');
+      else if(k===i) btns[k].classList.add('no');
+    }
+    ketThucCau(q,ok,ok?1:0, ok?'':'Đáp án đúng: <b>'+safe(q.options[q.correct])+'</b>.');
+  }
+
+  function chamDS(){
+    var q=st.qs[st.i], dung=0, kk=['a','b','c','d'], sai=[];
+    var rows=document.querySelectorAll('#dcg-ds .dcg-ds-row');
+    for(var j=0;j<q.items.length;j++){
+      var d=(st.ds[j]===q.items[j].ok);
+      if(d) dung++; else sai.push(kk[j]);
+      rows[j].classList.add(d?'ok':'no');
+      rows[j].querySelector('.btns').innerHTML='<b style="color:'+(d?'#166534':'#b91c1c')+'">'+(q.items[j].ok?'Đ':'S')+'</b>';
+    }
+    var ratio=[0,0.1,0.25,0.5,1][dung];
+    var note='Đúng '+dung+'/4 ý'+(sai.length?'; sai ở ý '+sai.join(', '):'')+'.';
+    /* đúng từ 3 ý trở lên thì không mất mạng */
+    ketThucCau(q,dung===4,ratio,note,dung<3);
+  }
+
+  function chamShort(){
+    var q=st.qs[st.i];
+    var raw=(document.getElementById('dcg-in').value||'').trim().replace(',','.');
+    var v=parseFloat(raw);
+    var ok=isFinite(v)&&Math.abs(v-q.answer)<1e-9;
+    document.getElementById('dcg-in').disabled=true;
+    document.getElementById('dcg-nop').disabled=true;
+    ketThucCau(q,ok,ok?1:0, ok?'':'Đáp án đúng: <b>'+q.answer+'</b>.');
+  }
+
+  function hetGio(){
+    var q=st.qs[st.i];
+    if(q.type==='mc'){
+      var btns=document.querySelectorAll('#dcg-opts .dcg-opt');
+      for(var k=0;k<btns.length;k++){ btns[k].disabled=true; if(k===q.correct) btns[k].classList.add('ok'); }
+    } else if(q.type==='ds'){
+      var rows=document.querySelectorAll('#dcg-ds .dcg-ds-row');
+      for(var j=0;j<q.items.length;j++) rows[j].querySelector('.btns').innerHTML='<b style="color:#166534">'+(q.items[j].ok?'Đ':'S')+'</b>';
+      document.getElementById('dcg-nop').disabled=true;
+    } else {
+      document.getElementById('dcg-in').disabled=true;
+      document.getElementById('dcg-nop').disabled=true;
+    }
+    ketThucCau(q,false,0,'Hết giờ. '+(q.type==='short'?'Đáp án đúng: <b>'+q.answer+'</b>.':(q.type==='mc'?'Đáp án đúng: <b>'+safe(q.options[q.correct])+'</b>.':'')));
+  }
+
+  function xepHang(){
+    var n=st.qs.length, tl=st.dung/n;
+    if(st.che==='vdc'){
+      if(tl===1) return 'Trùm tham số m';
+      if(tl>=0.8) return 'Rất chắc dạng VDC';
+      if(tl>=0.5) return 'Đã nắm ý chính, còn sót điều kiện';
+      return 'Cần ôn lại điều kiện của từng dạng';
+    }
+    if(st.mang<=0&&tl<0.6) return 'Cần luyện thêm phần xét dấu';
+    if(tl===1) return 'Đỉnh Cao Trí Tuệ';
+    if(st.dung>=n-1) return 'Cao thủ đơn điệu';
+    if(tl>=0.7) return 'Vững nền tảng';
+    if(tl>=0.5) return 'Đang tiến bộ';
+    return 'Tân binh';
+  }
+
+  function ketQua(){
+    dungTimer(); setBar(0,false);
+    var n=st.qs.length;
+    var giay=Math.round((Date.now()-st.batDauLuc)/1000);
+    var phut=Math.floor(giay/60), gd=giay%60;
+    var khoa=(st.che==='vdc')?'dcg-doncdieu-best-vdc':'dcg-doncdieu-best';
+    if(st.che==='vdc'){ if(st.diem>bestVDC){ bestVDC=st.diem; try{window.localStorage.setItem(khoa,String(bestVDC));}catch(e){} } }
+    else { if(st.diem>best){ best=st.diem; try{window.localStorage.setItem(khoa,String(best));}catch(e){} } }
+    var kl=(st.che==='vdc')?bestVDC:best;
+    var sai=st.log.filter(function(l){return !l.ok;});
+    var h='<div class="dcg-rank">'+xepHang()+'</div>'+
+      '<div class="dcg-grid">'+
+      '<div class="dcg-stat"><b>'+st.diem+'</b><span>Điểm</span></div>'+
+      '<div class="dcg-stat"><b>'+st.dung+'/'+n+'</b><span>Câu đúng</span></div>'+
+      '<div class="dcg-stat"><b>'+st.mang+'</b><span>Mạng còn</span></div>'+
+      '<div class="dcg-stat"><b>'+phut+'\''+(gd<10?'0':'')+gd+'</b><span>Thời gian</span></div>'+
+      '</div>';
+    if(st.mang<=0) h+='<p>Hết mạng ở câu '+(st.i+1)+'. Ván sau nhớ đọc kĩ dấu của đạo hàm trước khi chọn.</p>';
+    if(sai.length){
+      h+='<h3 style="font-size:1.05rem;margin:1em 0 .3em">Ôn lại '+sai.length+' câu chưa đúng</h3>';
+      sai.forEach(function(l,k){
+        h+='<details class="dcg-rev"><summary>Câu chưa đúng '+(k+1)+' &middot; '+l.q.nhan+' &middot; '+l.q.level+'</summary>'+
+           '<div class="noi">'+safe(l.q.stem)+(l.khoiSai?'<p>'+safe(l.khoiSai)+'</p>':'')+safe(l.q.giai)+'</div></details>';
+      });
+    } else {
+      h+='<p>Toàn bộ '+n+' câu đều đúng. Thử lại ở tốc độ nhanh hơn để lấy thêm điểm thưởng thời gian.</p>';
+    }
+    h+='<div class="dcg-row" style="margin-top:.9em"><button class="dcg-btn" id="dcg-again">Chơi lại chế độ này</button>'+
+       '<button class="dcg-btn ghost" id="dcg-home">Đổi chế độ</button>'+
+       '<span style="font-size:.9rem;opacity:.8">Kỉ lục'+(st.che==='vdc'?' VDC':'')+': <b>'+kl+'</b></span></div>';
+    body.innerHTML=h;
+    document.getElementById('dcg-again').onclick=choiLai;
+    document.getElementById('dcg-home').onclick=manHinhDau;
+    hud.innerHTML='<span>Đã xong '+st.dung+'/'+n+'</span><span>Điểm <b>'+st.diem+'</b></span><span>Kỉ lục <b>'+kl+'</b></span>';
+  }
+
+  /* phím tắt A/B/C/D và 1–4 cho câu trắc nghiệm */
+  document.addEventListener('keydown',function(e){
+    if(!st||st.daTraLoi) return;
+    var q=st.qs[st.i]; if(!q||q.type!=='mc') return;
+    var map={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
+    var k=String(e.key||'').toLowerCase();
+    if(map[k]!==undefined && document.getElementById('dcg-opts')) chamMC(map[k]);
+  });
+
+  if(body) manHinhDau();
+})();
+</script>
+</div>
+
+<script>
+/* báo chiều cao cho trang cha để iframe tự co giãn */
+(function(){
+  function baoCao(){
+    var h=Math.ceil(document.documentElement.getBoundingClientRect().height)+16;
+    try{ parent.postMessage({type:'dcg-height', id:'dondieu-1-1', height:h}, '*'); }catch(e){}
+  }
+  window.addEventListener('load',baoCao);
+  if(window.ResizeObserver){ new ResizeObserver(baoCao).observe(document.body); }
+  else { setInterval(baoCao,600); }
+})();
+</script>
+</body>
+</html>

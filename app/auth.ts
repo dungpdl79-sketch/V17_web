@@ -25,8 +25,6 @@ type D1Like = {
 export type SessionUser = { email: string; name: string; role: "teacher" | "student" };
 
 export const TEACHER_ACCOUNT = { email: "thuyetdung@gmail.com", name: "Hồ Thuyết Dũng" };
-export const SESSION_COOKIE = "user_session";
-export const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 ngày
 const STUDENT_EMAIL_RE = /^[a-z]{2,60}\.(1[0-2]|[6-9])[a-z]{1,5}\d{0,3}@student\.v17$/;
 const TEACHER_EMAIL_RE = /^[a-z]{4,60}@teacher\.v17$/;
 const PBKDF2_ITERATIONS = 100_000; // mức tối đa Cloudflare Workers cho phép
@@ -102,62 +100,33 @@ async function sha256(text: string) {
 }
 
 // ---------------- khóa ký phiên ----------------
-let cachedKey: Promise<CryptoKey> | null = null;
-async function loadSigningKey(): Promise<CryptoKey> {
-  let secret = typeof anyEnv.SESSION_SECRET === "string" && anyEnv.SESSION_SECRET.length >= 16 ? anyEnv.SESSION_SECRET : null;
+// Khóa bí mật dùng để KÝ cookie phiên (xem app/lib/session.ts).
+// Ưu tiên biến bí mật SESSION_SECRET cài trong Cloudflare; nếu chưa cài thì tự sinh
+// một khóa ngẫu nhiên lần đầu và cất trong D1 (bảng app_settings) — không cần làm gì thêm.
+let cachedSecret: Promise<string> | null = null;
+async function loadSigningSecret(): Promise<string> {
+  const fromEnv =
+    (typeof anyEnv.SESSION_SECRET === "string" && anyEnv.SESSION_SECRET) ||
+    (() => { try { return String((globalThis as any)?.process?.env?.SESSION_SECRET || ""); } catch { return ""; } })();
+  if (fromEnv && fromEnv.length >= 16) return fromEnv;
+  let secret = await getSetting("session_secret");
   if (!secret) {
-    secret = await getSetting("session_secret");
-    if (!secret) {
-      const fresh = randomB64(48);
-      await ensureTable();
-      // INSERT OR IGNORE: nếu hai yêu cầu cùng lúc thì chỉ một khóa được giữ lại
-      await getDB().prepare("INSERT OR IGNORE INTO app_settings (key, value) VALUES ('session_secret', ?)").bind(fresh).run();
-      secret = (await getSetting("session_secret")) || fresh;
-    }
+    const fresh = randomB64(48);
+    await ensureTable();
+    // INSERT OR IGNORE: nếu hai yêu cầu cùng lúc thì chỉ một khóa được giữ lại
+    await getDB().prepare("INSERT OR IGNORE INTO app_settings (key, value) VALUES ('session_secret', ?)").bind(fresh).run();
+    secret = (await getSetting("session_secret")) || fresh;
   }
-  return crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return secret;
 }
-function signingKey() {
-  if (!cachedKey) {
-    cachedKey = loadSigningKey().catch((e) => {
-      cachedKey = null;
+export function getSigningSecret(): Promise<string> {
+  if (!cachedSecret) {
+    cachedSecret = loadSigningSecret().catch((e) => {
+      cachedSecret = null;
       throw e;
     });
   }
-  return cachedKey;
-}
-async function hmac(data: string) {
-  const sig = await crypto.subtle.sign("HMAC", await signingKey(), enc.encode(data));
-  return b64url(new Uint8Array(sig));
-}
-
-// ---------------- phiên đăng nhập ----------------
-export async function createSessionToken(user: SessionUser): Promise<string> {
-  const payload = b64url(enc.encode(JSON.stringify({ ...user, exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE })));
-  return `v2.${payload}.${await hmac(payload)}`;
-}
-
-export async function verifySessionToken(token: string | undefined | null): Promise<SessionUser | null> {
-  try {
-    if (!token) return null;
-    const parts = decodeURIComponent(token).split(".");
-    if (parts.length !== 3 || parts[0] !== "v2") return null;
-    const [, payload, sig] = parts;
-    if (!safeEqual(sig, await hmac(payload))) return null;
-    const data = JSON.parse(new TextDecoder().decode(fromB64url(payload)));
-    if (!data || typeof data.exp !== "number" || data.exp < Date.now() / 1000) return null;
-    if (typeof data.email !== "string" || typeof data.name !== "string") return null;
-    if (data.role !== "teacher" && data.role !== "student") return null;
-    return { email: data.email, name: data.name, role: data.role };
-  } catch {
-    return null;
-  }
-}
-
-export async function sessionFromRequest(req: Request): Promise<SessionUser | null> {
-  const cookieHeader = req.headers.get("cookie") || "";
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=([^;]+)`));
-  return verifySessionToken(match?.[1]);
+  return cachedSecret;
 }
 
 export function isValidStudentEmail(email: string) {

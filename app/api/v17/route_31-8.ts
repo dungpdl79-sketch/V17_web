@@ -1,48 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { attempts, classes, exams, memberships, users } from "../../../db/schema";
-import { hashPassword, taoMatKhauHocSinh } from "../../../db/password";
-import { docPhien } from "../../lib/session";
-import { isValidTeacherEmail } from "../../auth";
-import { luotHocLieu } from "../../../db/luot-hoc-lieu";
-import { lienKet } from "../../../db/lien-ket";
 
 const now = () => new Date().toISOString();
 const makeCode = () =>
   Array.from({ length: 6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
 const clean = (v: unknown, n = 120) => String(v ?? "").replace(/[<>]/g, "").trim().slice(0, n);
-
-// =====================================================================
-// HỌC SINH DO GIÁO VIÊN CẤP TÀI KHOẢN
-// Trước đây học sinh tự gõ "họ tên + mã lớp" bất kỳ ở màn hình đăng nhập là vào được ngay,
-// không có mật khẩu, và "mã lớp" tự gõ không hề khớp với lớp thật trong CSDL.
-// Nay giáo viên chủ động thêm từng học sinh vào ĐÚNG lớp (classId), hệ thống tự cấp mật khẩu,
-// và học sinh phải nhập đúng mật khẩu đó (cùng mã lớp thật, họ tên) mới đăng nhập được.
-// =====================================================================
-function chuanHoaTenHocSinh(raw: unknown): string {
-  const s = clean(raw, 100).replace(/\s+/g, " ").trim();
-  if (!s) return "";
-  return s
-    .split(" ")
-    .map((w) => (w ? w[0].toLocaleUpperCase("vi-VN") + w.slice(1) : w))
-    .join(" ");
-}
-
-function boDauTiengViet(s: string): string {
-  return s
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D");
-}
-
-// Email nội bộ gắn với ĐÚNG classId, khác với trước đây học sinh tự gõ "mã lớp" nên
-// hai lớp khác nhau có thể vô tình đụng định danh với nhau.
-function emailHocSinh(ten: string, classId: number): string {
-  const slug = boDauTiengViet(ten).replace(/\s+/g, "").toLowerCase();
-  return `${slug}.lop${classId}@student.v17`;
-}
 
 // =====================================================================
 // LỖI CŨ NGHIÊM TRỌNG: "Failed query ... where exam_id in (?, ?, ?, …)"
@@ -176,20 +140,14 @@ async function chamTuLuanBangAI(dsCau: any[]): Promise<Record<string, any> | nul
   }
 }
 
-// =====================================================================
-// LỖI CŨ NGHIÊM TRỌNG: hàm này JSON.parse thẳng cookie "user_session" rồi tin
-// luôn email trong đó. Ai mở F12 cũng tự gõ được cookie mang email của thầy cô
-// và lập tức có quyền giáo viên: xem đáp án, sửa điểm, xoá lớp.
-// Nay cookie phải mang chữ ký hợp lệ (xem lib/session.ts) mới được chấp nhận.
-// =====================================================================
 async function getAuthFromRequest(req?: Request) {
   try {
     if (req) {
       const cookieHeader = req.headers.get("cookie") || "";
       const match = cookieHeader.match(/user_session=([^;]+)/);
       if (match) {
-        const phien = await docPhien(decodeURIComponent(match[1]));
-        if (phien) return { email: phien.email, displayName: phien.name, sessionRole: phien.role };
+        const session = JSON.parse(decodeURIComponent(match[1]));
+        if (session.email && session.name) return { email: String(session.email), displayName: String(session.name) };
       }
     }
   } catch { /* cookie hỏng thì coi như chưa đăng nhập */ }
@@ -417,9 +375,6 @@ function docHocLieu(rows: any[]) {
       // trọng tâm và Game tương tác — soạn bằng đúng khung OSoanNoiDung.
       soDoTuDuy: String(d.soDoTuDuy ?? ""),
       gameLinks: chuanHoaLink(d.gameLinks, d.gameUrl),
-      // Video bài giảng: cùng cơ chế danh sách liên kết như Game tương tác,
-      // để thầy cô gắn video Youtube/Drive quay sẵn cho bài này.
-      videoLinks: chuanHoaLink(d.videoLinks, null),
       // Mục Luyện tập nay là bài tập soạn thẳng để làm rõ kiến thức trọng tâm,
       // không còn là danh sách liên kết nữa.
       luyenTap: String(d.luyenTap ?? ""),
@@ -494,27 +449,6 @@ function taoMotMaDe(cauHoiGoc: any[]) {
 // =====================================================================
 export async function GET(req: Request) {
   try {
-    // =====================================================================
-    // ĐĂNG XUẤT TỪ TRANG TĨNH (Xưởng soạn đề /v17.html)
-    // VÌ SAO cần nhánh này: nút Đăng Xuất của bảng điều khiển gọi Server Action
-    // của Next.js, mà tệp HTML tĩnh không gọi được Server Action. Cookie phiên
-    // lại do máy chủ đặt nên JavaScript phía trình duyệt không tự xoá được.
-    // Nhánh này là địa chỉ để trang tĩnh gọi tới: xoá cookie rồi đưa về trang chủ.
-    // Đặt TRƯỚC phép kiểm đăng nhập, vì người đã hết phiên vẫn phải thoát được.
-    // =====================================================================
-    if (new URL(req.url).searchParams.get("action") === "logout") {
-      return new Response(null, {
-        status: 303,
-        headers: {
-          // Max-Age=0 với đúng Path mà cookie được đặt thì trình duyệt xoá ngay,
-          // kể cả cookie có cờ HttpOnly.
-          "Set-Cookie": "user_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax",
-          Location: "/",
-          "Cache-Control": "no-store",
-        },
-      });
-    }
-
     const auth = await getAuthFromRequest(req);
     if (!auth) return Response.json({ error: "Chưa đăng nhập" }, { status: 401 });
 
@@ -537,8 +471,6 @@ export async function GET(req: Request) {
       const ms: any[] = [];
       for (const lo of chiaLo(ids)) ms.push(...(await db.select().from(memberships).where(inArray(memberships.classId, lo))));
       const hlRows = await db.select().from(exams).where(and(eq(exams.teacherEmail, auth.email), eq(exams.status, TT_HOCLIEU)));
-      // Danh sách "Nhúng Link Bổ Sung" — nay lấy từ máy chủ nên máy nào cũng thấy như nhau.
-      const lkRows = await db.select().from(lienKet).where(eq(lienKet.teacherEmail, auth.email)).orderBy(lienKet.id);
 
       return Response.json({
         user: profile,
@@ -546,7 +478,6 @@ export async function GET(req: Request) {
         exams: es.map(phoiBayDe),
         attempts: at,
         hocLieu: docHocLieu(hlRows),
-        links: lkRows.map((r) => ({ id: r.id, name: r.name, url: r.url })),
       });
     }
 
@@ -595,9 +526,7 @@ export async function POST(req: Request) {
       const name = clean(b.name || auth.displayName, 100);
       const muonLamGV = b.role !== "student";
       // Quyền teacher chỉ cấp cho email trong danh sách, không cấp theo yêu cầu của trình duyệt.
-      // V17: Quản trị (danh sách email) hoặc Giáo viên đăng nhập bằng họ tên + mật khẩu riêng
-      // (email nội bộ ...@teacher.v17). Cả hai đều phải có phiên đã KÝ mang vai trò teacher.
-      const role = muonLamGV && auth.sessionRole === "teacher" && (isTeacherEmail(auth.email) || isValidTeacherEmail(auth.email)) ? "teacher" : "student";
+      const role = muonLamGV && isTeacherEmail(auth.email) ? "teacher" : "student";
 
       if (profile) {
         // Đã có hồ sơ thì chỉ cho đổi tên hiển thị, KHÔNG cho tự nâng quyền.
@@ -627,98 +556,6 @@ export async function POST(req: Request) {
       const [c] = await db.select().from(classes).where(eq(classes.code, code)).limit(1);
       if (!c) return Response.json({ error: "Mã lớp không tồn tại" }, { status: 404 });
       await db.insert(memberships).values({ classId: c.id, studentEmail: auth.email, joinedAt: now() }).onConflictDoNothing();
-      return Response.json({ ok: true });
-    }
-
-    // =====================================================================
-    // QUẢN LÝ DANH SÁCH HỌC SINH TRONG LỚP (giáo viên cấp tài khoản)
-    // =====================================================================
-    if (action === "renameClass" && profile.role === "teacher") {
-      const classId = Number(b.classId);
-      const newName = clean(b.name, 80);
-      if (!newName) return Response.json({ error: "Thiếu tên lớp mới" }, { status: 400 });
-      const [c] = await db.select().from(classes).where(and(eq(classes.id, classId), eq(classes.teacherEmail, auth.email))).limit(1);
-      if (!c) return Response.json({ error: "Không có quyền với lớp này" }, { status: 403 });
-      await db.update(classes).set({ name: newName }).where(eq(classes.id, classId));
-      return Response.json({ ok: true });
-    }
-
-    if (action === "layHocSinhLop" && profile.role === "teacher") {
-      const classId = Number(b.classId);
-      const [c] = await db.select().from(classes).where(and(eq(classes.id, classId), eq(classes.teacherEmail, auth.email))).limit(1);
-      if (!c) return Response.json({ error: "Không có quyền với lớp này" }, { status: 403 });
-
-      const ms = await db.select().from(memberships).where(eq(memberships.classId, classId));
-      const emails = ms.map((m) => m.studentEmail);
-      const rows: any[] = [];
-      for (const lo of chiaLo(emails)) rows.push(...(await db.select().from(users).where(inArray(users.email, lo))));
-
-      const dsHocSinh = ms
-        .map((m) => {
-          const u = rows.find((r) => r.email === m.studentEmail);
-          return { email: m.studentEmail, name: u?.name || m.studentEmail, coMatKhau: !!u?.passwordHash, joinedAt: m.joinedAt };
-        })
-        .sort((a, b2) => a.name.localeCompare(b2.name, "vi"));
-
-      return Response.json({ ok: true, students: dsHocSinh });
-    }
-
-    if (action === "addStudents" && profile.role === "teacher") {
-      const classId = Number(b.classId);
-      const [c] = await db.select().from(classes).where(and(eq(classes.id, classId), eq(classes.teacherEmail, auth.email))).limit(1);
-      if (!c) return Response.json({ error: "Không có quyền với lớp này" }, { status: 403 });
-
-      const raw = Array.isArray(b.names) ? (b.names as unknown[]) : [];
-      // Giới hạn 200 tên/lần để tránh nạp nhầm cả một file rác; loại tên trùng và tên chỉ có 1 từ.
-      const tenHopLe = Array.from(new Set(raw.map((x) => chuanHoaTenHocSinh(x)).filter((s) => s.split(" ").length >= 2))).slice(0, 200);
-
-      if (!tenHopLe.length)
-        return Response.json({ error: "Không tìm thấy họ tên hợp lệ nào (mỗi tên cần ít nhất họ và tên)" }, { status: 400 });
-
-      const ketQua: { name: string; email: string; password: string }[] = [];
-      for (const ten of tenHopLe) {
-        const email = emailHocSinh(ten, classId);
-        const matKhau = taoMatKhauHocSinh();
-        const passwordHash = await hashPassword(matKhau);
-
-        const [existed] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-        if (existed) {
-          await db.update(users).set({ name: ten, passwordHash }).where(eq(users.email, email));
-        } else {
-          await db.insert(users).values({ email, name: ten, role: "student", passwordHash, createdAt: now() });
-        }
-        await db.insert(memberships).values({ classId, studentEmail: email, joinedAt: now() }).onConflictDoNothing();
-        ketQua.push({ name: ten, email, password: matKhau });
-      }
-
-      return Response.json({ ok: true, students: ketQua });
-    }
-
-    if (action === "resetStudentPassword" && profile.role === "teacher") {
-      const email = clean(b.email, 160);
-      const [u] = await db.select().from(users).where(and(eq(users.email, email), eq(users.role, "student"))).limit(1);
-      if (!u) return Response.json({ error: "Không tìm thấy học sinh" }, { status: 404 });
-
-      // Chỉ giáo viên chủ nhiệm một trong các lớp của học sinh này mới được cấp lại mật khẩu.
-      const ms = await db.select().from(memberships).where(eq(memberships.studentEmail, email));
-      const classIds = ms.map((m) => m.classId);
-      const ownedClasses = classIds.length
-        ? await db.select().from(classes).where(and(inArray(classes.id, classIds), eq(classes.teacherEmail, auth.email)))
-        : [];
-      if (!ownedClasses.length) return Response.json({ error: "Không có quyền với học sinh này" }, { status: 403 });
-
-      const matKhauMoi = taoMatKhauHocSinh();
-      await db.update(users).set({ passwordHash: await hashPassword(matKhauMoi) }).where(eq(users.email, email));
-      return Response.json({ ok: true, password: matKhauMoi });
-    }
-
-    if (action === "removeStudent" && profile.role === "teacher") {
-      const classId = Number(b.classId);
-      const email = clean(b.email, 160);
-      const [c] = await db.select().from(classes).where(and(eq(classes.id, classId), eq(classes.teacherEmail, auth.email))).limit(1);
-      if (!c) return Response.json({ error: "Không có quyền với lớp này" }, { status: 403 });
-
-      await db.delete(memberships).where(and(eq(memberships.classId, classId), eq(memberships.studentEmail, email)));
       return Response.json({ ok: true });
     }
 
@@ -944,134 +781,6 @@ export async function POST(req: Request) {
       return Response.json({ ok: true, score, maxScore, coTuLuan: dsTuLuan.length > 0 });
     }
 
-    // =====================================================================
-    // GHI LƯỢT HỌC SINH VÀO HỌC LIỆU
-    // Học sinh mở một bài trong mục "Học Liệu Bài Học" thì trình duyệt gọi
-    // hành động này. Mỗi cặp (học sinh, bài) chỉ một dòng, mở lại thì cộng dồn.
-    // Không trả về gì ngoài ok: đây là việc ghi thầm, không được làm chậm
-    // hay chắn màn hình của học sinh.
-    // =====================================================================
-    if (action === "ghiLuotHocLieu" && profile.role === "student") {
-      const tag = clean(b.tag, 60);
-      if (!tag) return Response.json({ ok: false });
-      const t = now();
-      await db
-        .insert(luotHocLieu)
-        .values({ studentEmail: auth.email, tag, soLuot: 1, lanDau: t, lanCuoi: t })
-        .onConflictDoUpdate({
-          target: [luotHocLieu.studentEmail, luotHocLieu.tag],
-          // Cộng ngay trong câu lệnh SQL chứ không đọc ra rồi ghi lại,
-          // vì cả lớp cùng mở một lúc thì cách đọc-rồi-ghi sẽ mất lượt.
-          set: { soLuot: sql`${luotHocLieu.soLuot} + 1`, lanCuoi: t },
-        });
-      return Response.json({ ok: true });
-    }
-
-    // =====================================================================
-    // GHI THỜI GIAN HỌC SINH Ở TRONG MỘT BÀI
-    // Trình duyệt gửi lên khi em đóng bài, chuyển sang bài khác, chuyển tab
-    // hoặc rời trang. Mỗi lần chỉ gửi khoảng thời gian VỪA TRÔI QUA, máy chủ
-    // cộng dồn — như vậy mất một lần gửi cũng chỉ hụt đoạn đó, không sai lệch
-    // toàn bộ.
-    // Chặn trên 30 phút mỗi lần gửi: đề phòng em mở bài rồi bỏ đó, hoặc ai đó
-    // cố tình gửi số lớn để làm đẹp thống kê.
-    // =====================================================================
-    if (action === "ghiThoiGianHocLieu" && profile.role === "student") {
-      const tag = clean(b.tag, 60);
-      const giay = Math.max(0, Math.min(1800, Math.round(Number(b.giay) || 0)));
-      if (!tag || giay < 5) return Response.json({ ok: true });  // dưới 5 giây coi như bấm nhầm
-      const t = now();
-      await db
-        .insert(luotHocLieu)
-        .values({ studentEmail: auth.email, tag, soLuot: 0, tongGiay: giay, lanDau: t, lanCuoi: t })
-        .onConflictDoUpdate({
-          target: [luotHocLieu.studentEmail, luotHocLieu.tag],
-          set: { tongGiay: sql`${luotHocLieu.tongGiay} + ${giay}`, lanCuoi: t },
-        });
-      return Response.json({ ok: true });
-    }
-
-    // =====================================================================
-    // THỐNG KÊ HỌC LIỆU THEO LỚP (cho giáo viên)
-    // Trả về từng em: đã vào bao nhiêu BÀI, tổng bao nhiêu LƯỢT, lần cuối khi nào,
-    // kèm chi tiết từng bài để thầy cô bấm xem sâu hơn.
-    // =====================================================================
-    if (action === "thongKeHocLieu" && profile.role === "teacher") {
-      const classId = Number(b.classId);
-      const [c] = await db.select().from(classes).where(eq(classes.id, classId)).limit(1);
-      // Chỉ giáo viên chủ nhiệm lớp đó mới xem được, tránh xem chéo lớp người khác.
-      if (!c || c.teacherEmail !== auth.email) return Response.json({ error: "Không có quyền với lớp này" }, { status: 403 });
-
-      const ms = await db.select().from(memberships).where(eq(memberships.classId, classId));
-      const emails = ms.map((m) => m.studentEmail);
-      if (!emails.length) return Response.json({ ok: true, students: [] });
-
-      const hs: any[] = [];
-      for (const lo of chiaLo(emails)) hs.push(...(await db.select().from(users).where(inArray(users.email, lo))));
-
-      const rows: any[] = [];
-      for (const lo of chiaLo(emails)) rows.push(...(await db.select().from(luotHocLieu).where(inArray(luotHocLieu.studentEmail, lo))));
-
-      const students = emails.map((em) => {
-        const ten = hs.find((u) => u.email === em)?.name || em;
-        const cua = rows.filter((r) => r.studentEmail === em && (Number(r.soLuot) > 0 || Number(r.tongGiay) > 0));
-        const tongLuot = cua.reduce((t, r) => t + Number(r.soLuot || 0), 0);
-        const tongGiay = cua.reduce((t, r) => t + Number(r.tongGiay || 0), 0);
-        const lanCuoi = cua.map((r) => String(r.lanCuoi || "")).sort().pop() || "";
-        return {
-          email: em,
-          name: ten,
-          soBai: cua.length,
-          tongLuot,
-          tongGiay,
-          lanCuoi,
-          chiTiet: cua
-            .map((r) => ({ tag: r.tag, soLuot: Number(r.soLuot || 0), tongGiay: Number(r.tongGiay || 0), lanCuoi: r.lanCuoi || "" }))
-            .sort((a, b2) => b2.soLuot - a.soLuot),
-        };
-      });
-
-      // Xếp em chưa vào lần nào lên đầu — đó mới là danh sách thầy cô cần nhắc.
-      // Xếp theo THỜI GIAN học trước, rồi mới đến số lượt: em bấm vào 5 bài mỗi bài
-      // 3 giây thì "5 lượt" trông chăm chỉ, nhưng thời gian mới nói đúng sự thật.
-      students.sort((a, b2) => a.tongGiay - b2.tongGiay || a.tongLuot - b2.tongLuot || a.name.localeCompare(b2.name, "vi-VN"));
-      return Response.json({ ok: true, students });
-    }
-
-    // =====================================================================
-    // NHÚNG LINK BỔ SUNG — thêm / xoá
-    // Nhận cả danh sách để dùng chung cho hai việc: thêm một link, và đưa cả
-    // danh sách cũ từ localStorage của một máy lên máy chủ.
-    // onConflictDoNothing + chỉ số duy nhất (teacher_email, url) lo phần chống
-    // trùng, nên bấm đưa lên nhiều lần hay đưa từ nhiều máy đều vô hại.
-    // =====================================================================
-    if (action === "themLienKet" && profile.role === "teacher") {
-      const raw = Array.isArray(b.links) ? b.links : [{ name: b.name, url: b.url }];
-      const t = now();
-      let dem = 0;
-      for (const it of raw.slice(0, 200)) {
-        const name = clean((it as any)?.name, 150);
-        let url = clean((it as any)?.url, 500);
-        if (!name || !url) continue;
-        if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-        await db
-          .insert(lienKet)
-          .values({ teacherEmail: auth.email, name, url, createdAt: t })
-          .onConflictDoNothing({ target: [lienKet.teacherEmail, lienKet.url] });
-        dem++;
-      }
-      if (!dem) return Response.json({ error: "Thiếu tên hoặc đường dẫn" }, { status: 400 });
-      return Response.json({ ok: true, dem });
-    }
-
-    if (action === "xoaLienKet" && profile.role === "teacher") {
-      const id = Number(b.id);
-      // Kèm điều kiện teacherEmail để không ai xoá được link của người khác
-      // bằng cách đoán số id.
-      await db.delete(lienKet).where(and(eq(lienKet.id, id), eq(lienKet.teacherEmail, auth.email)));
-      return Response.json({ ok: true });
-    }
-
     if (action === "luuHocLieu" && profile.role === "teacher") {
       const tag = clean(b.tag, 60);
       if (!tag) return Response.json({ error: "Thiếu mã bài học" }, { status: 400 });
@@ -1093,7 +802,6 @@ export async function POST(req: Request) {
         kienThuc,
         soDoTuDuy,
         gameLinks: chuanHoaLink(b.gameLinks, null),
-        videoLinks: chuanHoaLink(b.videoLinks, null),
         luyenTap,
         capNhat: now(),
       });

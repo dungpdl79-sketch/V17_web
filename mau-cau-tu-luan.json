@@ -1,0 +1,33 @@
+{
+  "title": "Kiểm tra Toán 12 — Chương I",
+  "durationMinutes": 90,
+  "scoring": { "mcq": 0.25, "sa": 0.5, "tf": [0, 0.1, 0.25, 0.5, 1.0] },
+  "questions": [
+    {
+      "id": "q1",
+      "type": 1,
+      "q": "Hàm số $y=x^3-3x$ đồng biến trên khoảng nào?",
+      "opts": ["$(-1;1)$", "$(1;+\\infty)$", "$(-\\infty;1)$", "$(0;+\\infty)$"],
+      "ans": 1
+    },
+    {
+      "id": "q2",
+      "type": 3,
+      "q": "Cho $y=\\dfrac{2x+1}{x-3}$. Tiệm cận đứng là $x=a$. Tìm $a$.",
+      "ans": "3"
+    },
+
+    {
+      "id": "q3",
+      "type": 4,
+      "q": "Cho hàm số $y=f(x)=\\dfrac{2x^2+26x+18}{x+13}$. Tìm các điểm cực trị của hàm số.",
+      "dapAnMau": "TXĐ: $x \\neq -13$. $y'=\\dfrac{2x^2+52x+320}{(x+13)^2}$. $y'=0 \\Leftrightarrow x=-16$ hoặc $x=-10$. Lập bảng biến thiên: hàm đạt cực đại tại $x=-16$, cực tiểu tại $x=-10$.",
+      "barem": [
+        { "id": "b1", "noiDung": "Nêu đúng tập xác định và tính đúng đạo hàm y'", "diem": 0.5 },
+        { "id": "b2", "noiDung": "Giải phương trình y' = 0 ra đủ hai nghiệm", "diem": 0.5 },
+        { "id": "b3", "noiDung": "Lập bảng biến thiên hoặc xét dấu y' chính xác", "diem": 0.5 },
+        { "id": "b4", "noiDung": "Kết luận đúng điểm cực đại và điểm cực tiểu", "diem": 0.5 }
+      ]
+    }
+  ]
+}

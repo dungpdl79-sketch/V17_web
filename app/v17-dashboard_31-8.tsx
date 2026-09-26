@@ -9,7 +9,6 @@ type Data = {
   exams: any[];
   attempts: any[];
   hocLieu?: any[];
-  links?: any[];
 };
 
 // ==========================================
@@ -208,34 +207,20 @@ const V15_FEATURES = [
   "Nhập / Sửa Câu Hỏi",
   "Nạp Hàng Loạt (AI)",
   "Xưởng Ảnh → HTML",
-  "Đề Tự Soạn",
   "Thống Kê Ngân Hàng",
   "Lọc Câu Trùng",
   "Danh Mục Bài Học"
 ];
 
-// Mỗi nút Xưởng mở thẳng đúng chức năng trong trang /v17.html.
-const V15_TARGET: Record<string, string> = {
-  "Nhập / Sửa Câu Hỏi": "manual",
-  "Nạp Hàng Loạt (AI)": "bulk",
-  "Xưởng Ảnh → HTML": "anhhtml",
-  "Đề Tự Soạn": "dete",
-  "Thống Kê Ngân Hàng": "stats",
-  "Lọc Câu Trùng": "duplicates",
-  "Danh Mục Bài Học": "curriculum",
-};
-const openXuong = (id?: string) => window.open("/v17.html" + (id && V15_TARGET[id] ? "#" + V15_TARGET[id] : ""), "_blank");
-
 const TEACHER_GROUPS = [
   {
-    title: "XƯỞNG BIÊN SOẠN (MỞ TAB RIÊNG)",
+    title: "XƯỞNG BIÊN SOẠN (MỞ TAB V15)",
     items: V15_FEATURES.map((id) => ({
       id,
       icon:
         id === "Nhập / Sửa Câu Hỏi" ? "📝" :
         id === "Nạp Hàng Loạt (AI)" ? "🤖" :
         id === "Xưởng Ảnh → HTML" ? "🖼️" :
-        id === "Đề Tự Soạn" ? "🗂️" :
         id === "Thống Kê Ngân Hàng" ? "📊" :
         id === "Lọc Câu Trùng" ? "🔍" : "📚"
     }))
@@ -464,93 +449,13 @@ function ThanhTabHocTap({ tab, setTab, khoa, dem }: any) {
 // Bấm chương → danh sách bài; bấm một bài → ba mục học; bấm "Kiến thức
 // trọng tâm" → nội dung bài học hiện ra ngay trong khung màu xanh bên dưới.
 // ==========================================
-function KhongGianChuong({ maChuong, hocLieu, triggerMath, laHocSinh }: any) {
+function KhongGianChuong({ maChuong, hocLieu, triggerMath }: any) {
   const [baiMo, setBaiMo] = useState<string | null>(null);
   const [mucMo, setMucMo] = useState<string | null>(null);
-  // Nhớ những bài đã ghi trong phiên này, để em mở ra đóng vào liên tục
-  // không bị đếm thành mười lượt.
-  const daGhiRef = useRef<Set<string>>(new Set());
 
   const chuong = CHUONG_TRINH.find((c) => c.ma === maChuong);
 
   useEffect(() => { setBaiMo(null); setMucMo(null); }, [maChuong]);
-
-  /* =====================================================================
-     GHI NHẬN HỌC SINH VÀO HỌC LIỆU
-     Gọi thẳng fetch chứ không dùng act(): act() tải lại toàn bộ dữ liệu sau
-     mỗi lần gọi, mà đây chỉ là ghi thầm một dòng — tải lại cả bảng điểm mỗi
-     lần em mở một bài là quá tốn.
-     Lỗi mạng thì bỏ qua trong im lặng: hỏng phần thống kê của thầy cô còn hơn
-     chắn màn hình học sinh đang học.
-     ===================================================================== */
-  useEffect(() => {
-    if (!laHocSinh || !baiMo) return;
-    if (daGhiRef.current.has(baiMo)) return;
-    daGhiRef.current.add(baiMo);
-    fetch("/api/v17", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action: "ghiLuotHocLieu", tag: baiMo }),
-      keepalive: true,
-    }).catch(() => {});
-  }, [baiMo, laHocSinh]);
-
-  /* =====================================================================
-     ĐO THỜI GIAN EM Ở TRONG MỘT BÀI
-
-     CHỈ ĐẾM KHI TAB ĐANG HIỆN. Em chuyển sang tab khác, thu nhỏ trình duyệt
-     hay khoá máy là đồng hồ dừng ngay; quay lại thì chạy tiếp. Không làm vậy
-     thì em nào mở bài rồi đi ăn cơm sẽ thành "học hai tiếng", con số vô nghĩa
-     mà thầy cô lại tưởng thật.
-
-     GỬI TỪNG ĐOẠN, KHÔNG GỬI TỔNG. Mỗi lần chỉ báo khoảng vừa trôi qua rồi
-     đặt lại đồng hồ. Mất một lần gửi (rớt mạng, tắt máy đột ngột) chỉ hụt
-     đúng đoạn đó chứ không sai toàn bộ.
-
-     LÚC RỜI TRANG dùng navigator.sendBeacon: trình duyệt đang đóng thì fetch
-     thường bị huỷ giữa chừng, còn sendBeacon được cam kết gửi xong.
-     ===================================================================== */
-  const dongHoRef = useRef<{ tag: string; batDau: number } | null>(null);
-
-  const guiThoiGian = useCallback((dungBeacon = false) => {
-    const dh = dongHoRef.current;
-    dongHoRef.current = null;
-    if (!dh) return;
-    const giay = Math.round((Date.now() - dh.batDau) / 1000);
-    if (giay < 5) return;                       // dưới 5 giây coi như bấm nhầm
-    const goi = JSON.stringify({ action: "ghiThoiGianHocLieu", tag: dh.tag, giay });
-    try {
-      if (dungBeacon && navigator.sendBeacon) {
-        navigator.sendBeacon("/api/v17", new Blob([goi], { type: "application/json" }));
-      } else {
-        fetch("/api/v17", { method: "POST", headers: { "content-type": "application/json" }, body: goi, keepalive: true }).catch(() => {});
-      }
-    } catch { /* hỏng phần thống kê còn hơn chắn màn hình em đang học */ }
-  }, []);
-
-  useEffect(() => {
-    if (!laHocSinh) return;
-
-    // Bắt đầu bấm giờ khi có bài đang mở và tab đang hiện.
-    if (baiMo && document.visibilityState === "visible") {
-      dongHoRef.current = { tag: baiMo, batDau: Date.now() };
-    }
-
-    const doiTrangThaiTab = () => {
-      if (document.visibilityState === "hidden") guiThoiGian();
-      else if (baiMo && !dongHoRef.current) dongHoRef.current = { tag: baiMo, batDau: Date.now() };
-    };
-    const roiTrang = () => guiThoiGian(true);
-
-    document.addEventListener("visibilitychange", doiTrangThaiTab);
-    window.addEventListener("pagehide", roiTrang);
-
-    return () => {
-      document.removeEventListener("visibilitychange", doiTrangThaiTab);
-      window.removeEventListener("pagehide", roiTrang);
-      guiThoiGian();   // đóng bài hoặc chuyển sang bài khác thì chốt đoạn vừa rồi
-    };
-  }, [baiMo, laHocSinh, guiThoiGian]);
   useEffect(() => { if (mucMo === "kienthuc" || mucMo === "sodotuduy") triggerMath(); }, [mucMo, baiMo, triggerMath]);
 
   if (!chuong) return null;
@@ -606,7 +511,6 @@ function KhongGianChuong({ maChuong, hocLieu, triggerMath, laHocSinh }: any) {
           const coKienThuc = !!String(hl.kienThuc || "").trim();
           const coSoDoTuDuy = !!String(hl.soDoTuDuy || "").trim();
           const dsGame = hl.gameLinks || [];
-          const dsVideo = hl.videoLinks || [];
           const coLuyenTap = !!String(hl.luyenTap || "").trim();
 
           return (
@@ -645,9 +549,6 @@ function KhongGianChuong({ maChuong, hocLieu, triggerMath, laHocSinh }: any) {
 
                   {nutMuc("game", "🎮", "Game tương tác", `${dsGame.length} liên kết`, dsGame.length > 0)}
                   {mucMo === "game" && khungLink(dsGame)}
-
-                  {nutMuc("video", "🎬", "Video bài giảng", `${dsVideo.length} video`, dsVideo.length > 0)}
-                  {mucMo === "video" && khungLink(dsVideo)}
 
                   {nutMuc("luyentap", "✏️", "Luyện tập", "Bài tập vận dụng phần kiến thức ở trên", coLuyenTap)}
                   {mucMo === "luyentap" && (
@@ -732,8 +633,8 @@ function ExamTimer({ endTime, onTimeOut }: { endTime: number; onTimeOut: () => v
   );
 }
 
-export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction, setSharedPasswordAction, resetTeacherPwdAction, isAdmin }: any) {
-  const [data, setData] = useState<Data>({ user: { ...initialUser, role: initialUser.role || null }, classes: [], exams: [], attempts: [], hocLieu: [], links: [] });
+export default function Dashboard({ initialUser, logoutAction, changePasswordAction, resetPasswordAction }: any) {
+  const [data, setData] = useState<Data>({ user: { ...initialUser, role: initialUser.role || null }, classes: [], exams: [], attempts: [], hocLieu: [] });
   const [active, setActive] = useState(initialUser?.role === "student" ? "Bài cần làm" : "Studio đề");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
@@ -838,7 +739,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
       {menuMo && <div className="v17-overlay" onClick={() => setMenuMo(false)} />}
       <aside className={`v17-sidebar${menuMo ? " mo" : ""}`} style={{ width: "270px", background: "#153d8a", color: "#fff", display: "flex", flexDirection: "column", height: "100vh", overflowY: "auto", flexShrink: 0, borderRight: "1px solid #1e3a8a" }}>
         <div style={{ padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-          <p style={{ color: "#fbbf24", fontSize: "14px", fontWeight: "bold", margin: "12px 0 0", textTransform: "uppercase" }}>{teacher ? (isAdmin ? "QUẢN TRỊ" : "GIÁO VIÊN") : "HỌC SINH"} : {data.user.name}</p>
+          <p style={{ color: "#fbbf24", fontSize: "14px", fontWeight: "bold", margin: "12px 0 0", textTransform: "uppercase" }}>{teacher ? "ADMIN" : "HỌC SINH"} : {data.user.name}</p>
           {!teacher && (
             <p style={{ color: "#bfdbfe", fontSize: "13px", fontWeight: "bold", margin: "6px 0 0" }}>
               LỚP : {(data.classes || []).map((c: any) => c.name).join(", ") || "chưa vào lớp"}
@@ -858,7 +759,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
                     <button
                       key={item.id}
                       onClick={() => {
-                        if (isV15) openXuong(item.id);
+                        if (isV15) window.open("/v15.html", "_blank");
                         else setActive(item.id);
                       }}
                       style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "10px 14px", borderRadius: "8px", border: isActive ? "1px solid #60a5fa" : "1px solid transparent", background: isActive ? "#2563eb" : "transparent", color: "#fff", fontSize: "14px", fontWeight: isActive ? "bold" : 600, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
@@ -919,7 +820,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
           )}
 
           {teacher ? (
-            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} setSharedPasswordAction={setSharedPasswordAction} resetTeacherPwdAction={resetTeacherPwdAction} isAdmin={isAdmin} />
+            <Teacher active={active} data={data} busy={busy} act={act} triggerMath={triggerMath} changePasswordAction={changePasswordAction} resetPasswordAction={resetPasswordAction} />
           ) : (
             <Student active={active} data={data} busy={busy} act={act} answers={answers} setAnswers={setAnswers} triggerMath={triggerMath} />
           )}
@@ -932,7 +833,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
 // ==========================================
 // KHU VỰC GIÁO VIÊN
 // ==========================================
-function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction, setSharedPasswordAction, resetTeacherPwdAction, isAdmin }: any) {
+function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, resetPasswordAction }: any) {
   const [name, setName] = useState("");
   const [exam, setExam] = useState({ classId: "", duration: 45 });
   const [previewData, setPreviewData] = useState<any>(null);
@@ -945,37 +846,23 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   const [selectedClassToDelete, setSelectedClassToDelete] = useState("");
   const [locLoaiBai, setLocLoaiBai] = useState("all");
 
+  const [links, setLinks] = useState<{ name: string; url: string }[]>([]);
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
-  // Danh sách cũ còn sót trong trình duyệt máy này, chờ đưa lên máy chủ.
-  const [linkCu, setLinkCu] = useState<{ name: string; url: string }[]>([]);
 
   useEffect(() => {
     if (previewData) triggerMath();
   }, [previewData, editIdx, triggerMath]);
 
-  /* =====================================================================
-     NHÚNG LINK BỔ SUNG — nay lưu trên máy chủ
-     Trước kia danh sách nằm trong localStorage nên mỗi máy một kiểu: thầy cô
-     thêm link ở máy bàn thì máy xách tay không thấy gì.
-     Đoạn dưới chỉ ĐỌC phần cũ còn sót trong trình duyệt để mời đưa lên, chứ
-     không tự ý gửi đi. Đưa lên xong mới xoá bản trong máy — xoá trước mà lỗi
-     mạng thì mất trắng.
-     ===================================================================== */
   useEffect(() => {
-    const cu = safeParse<{ name: string; url: string }[]>(localStorage.getItem("v17_teacher_links"), []);
-    setLinkCu(Array.isArray(cu) ? cu.filter((x) => x && x.url) : []);
+    setLinks(safeParse<{ name: string; url: string }[]>(localStorage.getItem("v17_teacher_links"), []));
   }, []);
 
-  const dayLinkCuLen = async () => {
-    const j = await act({ action: "themLienKet", links: linkCu }, true);
-    if (j?.ok) {
-      try { localStorage.removeItem("v17_teacher_links"); } catch {}
-      setLinkCu([]);
-      alert("Đã đưa " + (j.dem || 0) + " liên kết lên máy chủ. Từ giờ máy nào đăng nhập cũng thấy.");
-    } else {
-      alert(j?.error || "Chưa đưa lên được. Danh sách trong máy vẫn còn nguyên, thử lại sau.");
-    }
+  const saveLinks = (newLinks: { name: string; url: string }[]) => {
+    setLinks(newLinks);
+    try {
+      localStorage.setItem("v17_teacher_links", JSON.stringify(newLinks));
+    } catch {}
   };
 
   const getQuestionsFromJSON = (json: any): any[] => {
@@ -1012,12 +899,12 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   if (V15_FEATURES.includes(active)) {
     return (
       <div style={{ background: "#fff", padding: "40px", borderRadius: "16px", border: "1px dashed #cbd5e1", textAlign: "center", boxShadow: "0 4px 6px rgba(0,0,0,0.05)" }}>
-        <h2 style={{ color: "#3b82f6", marginBottom: "16px", fontSize: "24px" }}>🚀 Đang khởi động Xưởng Biên Soạn...</h2>
+        <h2 style={{ color: "#3b82f6", marginBottom: "16px", fontSize: "24px" }}>🚀 Đang khởi động Xưởng Biên Soạn V15...</h2>
         <p style={{ fontSize: "16px", color: "#64748b", lineHeight: "1.6", maxWidth: "600px", margin: "0 auto" }}>
-          Hệ thống mở Xưởng Soạn Đề ở một tab mới để bảo toàn dữ liệu đang soạn.<br /><br />
+          Hệ thống mở Xưởng V15 ở một tab mới để bảo toàn dữ liệu đang soạn.<br /><br />
           Nếu trình duyệt chặn pop-up, bấm nút bên dưới để mở thủ công.
         </p>
-        <button onClick={() => window.open("/v17.html", "_blank")} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>Mở Xưởng Soạn Đề Ngay</button>
+        <button onClick={() => window.open("/v15.html", "_blank")} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>Mở Xưởng V15 Ngay</button>
       </div>
     );
   }
@@ -1096,7 +983,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
               <h3 style={{ margin: 0 }}>Danh sách câu hỏi gốc ({previewQs.length} câu)</h3>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <button onClick={() => openXuong("Xưởng Ảnh → HTML")} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #fcd34d", background: "#fffbeb", color: "#b45309", cursor: "pointer", fontWeight: "bold" }}>🖼️ Mở Xưởng Ảnh</button>
+                <button onClick={() => window.open('/v15.html', '_blank')} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #fcd34d", background: "#fffbeb", color: "#b45309", cursor: "pointer", fontWeight: "bold" }}>🖼️ Mở Xưởng Ảnh</button>
                 <button onClick={() => { setPreviewData(null); setEditIdx(null); }} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #cbd5e1", background: "#f8fafc", cursor: "pointer", fontWeight: "bold" }}>Hủy bỏ</button>
                 <button
                   style={{ background: "#1e3a8a", color: "#fff", border: "none", padding: "10px 16px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
@@ -1201,7 +1088,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
       <div style={{ width: "100%" }}>
         <div style={{ background: "#fff", padding: "40px", borderRadius: "16px", border: "1px solid #cbd5e1", boxShadow: "0 4px 10px rgba(0,0,0,0.05)", width: "100%" }}>
           <h2 style={{ marginTop: 0, color: "#1e3a8a", fontSize: "24px", marginBottom: "10px" }}>📤 Nạp Đề & Phát Bài</h2>
-          <p style={{ color: "#64748b", fontSize: "16px", marginBottom: "30px" }}>Tải file JSON đã thiết kế từ Xưởng Soạn Đề để phát trực tiếp lên máy chủ cho học sinh.</p>
+          <p style={{ color: "#64748b", fontSize: "16px", marginBottom: "30px" }}>Tải file JSON đã thiết kế từ Xưởng V15 để phát trực tiếp lên máy chủ cho học sinh.</p>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "800px" }}>
             <label style={{ display: "flex", flexDirection: "column", gap: "8px", fontWeight: "bold", color: "#334155" }}>
@@ -1235,7 +1122,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
               onClick={() => {
                 const input = document.getElementById("json-exam-file") as HTMLInputElement | null;
                 const f = input?.files?.[0];
-                if (!f) return alert("Hãy chọn file .json đã xuất từ Xưởng Soạn Đề.");
+                if (!f) return alert("Hãy chọn file .json đã xuất từ V15.");
                 const r = new FileReader();
                 r.onerror = () => alert("Không đọc được file. Hãy thử chọn lại.");
                 r.onload = (e) => {
@@ -1253,7 +1140,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
                     });
                     setEditIdx(null);
                   } catch {
-                    alert("File JSON sai định dạng. Hãy xuất lại từ Xưởng Soạn Đề.");
+                    alert("File JSON sai định dạng. Hãy xuất lại từ Xưởng V15.");
                   }
                 };
                 r.readAsText(f);
@@ -1272,18 +1159,6 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   if (active === "Nhúng link") {
     return (
       <div>
-        {linkCu.length > 0 && (
-          <div style={{ background: "#fffbeb", border: "1px solid #f59e0b", borderRadius: "12px", padding: "16px 20px", marginBottom: "20px" }}>
-            <b style={{ color: "#92400e" }}>Có {linkCu.length} liên kết cũ chỉ nằm trong trình duyệt máy này.</b>
-            <p style={{ margin: "6px 0 12px", color: "#78350f", fontSize: "14px" }}>
-              Danh sách liên kết nay lưu trên máy chủ để máy nào đăng nhập cũng thấy như nhau. Bấm nút dưới để đưa số cũ lên. Link đã có sẵn trên máy chủ sẽ không bị thêm trùng.
-            </p>
-            <button onClick={dayLinkCuLen} disabled={busy} style={{ background: "#f59e0b", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}>
-              ⬆️ Đưa {linkCu.length} liên kết lên máy chủ
-            </button>
-          </div>
-        )}
-
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
           <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>➕ Thêm liên kết mới</h3>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
@@ -1291,13 +1166,12 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
             <input placeholder="Đường dẫn URL (vd: https://meet.google.com/...)" value={newLinkUrl} onChange={(e) => setNewLinkUrl(e.target.value)} style={{ flex: "2 1 300px", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none" }} />
             <button
               style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
-              onClick={async () => {
+              onClick={() => {
                 const n = newLinkName.trim();
                 let u = newLinkUrl.trim();
                 if (!n || !u) return alert("Vui lòng nhập đầy đủ tên và đường dẫn URL.");
                 if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
-                const j = await act({ action: "themLienKet", name: n, url: u }, true);
-                if (!j?.ok) return alert(j?.error || "Không thêm được liên kết.");
+                saveLinks([...links, { name: n, url: u }]);
                 setNewLinkName("");
                 setNewLinkUrl("");
               }}
@@ -1309,16 +1183,16 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
 
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
           <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>🔗 Danh sách liên kết đã lưu</h3>
-          {(data.links || []).length === 0 && <p style={{ color: "#64748b" }}>Chưa có liên kết nào. Thêm một liên kết ở khung phía trên.</p>}
+          {links.length === 0 && <p style={{ color: "#64748b" }}>Chưa có liên kết nào. Thêm một liên kết ở khung phía trên.</p>}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
-            {(data.links || []).map((lnk: any, idx: number) => (
+            {links.map((lnk, idx) => (
               <div key={`${lnk.url}-${idx}`} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", flexWrap: "wrap", gap: "10px" }}>
                 <div>
                   <b style={{ color: "#0f172a", fontSize: "16px" }}>{lnk.name}</b>
                   <br />
                   <a href={lnk.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "14px", color: "#3b82f6", textDecoration: "none", wordBreak: "break-all" }}>{lnk.url}</a>
                 </div>
-                <button style={{ background: "#fee2e2", color: "#b91c1c", border: "none", padding: "8px 16px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }} onClick={() => { if (confirm(`Xóa liên kết "${lnk.name}"?`)) act({ action: "xoaLienKet", id: lnk.id }, true); }}>🗑️ Xóa</button>
+                <button style={{ background: "#fee2e2", color: "#b91c1c", border: "none", padding: "8px 16px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }} onClick={() => { if (confirm(`Xóa liên kết "${lnk.name}"?`)) saveLinks(links.filter((_, i) => i !== idx)); }}>🗑️ Xóa</button>
               </div>
             ))}
           </div>
@@ -1328,7 +1202,49 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   }
 
   if (active === "Lớp học")
-    return <QuanLyLopHoc classesList={data.classes || []} act={act} busy={busy} />;
+    return (
+      <div>
+        <form
+          style={{ display: "flex", gap: "10px", marginBottom: "20px" }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const n = name.trim();
+            if (!n) return alert("Nhập tên lớp trước khi tạo.");
+            act({ action: "createClass", name: n });
+            setName("");
+          }}
+        >
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ví dụ: Toán 12A09" style={{ flex: 1, padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <button disabled={busy} style={{ background: "#1e3a8a", color: "#fff", border: "none", padding: "0 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}>＋ Tạo lớp</button>
+        </form>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+          {(data.classes || []).map((c: any) => (
+            <article key={c.id} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px", display: "flex", gap: "16px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+              <div style={{ width: "48px", height: "48px", background: "#eff6ff", color: "#2563eb", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "18px" }}>12</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <h3 style={{ margin: 0, color: "#1e293b", fontSize: "18px" }}>{c.name}</h3>
+                  <button
+                    title="Xóa lớp học này"
+                    style={{ background: "#fee2e2", color: "#b91c1c", border: "none", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
+                    disabled={busy}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`Xóa lớp "${c.name}"? Đề thi và bảng điểm liên quan có thể bị ảnh hưởng.`)) act({ action: "deleteClass", classId: c.id });
+                    }}
+                  >
+                    🗑️ Xóa lớp
+                  </button>
+                </div>
+                <p style={{ margin: "0 0 8px 0", color: "#64748b", fontSize: "14px" }}>{c.students ?? 0} học sinh · {c.schoolYear || "—"}</p>
+                <span style={{ fontSize: "13px", color: "#10b981", background: "#f0fdf4", padding: "4px 8px", borderRadius: "4px", fontWeight: "bold" }}>Mã: {c.code}</span>
+              </div>
+            </article>
+          ))}
+          {!(data.classes || []).length && <p style={{ color: "#64748b", fontStyle: "italic" }}>Chưa có lớp học nào. Tạo lớp đầu tiên ở ô phía trên.</p>}
+        </div>
+      </div>
+    );
 
   if (active === "Kết quả")
     return (
@@ -1362,10 +1278,9 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
   if (active === "Sao lưu")
     return (
       <div>
-        {isAdmin ? (
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
-          <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>🔑 Mật khẩu Quản trị & Giáo viên</h3>
-          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Mật khẩu được mã hóa trên máy chủ. Giáo viên đăng nhập LẦN ĐẦU bằng họ tên + mật khẩu ban đầu, sau đó tự đặt mật khẩu riêng.</p>
+          <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>🔑 Cài đặt Mật khẩu Giáo viên</h3>
+          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>Bảo vệ tài khoản quản trị. Mật khẩu được mã hóa trên máy chủ.</p>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <button
               style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
@@ -1373,7 +1288,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
               onClick={async () => {
                 const newPass = prompt("Nhập mật khẩu MỚI:");
                 if (newPass === null) return;
-                if (newPass.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
+                if (newPass.trim().length < 6) return alert("Mật khẩu cần ít nhất 6 ký tự.");
                 if (typeof changePasswordAction !== "function") return alert("Máy chủ chưa bật chức năng đổi mật khẩu.");
                 // LỖI CŨ: báo "✅ Đã đổi mật khẩu" kể cả khi máy chủ trả lỗi
                 try {
@@ -1385,19 +1300,19 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
                 }
               }}
             >
-              Đổi mật khẩu Quản trị
+              Đổi mật khẩu mới
             </button>
 
             <button
               style={{ background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
               disabled={busy}
               onClick={async () => {
-                if (!confirm("Khôi phục về mật khẩu gốc (TEACHER_PASSWORD cài trong Cloudflare)?")) return;
+                if (!confirm("Khôi phục mật khẩu về mặc định (123456)?")) return;
                 if (typeof resetPasswordAction !== "function") return alert("Máy chủ chưa bật chức năng khôi phục.");
                 try {
                   const kq = await resetPasswordAction();
                   if (kq?.error) return alert("❌ " + kq.error);
-                  alert("✅ Đã khôi phục về mật khẩu gốc cài trong Cloudflare.");
+                  alert("✅ Đã khôi phục mật khẩu về: 123456");
                 } catch {
                   alert("❌ Không kết nối được máy chủ. Mật khẩu chưa đổi.");
                 }
@@ -1405,73 +1320,8 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
             >
               Khôi phục về mặc định
             </button>
-            <button
-              style={{ background: "#166534", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
-              disabled={busy}
-              onClick={async () => {
-                const newPass = prompt("Đặt MẬT KHẨU BAN ĐẦU cho Giáo viên (ít nhất 8 ký tự).\nGửi mật khẩu này cho các thầy cô để đăng nhập LẦN ĐẦU (sau đó họ tự đặt mật khẩu riêng):");
-                if (newPass === null) return;
-                if (newPass.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
-                if (typeof setSharedPasswordAction !== "function") return alert("Máy chủ chưa bật chức năng này.");
-                try {
-                  const kq = await setSharedPasswordAction(newPass.trim());
-                  if (kq?.error) return alert("❌ " + kq.error);
-                  alert("✅ Đã đặt mật khẩu ban đầu cho Giáo viên.");
-                } catch {
-                  alert("❌ Không kết nối được máy chủ. Mật khẩu chưa được đặt.");
-                }
-              }}
-            >
-              👨‍🏫 Đặt mật khẩu ban đầu Giáo viên
-            </button>
-
-            <button
-              style={{ background: "#fff7ed", color: "#9a3412", border: "1px solid #fdba74", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
-              disabled={busy}
-              onClick={async () => {
-                const name = prompt("CẤP LẠI MẬT KHẨU cho Giáo viên quên mật khẩu.\nNhập đúng họ tên Giáo viên (ví dụ: Nguyễn Văn An):");
-                if (name === null || !name.trim()) return;
-                if (typeof resetTeacherPwdAction !== "function") return alert("Máy chủ chưa bật chức năng này.");
-                try {
-                  const kq = await resetTeacherPwdAction(name.trim());
-                  if (kq?.error) return alert("❌ " + kq.error);
-                  alert(`✅ Đã cấp lại. "${name.trim()}" đăng nhập bằng mật khẩu BAN ĐẦU rồi đặt mật khẩu riêng mới.`);
-                } catch {
-                  alert("❌ Không kết nối được máy chủ.");
-                }
-              }}
-            >
-              ♻️ Cấp lại mật khẩu cho 1 Giáo viên
-            </button>
           </div>
         </div>
-        ) : (
-          <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px" }}>
-            <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>🔑 Mật khẩu của tôi</h3>
-            <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "16px" }}>Mật khẩu riêng chỉ thầy/cô biết (được mã hóa, Quản trị cũng không xem được). Quên mật khẩu thì nhờ Quản trị cấp lại.</p>
-            <button
-              style={{ background: "#10b981", color: "#fff", border: "none", padding: "12px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
-              disabled={busy}
-              onClick={async () => {
-                const p1 = prompt("Nhập mật khẩu riêng MỚI (ít nhất 8 ký tự):");
-                if (p1 === null) return;
-                if (p1.trim().length < 8) return alert("Mật khẩu cần ít nhất 8 ký tự.");
-                const p2 = prompt("Nhập lại mật khẩu mới:");
-                if (p2 === null) return;
-                if (p1.trim() !== p2.trim()) return alert("❌ Hai lần nhập không khớp.");
-                try {
-                  const kq = await changePasswordAction(p1.trim());
-                  if (kq?.error) return alert("❌ " + kq.error);
-                  alert("✅ Đã đổi mật khẩu riêng.");
-                } catch {
-                  alert("❌ Không kết nối được máy chủ. Mật khẩu chưa được đổi.");
-                }
-              }}
-            >
-              Đổi mật khẩu của tôi
-            </button>
-          </div>
-        )}
 
         <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
           <h3 style={{ marginTop: 0, color: "#1e3a8a", display: "flex", alignItems: "center", gap: "8px" }}>💾 Sao lưu kết quả lớp học</h3>
@@ -1588,347 +1438,6 @@ const ANH_RONG_TOI_DA = 1000;
 // mới đủ chỗ chèn NHIỀU ảnh một mục (ví dụ 3-4 ảnh cho sơ đồ tư duy).
 const ANH_NANG_TOI_DA = 400 * 1024;
 
-// ==========================================
-// QUẢN LÝ LỚP HỌC — đổi tên lớp, thêm/xóa học sinh (tay hoặc từ file Excel), cấp lại mật khẩu.
-// Trước đây học sinh tự đăng ký bằng cách gõ họ tên + mã lớp bất kỳ, không có mật khẩu.
-// Nay giáo viên chủ động cấp tài khoản cho từng học sinh ngay trong màn hình này.
-// ==========================================
-/* Đổi số giây thành chữ dễ đọc: "45 giây", "12 phút", "1 giờ 20 phút".
-   Thầy cô cần biết em học lâu hay chóng, chứ không cần con số 4823 giây. */
-function doiGiay(giay: number) {
-  const g = Math.max(0, Math.round(Number(giay) || 0));
-  if (g < 60) return g + " giây";
-  const phut = Math.round(g / 60);
-  if (phut < 60) return phut + " phút";
-  const gio = Math.floor(phut / 60);
-  const du = phut % 60;
-  return du ? gio + " giờ " + du + " phút" : gio + " giờ";
-}
-
-function QuanLyLopHoc({ classesList, act, busy }: { classesList: any[]; act: any; busy: boolean }) {
-  const [tenLopMoi, setTenLopMoi] = useState("");
-  const [lopMoRong, setLopMoRong] = useState<number | null>(null);
-  const [dsHocSinh, setDsHocSinh] = useState<Record<number, any[]>>({});
-  const [dangTaiHocSinh, setDangTaiHocSinh] = useState<number | null>(null);
-  const [tenHocSinhMoi, setTenHocSinhMoi] = useState("");
-  const [dangSuaTenLop, setDangSuaTenLop] = useState<number | null>(null);
-  const [tenLopDangSua, setTenLopDangSua] = useState("");
-  const [matKhauVuaTao, setMatKhauVuaTao] = useState<{ className: string; students: any[] } | null>(null);
-  const [lopChoUpload, setLopChoUpload] = useState<number | null>(null);
-  const [thongKe, setThongKe] = useState<Record<number, any[]>>({});
-  const [dangTaiThongKe, setDangTaiThongKe] = useState<number | null>(null);
-  const [moChiTiet, setMoChiTiet] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const taiDanhSachHocSinh = async (classId: number) => {
-    setDangTaiHocSinh(classId);
-    const j = await act({ action: "layHocSinhLop", classId }, true);
-    if (j?.ok) setDsHocSinh((prev) => ({ ...prev, [classId]: j.students || [] }));
-    setDangTaiHocSinh(null);
-  };
-
-  const moRongLop = (classId: number) => {
-    const dangMo = lopMoRong === classId;
-    setLopMoRong(dangMo ? null : classId);
-    if (!dangMo && !dsHocSinh[classId]) taiDanhSachHocSinh(classId);
-  };
-
-  /* =====================================================================
-     THỐNG KÊ HỌC LIỆU
-     Tải riêng khi thầy cô bấm xem, không tải sẵn cùng danh sách lớp — vì phần
-     lớn lần vào màn hình này là để thêm/xoá học sinh chứ không phải xem thống kê.
-     ===================================================================== */
-  const taiThongKe = async (classId: number) => {
-    if (thongKe[classId]) { setThongKe((p) => { const q = { ...p }; delete q[classId]; return q; }); return; }
-    setDangTaiThongKe(classId);
-    const j = await act({ action: "thongKeHocLieu", classId }, true);
-    if (j?.ok) setThongKe((p) => ({ ...p, [classId]: j.students || [] }));
-    else alert(j?.error || "Không tải được thống kê.");
-    setDangTaiThongKe(null);
-  };
-
-  const themHocSinhTay = async (classId: number) => {
-    const raw = tenHocSinhMoi.trim();
-    if (!raw) return alert("Nhập họ tên học sinh trước (mỗi em một dòng).");
-    const names = raw.split("\n").map((s) => s.trim()).filter(Boolean);
-    const j = await act({ action: "addStudents", classId, names }, true);
-    if (j?.ok) {
-      setTenHocSinhMoi("");
-      const c = classesList.find((x) => x.id === classId);
-      setMatKhauVuaTao({ className: c?.name || "", students: j.students || [] });
-      taiDanhSachHocSinh(classId);
-    } else {
-      alert(j?.error || "Không thêm được học sinh.");
-    }
-  };
-
-  const chonFileExcel = (classId: number) => {
-    setLopChoUpload(classId);
-    fileInputRef.current?.click();
-  };
-
-  const xuLyFileExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file || lopChoUpload == null) return;
-    const classId = lopChoUpload;
-    try {
-      const XLSX = await import("xlsx");
-      const buf = await file.arrayBuffer();
-      const wb = XLSX.read(buf, { type: "array" });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      const boQua = new Set(["họ và tên", "họ tên", "tên", "stt", "họ và tên học sinh"]);
-      const names: string[] = [];
-      for (const r of rows) {
-        const raw = String(r?.[0] ?? "").trim();
-        if (!raw) continue;
-        if (boQua.has(raw.toLocaleLowerCase("vi-VN"))) continue;
-        if (/^\d+$/.test(raw)) continue; // dòng chỉ có số thứ tự, không phải tên
-        names.push(raw);
-      }
-      if (!names.length) return alert("Không đọc được họ tên nào. Đảm bảo CỘT ĐẦU TIÊN của file là họ tên học sinh.");
-
-      const j = await act({ action: "addStudents", classId, names }, true);
-      if (j?.ok) {
-        const c = classesList.find((x) => x.id === classId);
-        setMatKhauVuaTao({ className: c?.name || "", students: j.students || [] });
-        taiDanhSachHocSinh(classId);
-      } else {
-        alert(j?.error || "Không thêm được học sinh từ file.");
-      }
-    } catch {
-      alert("Không đọc được file. Đảm bảo đây là file Excel .xlsx hoặc .xls rồi thử lại.");
-    }
-  };
-
-  const resetMatKhau = async (email: string, hoTen: string) => {
-    if (!confirm(`Cấp lại mật khẩu mới cho "${hoTen}"? Mật khẩu cũ sẽ không dùng được nữa.`)) return;
-    const j = await act({ action: "resetStudentPassword", email }, true);
-    if (j?.ok) setMatKhauVuaTao({ className: "", students: [{ name: hoTen, email, password: j.password }] });
-    else alert(j?.error || "Không cấp lại được mật khẩu.");
-  };
-
-  const xoaHocSinh = async (classId: number, email: string, hoTen: string) => {
-    if (!confirm(`Xóa "${hoTen}" khỏi lớp này?`)) return;
-    const j = await act({ action: "removeStudent", classId, email }, true);
-    if (j?.ok) taiDanhSachHocSinh(classId);
-    else alert(j?.error || "Không xóa được học sinh.");
-  };
-
-  const luuTenLopMoi = async (classId: number) => {
-    const ten = tenLopDangSua.trim();
-    if (!ten) return alert("Tên lớp không được để trống.");
-    const j = await act({ action: "renameClass", classId, name: ten });
-    if (j?.ok) setDangSuaTenLop(null);
-    else alert(j?.error || "Không đổi được tên lớp.");
-  };
-
-  const taiXuongDanhSachMatKhau = () => {
-    if (!matKhauVuaTao) return;
-    const hang = matKhauVuaTao.students
-      .map((s) => `<tr><td>${s.name}</td><td>${s.email}</td><td style="font-weight:bold;">${s.password}</td></tr>`)
-      .join("");
-    const html = `<html><head><meta charset="utf-8"></head><body><h2>Tài khoản học sinh ${matKhauVuaTao.className ? "— " + matKhauVuaTao.className : ""}</h2><table border="1" cellpadding="8" style="border-collapse:collapse;"><thead><tr><th>Họ và tên</th><th>Mã lớp + Tài khoản nội bộ</th><th>Mật khẩu</th></tr></thead><tbody>${hang}</tbody></table></body></html>`;
-    download(["\ufeff", html], "application/vnd.ms-excel", `Mat_khau_hoc_sinh.xls`);
-  };
-
-  return (
-    <div>
-      <input type="file" accept=".xlsx,.xls" ref={fileInputRef} style={{ display: "none" }} onChange={xuLyFileExcel} />
-
-      <form
-        style={{ display: "flex", gap: "10px", marginBottom: "20px" }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const n = tenLopMoi.trim();
-          if (!n) return alert("Nhập tên lớp trước khi tạo.");
-          act({ action: "createClass", name: n });
-          setTenLopMoi("");
-        }}
-      >
-        <input value={tenLopMoi} onChange={(e) => setTenLopMoi(e.target.value)} placeholder="Ví dụ: Toán 12A09" style={{ flex: 1, padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none" }} />
-        <button disabled={busy} style={{ background: "#1e3a8a", color: "#fff", border: "none", padding: "0 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}>＋ Tạo lớp</button>
-      </form>
-
-      {matKhauVuaTao && (
-        <div style={{ background: "#f0fdf4", border: "1px solid #86efac", borderRadius: "12px", padding: "18px", marginBottom: "20px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", gap: "10px", flexWrap: "wrap" }}>
-            <b style={{ color: "#166534" }}>🔑 Mật khẩu vừa cấp{matKhauVuaTao.className ? ` — ${matKhauVuaTao.className}` : ""} (chỉ hiện MỘT LẦN, hãy lưu lại ngay)</b>
-            <button onClick={() => setMatKhauVuaTao(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#166534" }}>✕</button>
-          </div>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
-              <thead>
-                <tr style={{ textAlign: "left", color: "#166534" }}>
-                  <th style={{ padding: "6px" }}>Họ và tên</th>
-                  <th style={{ padding: "6px" }}>Mật khẩu</th>
-                </tr>
-              </thead>
-              <tbody>
-                {matKhauVuaTao.students.map((s: any) => (
-                  <tr key={s.email}>
-                    <td style={{ padding: "6px" }}>{s.name}</td>
-                    <td style={{ padding: "6px", fontFamily: "monospace", fontWeight: "bold" }}>{s.password}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button onClick={taiXuongDanhSachMatKhau} style={{ marginTop: "10px", background: "#166534", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>
-            ⬇️ Tải danh sách để in cho học sinh
-          </button>
-        </div>
-      )}
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
-        {classesList.map((c: any) => {
-          const dangMo = lopMoRong === c.id;
-          return (
-            <article key={c.id} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
-              <div style={{ display: "flex", gap: "16px" }}>
-                <div style={{ width: "48px", height: "48px", background: "#eff6ff", color: "#2563eb", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "18px", flexShrink: 0 }}>12</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", gap: "8px" }}>
-                    {dangSuaTenLop === c.id ? (
-                      <div style={{ display: "flex", gap: "6px", flex: 1 }}>
-                        <input value={tenLopDangSua} onChange={(e) => setTenLopDangSua(e.target.value)} style={{ flex: 1, padding: "6px 8px", borderRadius: "6px", border: "1px solid #cbd5e1" }} autoFocus />
-                        <button onClick={() => luuTenLopMoi(c.id)} disabled={busy} style={{ background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "6px", padding: "4px 10px", cursor: "pointer" }}>Lưu</button>
-                        <button onClick={() => setDangSuaTenLop(null)} style={{ background: "#e2e8f0", border: "none", borderRadius: "6px", padding: "4px 10px", cursor: "pointer" }}>Hủy</button>
-                      </div>
-                    ) : (
-                      <h3
-                        style={{ margin: 0, color: "#1e293b", fontSize: "18px", cursor: "pointer" }}
-                        onClick={() => { setDangSuaTenLop(c.id); setTenLopDangSua(c.name); }}
-                        title="Bấm để đổi tên lớp"
-                      >
-                        {c.name} ✏️
-                      </h3>
-                    )}
-                    <button
-                      title="Xóa lớp học này"
-                      style={{ background: "#fee2e2", color: "#b91c1c", border: "none", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold", flexShrink: 0 }}
-                      disabled={busy}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm(`Xóa lớp "${c.name}"? Đề thi và bảng điểm liên quan có thể bị ảnh hưởng.`)) act({ action: "deleteClass", classId: c.id });
-                      }}
-                    >
-                      🗑️ Xóa lớp
-                    </button>
-                  </div>
-                  <p style={{ margin: "0 0 8px 0", color: "#64748b", fontSize: "14px" }}>{c.students ?? 0} học sinh · {c.schoolYear || "—"}</p>
-                  <span style={{ fontSize: "13px", color: "#10b981", background: "#f0fdf4", padding: "4px 8px", borderRadius: "4px", fontWeight: "bold" }}>Mã: {c.code}</span>
-
-                  <div style={{ marginTop: "14px" }}>
-                    <button onClick={() => moRongLop(c.id)} style={{ background: "none", border: "none", color: "#1e3a8a", fontWeight: "bold", cursor: "pointer", padding: 0, fontSize: "14px" }}>
-                      {dangMo ? "▲ Ẩn danh sách học sinh" : "▼ Quản lý danh sách học sinh"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {dangMo && (
-                <div style={{ marginTop: "16px", borderTop: "1px solid #e2e8f0", paddingTop: "16px" }}>
-                  <div style={{ display: "flex", gap: "8px", marginBottom: "12px", flexWrap: "wrap" }}>
-                    <button onClick={() => chonFileExcel(c.id)} disabled={busy} style={{ background: "#eff6ff", color: "#1e3a8a", border: "1px solid #1e3a8a", borderRadius: "8px", padding: "8px 14px", cursor: "pointer", fontWeight: "bold", fontSize: "13px" }}>
-                      📄 Tải danh sách từ Excel
-                    </button>
-                    <button onClick={() => taiThongKe(c.id)} disabled={busy} style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #10b981", borderRadius: "8px", padding: "8px 14px", cursor: "pointer", fontWeight: "bold", fontSize: "13px" }}>
-                      {thongKe[c.id] ? "▲ Ẩn thống kê học liệu" : "📊 Thống kê học liệu"}
-                    </button>
-                  </div>
-
-                  {dangTaiThongKe === c.id && <p style={{ color: "#64748b" }}>Đang tính thống kê...</p>}
-
-                  {thongKe[c.id] && (
-                    <div style={{ marginBottom: "14px", border: "1px solid #bbf7d0", borderRadius: "10px", overflow: "hidden" }}>
-                      <div style={{ background: "#f0fdf4", padding: "10px 12px", fontSize: "13px", color: "#166534", fontWeight: "bold" }}>
-                        Ai đã vào mục Học Liệu Bài Học · ⏱ chỉ tính lúc em thực sự mở màn hình
-                      </div>
-                      {!thongKe[c.id].length ? (
-                        <p style={{ margin: 0, padding: "12px", color: "#64748b", fontStyle: "italic", fontSize: "13px" }}>Lớp chưa có học sinh nào.</p>
-                      ) : (
-                        <div>
-                          {thongKe[c.id].map((hs: any) => {
-                            const khoa = c.id + "|" + hs.email;
-                            const dangXem = moChiTiet === khoa;
-                            return (
-                              <div key={hs.email} style={{ borderTop: "1px solid #dcfce7" }}>
-                                <div
-                                  onClick={() => hs.soBai && setMoChiTiet(dangXem ? null : khoa)}
-                                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", padding: "9px 12px", fontSize: "13px", background: hs.tongLuot ? "#fff" : "#fff7ed", cursor: hs.soBai ? "pointer" : "default" }}
-                                >
-                                  <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: "bold", color: "#1e293b" }}>{hs.name}</span>
-                                  {hs.tongLuot ? (
-                                    <>
-                                      <span style={{ color: "#166534", flexShrink: 0 }}>{hs.soBai} bài · {hs.tongLuot} lượt</span>
-                                      <span style={{ color: "#1e3a8a", fontWeight: "bold", flexShrink: 0 }}>⏱ {doiGiay(hs.tongGiay || 0)}</span>
-                                      <span style={{ color: "#64748b", fontSize: "12px", flexShrink: 0 }}>{hs.lanCuoi ? new Date(hs.lanCuoi).toLocaleDateString("vi-VN") : ""}</span>
-                                      <span style={{ color: "#94a3b8", flexShrink: 0 }}>{dangXem ? "▲" : "▼"}</span>
-                                    </>
-                                  ) : (
-                                    <span style={{ color: "#b45309", fontWeight: "bold", flexShrink: 0 }}>chưa vào lần nào</span>
-                                  )}
-                                </div>
-                                {dangXem && (
-                                  <div style={{ padding: "4px 12px 10px 24px", background: "#f8fafc" }}>
-                                    {hs.chiTiet.map((ct: any) => (
-                                      <div key={ct.tag} style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "12.5px", color: "#475569", padding: "3px 0" }}>
-                                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{TEN_BAI[ct.tag] || ct.tag}</span>
-                                        <span style={{ flexShrink: 0, fontWeight: "bold" }}>{ct.soLuot} lượt · {doiGiay(ct.tongGiay || 0)}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
-                    <textarea
-                      value={tenHocSinhMoi}
-                      onChange={(e) => setTenHocSinhMoi(e.target.value)}
-                      placeholder={"Hoặc gõ tay mỗi học sinh một dòng, ví dụ:\nNguyễn Văn A\nTrần Thị B"}
-                      rows={2}
-                      style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "13px", resize: "vertical" }}
-                    />
-                    <button onClick={() => themHocSinhTay(c.id)} disabled={busy} style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: "8px", padding: "0 16px", cursor: "pointer", fontWeight: "bold", fontSize: "13px" }}>+ Thêm</button>
-                  </div>
-
-                  {dangTaiHocSinh === c.id ? (
-                    <p style={{ color: "#64748b" }}>Đang tải danh sách...</p>
-                  ) : (dsHocSinh[c.id] || []).length ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {(dsHocSinh[c.id] || []).map((hs: any) => (
-                        <div key={hs.email} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", background: "#f8fafc", borderRadius: "8px", fontSize: "13px", gap: "8px" }}>
-                          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{hs.name}</span>
-                          <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-                            <button onClick={() => resetMatKhau(hs.email, hs.name)} disabled={busy} title="Cấp lại mật khẩu mới" style={{ background: "#fef3c7", color: "#92400e", border: "none", borderRadius: "6px", padding: "4px 8px", cursor: "pointer", fontSize: "12px" }}>🔑 Đặt lại MK</button>
-                            <button onClick={() => xoaHocSinh(c.id, hs.email, hs.name)} disabled={busy} title="Xóa khỏi lớp" style={{ background: "#fee2e2", color: "#b91c1c", border: "none", borderRadius: "6px", padding: "4px 8px", cursor: "pointer", fontSize: "12px" }}>🗑️</button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{ color: "#64748b", fontStyle: "italic", fontSize: "13px" }}>Lớp chưa có học sinh nào. Thêm bằng Excel hoặc gõ tay ở trên.</p>
-                  )}
-                </div>
-              )}
-            </article>
-          );
-        })}
-        {!classesList.length && <p style={{ color: "#64748b", fontStyle: "italic" }}>Chưa có lớp học nào. Tạo lớp đầu tiên ở ô phía trên.</p>}
-      </div>
-    </div>
-  );
-}
-
 function anhThanhHtml(file: File): Promise<string> {
   return new Promise((ok, loi) => {
     const doc = new FileReader();
@@ -2024,7 +1533,7 @@ function OSoanNoiDung({ nhan, giaTri, setGiaTri, goiY, mauNen }: any) {
         </button>
 
         <button
-          onClick={() => window.open("/v17.html", "_blank")}
+          onClick={() => window.open("/v15.html", "_blank")}
           style={{ padding: "8px 14px", borderRadius: "8px", border: "1px solid #fcd34d", background: "#fffbeb", color: "#b45309", cursor: "pointer", fontWeight: "bold", fontSize: "13px" }}
         >
           🎨 Mở Xưởng Ảnh → HTML
@@ -2100,7 +1609,6 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
   const [kienThuc, setKienThuc] = useState("");
   const [soDoTuDuy, setSoDoTuDuy] = useState("");
   const [dsGame, setDsGame] = useState<any[]>([]);
-  const [dsVideo, setDsVideo] = useState<any[]>([]);
   const [luyenTap, setLuyenTap] = useState("");
   const [xemThu, setXemThu] = useState(false);
 
@@ -2111,7 +1619,6 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
     setKienThuc(String(hienTai.kienThuc || ""));
     setSoDoTuDuy(String(hienTai.soDoTuDuy || ""));
     setDsGame(Array.isArray(hienTai.gameLinks) ? hienTai.gameLinks.map((x: any) => ({ ...x })) : []);
-    setDsVideo(Array.isArray(hienTai.videoLinks) ? hienTai.videoLinks.map((x: any) => ({ ...x })) : []);
     setLuyenTap(String(hienTai.luyenTap || ""));
     setXemThu(false);
   }, [tag, hienTai]);
@@ -2192,8 +1699,6 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
 
         <BoSuaLink nhan="🎮 Game tương tác" ds={dsGame} setDs={setDsGame} goiY="https://dinhcaotritue.com/game/" />
 
-        <BoSuaLink nhan="🎬 Video bài giảng" ds={dsVideo} setDs={setDsVideo} goiY="https://youtube.com/watch?v=..." />
-
         {!xemThu && (
           <div style={{ marginTop: "22px", paddingTop: "18px", borderTop: "1px solid #e2e8f0" }}>
             <label style={{ fontWeight: "bold", color: "#334155", fontSize: "15px", display: "block", marginBottom: "4px" }}>✏️ Luyện tập</label>
@@ -2211,7 +1716,7 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
           <button
             disabled={busy}
-            onClick={() => act({ action: "luuHocLieu", tag, kienThuc, soDoTuDuy, luyenTap, gameLinks: dsGame.filter((x) => String(x.url || "").trim()), videoLinks: dsVideo.filter((x) => String(x.url || "").trim()) })}
+            onClick={() => act({ action: "luuHocLieu", tag, kienThuc, soDoTuDuy, luyenTap, gameLinks: dsGame.filter((x) => String(x.url || "").trim()) })}
             style={{ background: "#1e3a8a", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "15px" }}
           >
             💾 Lưu học liệu cho bài này
@@ -2571,7 +2076,7 @@ function Student({ active, data, busy, act, answers, setAnswers, triggerMath }: 
       )}
 
       {!laNangLuc && tabHoc !== "kt15" && tabHoc !== "kt1tiet" ? (
-        <KhongGianChuong maChuong={tabHoc} hocLieu={data.hocLieu || []} triggerMath={triggerMath} laHocSinh={data.user?.role === "student"} />
+        <KhongGianChuong maChuong={tabHoc} hocLieu={data.hocLieu || []} triggerMath={triggerMath} />
       ) : (
       <div style={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
         {!(data.classes || []).length && (
@@ -2958,41 +2463,10 @@ function printPdf(rows: any[], exams: any[]) {
 // ==========================================
 // ĐĂNG NHẬP
 // ==========================================
-const loginInput: React.CSSProperties = { width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff", boxSizing: "border-box" };
-const loginTitle: React.CSSProperties = { fontSize: "13px", fontWeight: "bold", color: "#1e3a8a", letterSpacing: "1px", textTransform: "uppercase" };
-
-// Ô mật khẩu có nút 👁 ẩn/hiện để thầy cô kiểm tra mình gõ đúng chưa.
-function PasswordInput({ value, onChange, onEnter, placeholder, inputStyle }: any) {
-  const [show, setShow] = useState(false);
-  return (
-    <div style={{ position: "relative", width: "100%" }}>
-      <input
-        type={show ? "text" : "password"}
-        value={value}
-        onChange={onChange}
-        onKeyDown={(e) => { if (e.key === "Enter" && onEnter) onEnter(); }}
-        placeholder={placeholder}
-        autoComplete="current-password"
-        style={{ ...(inputStyle || loginInput), paddingLeft: inputStyle ? (inputStyle.padding || "16px") : "44px", paddingRight: "44px", width: "100%", boxSizing: "border-box" }}
-      />
-      <button
-        type="button"
-        onClick={() => setShow((v) => !v)}
-        title={show ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-        aria-label={show ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-        style={{ position: "absolute", right: "6px", top: "50%", transform: "translateY(-50%)", width: "34px", height: "34px", border: "none", background: "transparent", cursor: "pointer", fontSize: "18px", lineHeight: 1, borderRadius: "8px", opacity: show ? 1 : 0.65 }}
-      >
-        {show ? "🙈" : "👁️"}
-      </button>
-    </div>
-  );
-}
-
-export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
+export function LoginForm({ onLogin, onSendCode, onVerifyReset }: any) {
   const [name, setName] = useState("");
   const [classCode, setClassCode] = useState("");
   const [password, setPassword] = useState("");
-  const [studentPassword, setStudentPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -3016,22 +2490,19 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
       setError("❌ Viết hoa chữ cái đầu của mỗi từ trong tên (ví dụ: Hồ Thuyết Dũng).");
       return;
     }
-    // Mã lớp giờ là mã THẬT do giáo viên cấp (hiện ở màn "Quản Lý Lớp Học"), không phải tên lớp tự gõ.
-    if (!/^[A-Z0-9]{4,10}$/.test(rawClass)) {
-      setError("❌ Mã lớp không hợp lệ. Hỏi giáo viên để lấy đúng mã lớp.");
-      return;
-    }
-    if (!studentPassword.trim()) {
-      setError("❌ Nhập mật khẩu giáo viên đã cấp cho em.");
+    if (!/^(1[0-2]|[6-9])[A-Z]{1,5}\d{0,3}$/.test(rawClass)) {
+      setError("❌ Mã lớp không hợp lệ. Ví dụ đúng: 12A01, 11A1, 10CT2.");
       return;
     }
 
     setBusy(true);
     try {
+      const cleanName = finalName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d").replace(/\s+/g, "").toLowerCase();
+      const finalEmail = `${cleanName}.${rawClass.toLowerCase()}@student.v17`;
+
       const formData = new FormData();
+      formData.append("email", finalEmail);
       formData.append("name", finalName);
-      formData.append("classCode", rawClass);
-      formData.append("password", studentPassword.trim());
       formData.append("roleType", "student");
 
       const res = await onLogin(formData);
@@ -3043,20 +2514,18 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
     }
   };
 
-  const [gvName, setGvName] = useState("");
-  const [gvPassword, setGvPassword] = useState("");
-
-  // QUẢN TRỊ: chỉ gửi mật khẩu, máy chủ tự gán tài khoản Quản trị.
-  const handleAdminLogin = async () => {
+  const handleTeacherLogin = async () => {
     setError("");
     if (!password) {
-      setError("❌ Nhập mật khẩu Quản trị vào ô bên trên trước khi bấm nút.");
+      setError("❌ Nhập mật khẩu giáo viên vào ô bên trên trước khi bấm nút.");
       return;
     }
     setBusy(true);
     try {
       const formData = new FormData();
-      formData.append("roleType", "admin");
+      formData.append("email", TEACHER_ACCOUNT.email);
+      formData.append("name", TEACHER_ACCOUNT.name);
+      formData.append("roleType", "teacher");
       formData.append("password", password);
       const res = await onLogin(formData);
       if (res?.error) setError(res.error);
@@ -3067,66 +2536,43 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
     }
   };
 
-  // GIÁO VIÊN: họ tên + mật khẩu chung do Quản trị đặt.
-  const handleGvLogin = async () => {
-    setError("");
-    const finalName = gvName.trim().replace(/\s+/g, " ");
-    if (finalName.split(" ").length < 2 || /\d/.test(finalName)) {
-      setError("❌ Họ và tên Giáo viên phải từ 2 chữ trở lên, không có số (ví dụ: Nguyễn Văn An).");
-      return;
-    }
-    const isCapitalized = finalName.split(" ").every((w) => w.length > 0 && w[0] === w[0].toLocaleUpperCase("vi-VN") && w[0] !== w[0].toLocaleLowerCase("vi-VN"));
-    if (!isCapitalized) {
-      setError("❌ Viết hoa chữ cái đầu của mỗi từ trong tên (ví dụ: Nguyễn Văn An).");
-      return;
-    }
-    if (!gvPassword) {
-      setError("❌ Nhập mật khẩu Giáo viên.");
+  const handleForgotPassword = async () => {
+    // LỖI CŨ: gọi thẳng onSendCode() / onVerifyReset() mà không kiểm tra -> TypeError trắng nút
+    if (typeof onSendCode !== "function" || typeof onVerifyReset !== "function") {
+      alert("Máy chủ chưa bật chức năng khôi phục mật khẩu.");
       return;
     }
     setBusy(true);
     try {
-      const formData = new FormData();
-      formData.append("roleType", "teacher");
-      formData.append("name", finalName);
-      formData.append("password", gvPassword);
-      const res = await onLogin(formData);
-      if (res?.needChange) {
-        // LẦN ĐẦU ĐĂNG NHẬP: bắt buộc đặt mật khẩu riêng
-        const p1 = prompt(`Chào ${finalName}!\nĐây là lần đầu đăng nhập. Hãy đặt MẬT KHẨU RIÊNG (ít nhất 8 ký tự, khác mật khẩu ban đầu).\nChỉ thầy/cô biết mật khẩu này:`);
-        if (p1 === null) return setError("⚠️ Cần đặt mật khẩu riêng để vào lần đầu.");
-        if (p1.trim().length < 8) return setError("❌ Mật khẩu mới cần ít nhất 8 ký tự.");
-        const p2 = prompt("Nhập lại mật khẩu riêng vừa đặt:");
-        if (p2 === null) return setError("⚠️ Cần đặt mật khẩu riêng để vào lần đầu.");
-        if (p1.trim() !== p2.trim()) return setError("❌ Hai lần nhập mật khẩu không khớp. Thử lại.");
-        const fd = new FormData();
-        fd.append("name", finalName);
-        fd.append("password", gvPassword);
-        fd.append("newPassword", p1.trim());
-        const r2 = await onTeacherFirstLogin(fd);
-        if (r2?.error) setError(r2.error);
-        else alert("✅ Đã đặt mật khẩu riêng. Từ lần sau, đăng nhập bằng họ tên và mật khẩu riêng này.");
-        return;
-      }
-      if (res?.error) setError(res.error);
+      await onSendCode();
     } catch {
-      setError("❌ Không kết nối được máy chủ.");
+      setBusy(false);
+      alert("❌ Không gửi được mã xác minh. Kiểm tra kết nối rồi thử lại.");
+      return;
     } finally {
       setBusy(false);
     }
-  };
 
-  const handleForgotPassword = () => {
-    alert(
-      "QUÊN MẬT KHẨU\n\n" +
-        "• Học sinh: nhờ giáo viên bấm \"🔑 Đặt lại MK\" trong Quản Lý Lớp Học để cấp mật khẩu mới.\n\n" +
-        "• Giáo viên: liên hệ Quản trị để được CẤP LẠI mật khẩu. Sau đó đăng nhập bằng mật khẩu ban đầu và đặt mật khẩu riêng mới.\n\n" +
-        "• Quản trị:\n" +
-        "  1. Đăng nhập dash.cloudflare.com.\n" +
-        "  2. Workers & Pages → v17-dinhcaotritue → Settings → Variables and Secrets.\n" +
-        "  3. Sửa biến bí mật TEACHER_PASSWORD thành mật khẩu mới rồi bấm Deploy.\n" +
-        "  Sau đó đăng nhập Quản trị bằng mật khẩu mới vừa đặt."
-    );
+    alert("Đã gửi mã xác minh 6 số đến email quản trị (mã cũng hiện trên cửa sổ máy chủ Node/Vercel).");
+
+    const code = prompt("Nhập mã xác minh 6 chữ số:");
+    if (!code || !code.trim()) return;
+
+    const newPass = prompt("Tạo mật khẩu MỚI (ít nhất 6 ký tự):");
+    if (newPass === null) return;
+    if (newPass.trim().length < 6) {
+      alert("❌ Mật khẩu mới cần ít nhất 6 ký tự.");
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const res = await onVerifyReset(code.trim(), newPass.trim());
+      if (res?.error) alert(res.error);
+      else alert("✅ Đã đổi mật khẩu. Dùng mật khẩu mới để đăng nhập quản trị.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -3135,38 +2581,26 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
         <div className="brand-mark" style={{ width: "56px", height: "56px", background: "#fbbf24", color: "#1e3a8a", fontSize: "28px", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "16px", margin: "0 auto 24px" }}>Đ</div>
         <p className="eyebrow" style={{ fontSize: "13px", fontWeight: "bold", color: "#64748b", letterSpacing: "1.5px", margin: "0 0 10px", textTransform: "uppercase" }}>ĐỈNH CAO TRÍ TUỆ</p>
         <h1 style={{ fontSize: "32px", color: "#1e3a8a", margin: "0 0 12px" }}>ỨNG DỤNG HỌC VÀ THI ONLINE</h1>
-        <p style={{ color: "#64748b", fontSize: "16px", margin: "0 0 32px" }}>Đăng nhập bằng họ tên, mã lớp và mật khẩu do giáo viên cấp. Phiên đăng nhập được mã hóa.</p>
+        <p style={{ color: "#64748b", fontSize: "16px", margin: "0 0 32px" }}>Đăng nhập bằng họ tên và mã lớp. Phiên đăng nhập được mã hóa.</p>
 
         {error && <div style={{ background: "#fee2e2", color: "#b91c1c", padding: "14px", borderRadius: "10px", marginBottom: "20px", fontWeight: "bold", border: "1px solid #fca5a5" }}>{error}</div>}
 
-        <div style={{ display: "flex", gap: "16px", marginTop: "20px", marginBottom: "12px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "16px", marginTop: "20px", marginBottom: "20px", flexWrap: "wrap" }}>
           <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#f8fafc", padding: "20px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
-            <div style={loginTitle}>Quản trị</div>
-            <PasswordInput
-              value={password} onChange={(e: any) => setPassword(e.target.value)}
-              onEnter={handleAdminLogin}
-              placeholder="Nhập mật khẩu Quản trị..."
+            <input
+              type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleTeacherLogin(); }}
+              placeholder="Nhập mật khẩu Giáo viên..."
+              style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", fontSize: "15px", textAlign: "center", outline: "none", background: "#fff" }}
             />
-            <button type="button" onClick={handleAdminLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#eff6ff", color: "#1e3a8a", border: "2px solid #1e3a8a", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🛡️ Quản Trị</button>
+            <button type="button" onClick={handleTeacherLogin} disabled={busy} style={{ width: "100%", padding: "14px", background: "#eff6ff", color: "#1e3a8a", border: "2px solid #1e3a8a", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>👨‍🏫 Quản Trị</button>
           </div>
 
-          <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#f0fdf4", padding: "20px", borderRadius: "16px", border: "1px solid #bbf7d0" }}>
-            <div style={{ ...loginTitle, color: "#166534" }}>Giáo viên</div>
-            <input
-              type="text" value={gvName} onChange={(e) => setGvName(e.target.value)}
-              placeholder="Họ và tên Giáo viên"
-              style={loginInput}
-            />
-            <PasswordInput
-              value={gvPassword} onChange={(e: any) => setGvPassword(e.target.value)}
-              onEnter={handleGvLogin}
-              placeholder="Nhập mật khẩu Giáo viên..."
-            />
-            <button type="button" onClick={handleGvLogin} disabled={busy} style={{ width: "100%", padding: "14px", marginTop: "auto", background: "#dcfce7", color: "#166534", border: "2px solid #166534", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>👨‍🏫 Giáo viên</button>
+          <div style={{ flex: "1 1 250px", display: "flex", flexDirection: "column", gap: "10px", background: "#fef2f2", padding: "20px", borderRadius: "16px", border: "1px solid #fca5a5" }}>
+            <div style={{ height: "46px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "#b91c1c", fontWeight: "bold" }}>Khôi phục qua email quản trị</div>
+            <button type="button" onClick={handleForgotPassword} disabled={busy} style={{ width: "100%", padding: "14px", background: "#fff", color: "#b91c1c", border: "2px solid #b91c1c", borderRadius: "10px", fontWeight: "bold", fontSize: "16px", cursor: busy ? "not-allowed" : "pointer" }}>🔑 Quên mật khẩu</button>
           </div>
         </div>
-
-        <button type="button" onClick={handleForgotPassword} disabled={busy} style={{ width: "100%", padding: "12px", marginBottom: "8px", background: "#fff", color: "#b91c1c", border: "2px solid #b91c1c", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", cursor: busy ? "not-allowed" : "pointer" }}>🔑 Quên mật khẩu</button>
 
         <div style={{ display: "flex", alignItems: "center", margin: "24px 0" }}>
           <hr style={{ flex: 1, border: "none", borderTop: "1px solid #cbd5e1" }} />
@@ -3176,12 +2610,7 @@ export function LoginForm({ onLogin, onTeacherFirstLogin }: any) {
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px", margin: "10px 0 20px" }}>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="1. Họ và tên (viết hoa chữ cái đầu)" required style={{ padding: "16px", borderRadius: "10px", border: "1px solid #cbd5e1", color: "#0f172a", fontSize: "16px", outline: "none", background: "#f8fafc" }} />
-          <input type="text" value={classCode} onChange={(e) => setClassCode(e.target.value.toUpperCase())} placeholder="2. Mã lớp (do giáo viên cung cấp)" required style={{ padding: "16px", borderRadius: "10px", border: "1px solid #cbd5e1", color: "#0f172a", fontSize: "16px", outline: "none", background: "#f8fafc" }} />
-          <PasswordInput
-            value={studentPassword} onChange={(e: any) => setStudentPassword(e.target.value)}
-            placeholder="3. Mật khẩu (do giáo viên cấp)"
-            inputStyle={{ padding: "16px", borderRadius: "10px", border: "1px solid #cbd5e1", color: "#0f172a", fontSize: "16px", outline: "none", background: "#f8fafc", textAlign: "left" }}
-          />
+          <input type="text" value={classCode} onChange={(e) => setClassCode(e.target.value.toUpperCase())} placeholder="2. Mã lớp (ví dụ: 12A01)" required style={{ padding: "16px", borderRadius: "10px", border: "1px solid #cbd5e1", color: "#0f172a", fontSize: "16px", outline: "none", background: "#f8fafc" }} />
           <button type="submit" disabled={busy} className="primary-btn" style={{ background: "#1e3a8a", color: "#fff", cursor: busy ? "not-allowed" : "pointer", border: "none", width: "100%", fontSize: "18px", padding: "16px", borderRadius: "10px", fontWeight: "bold", marginTop: "8px" }}>
             {busy ? "Đang kiểm tra dữ liệu..." : "Vào lớp học ngay"}
           </button>
