@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e3a8a'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='%23fbbf24' font-family='sans-serif' font-weight='bold'%3E%C4%90%3C/text%3E%3C/svg%3E">
-<title>Đỉnh Cao Trí Tuệ V15 — Xưởng Thiết Kế Offline</title>
+<title>Đỉnh Cao Trí Tuệ — Xưởng Thiết Kế Offline</title>
 
 <script>
 MathJax = {
@@ -109,117 +109,202 @@ textarea.input-box{resize:vertical;min-height:130px;font-family:ui-monospace,Men
 }
 
 /* =====================================================================
-   KHUNG DUYỆT DỮ LIỆU AI — CHẾ ĐỘ TOÀN MÀN HÌNH
-   Trước đây danh sách chờ duyệt bị kẹt trong .container (tối đa 1000px)
-   rồi lại cuộn trong một ô cao 60vh, nên đồ thị và công thức dài bị cắt,
-   thầy cô phải cuộn hai tầng mới đọc hết một câu.
+   KHUNG DUYỆT CÂU HỎI — DÙNG CHUNG cho "Trạm nhận dữ liệu AI" và
+   "Xem trước câu hỏi". Hai màn hình này nay có cùng một bộ giao diện:
+   thanh tiêu đề dính trên đầu, danh sách cuộn riêng bên dưới, mỗi câu là
+   một thẻ trắng đủ rộng với ô chọn mức độ / bài học ngay trên đầu thẻ và
+   hàng nút thao tác ở cuối thẻ.
+   Trước đây màn Xem trước dùng .preview-item với ba huy hiệu Sửa/Chuyển/Xóa
+   bé xíu treo lơ lửng ở góc phải, đè lên nội dung và rất khó bấm.
    ===================================================================== */
-#bulk-preview-area .bulk-head{
+.khung-duyet .bulk-head{
   position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;
   align-items:center;justify-content:space-between;
   background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;
   padding:10px 16px;margin-bottom:12px;text-align:left
 }
-#bulk-preview-area .bulk-head b{color:var(--primary-blue);font-size:1.15em}
-#bulk-preview-area .bulk-head .dem{font-size:.85em;color:#475569;font-weight:700}
-#bulk-preview-area .bulk-list{
+.khung-duyet .bulk-head b{color:var(--primary-blue);font-size:1.15em}
+.khung-duyet .bulk-head .dem{font-size:.85em;color:#475569;font-weight:700}
+.khung-duyet .bulk-list{
   max-height:62vh;overflow-y:auto;padding-right:8px;
   border-top:2px solid #e2e8f0;padding-top:14px
 }
-#bulk-preview-area .bulk-card{
+.khung-duyet .bulk-card{
   margin-bottom:16px;padding:18px;background:#fff;border-radius:10px;
-  border:1px solid #cbd5e1;text-align:left
+  border:1px solid #cbd5e1;text-align:left;position:relative
 }
-#bulk-preview-area .bulk-card.dang-sua{border:2px solid #8b5cf6;background:#faf5ff}
+.khung-duyet .bulk-card.dang-sua{border:2px solid #8b5cf6;background:#faf5ff}
 /* Ảnh đồ thị co theo bề ngang khung, không bị cắt như trước */
-#bulk-preview-area .bulk-card img{max-width:100%;height:auto;display:block;margin:8px 0}
-#bulk-preview-area .bulk-card table{max-width:100%}
+.khung-duyet .bulk-card img{max-width:100%;height:auto;display:block;margin:8px 0}
+.khung-duyet .bulk-card table{max-width:100%}
 
 /* LỖI CŨ: .input-box có max-width:560px và margin:0 auto, nên dù đặt
    style="width:100%" thì ô soạn thảo vẫn kẹt 560px và nằm giữa —
    sửa một câu có đồ thị hay công thức dài rất khổ. */
-#bulk-preview-area .bulk-edit{
+.khung-duyet .bulk-edit{
   width:100%!important;max-width:none!important;margin:0 0 10px!important;
   text-align:left;display:block
 }
 
-/* Toàn màn hình: thoát khỏi .container và khỏi thanh menu bên trái */
-#bulk-preview-area.bulk-full{
-  position:fixed;inset:0;z-index:9000;margin:0;padding:14px 20px;
-  background:#f8fafc;overflow:hidden;display:flex;flex-direction:column;
-  box-shadow:none;border-radius:0
-}
-#bulk-preview-area.bulk-full .bulk-list{
-  max-height:none;flex:1;min-height:0;border-top:none;padding-top:8px
-}
-#bulk-preview-area.bulk-full .bulk-card{padding:22px 26px}
-body.bulk-khoa-cuon{overflow:hidden}
-
-/* Màn hình rộng: xếp phương án thành 2 cột cho đỡ phải cuộn */
-@media(min-width:1250px){
-  #bulk-preview-area.bulk-full .bulk-opts{
-    display:grid;grid-template-columns:1fr 1fr;gap:2px 30px
-  }
-}
-
 /* --- Hàng chọn mức độ / bài học và ô chọn đáp án --- */
-#bulk-preview-area .bulk-meta{
+.khung-duyet .bulk-meta{
   display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;
   background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;
   padding:10px 14px;margin-bottom:14px
 }
-#bulk-preview-area .bulk-meta label{
+.khung-duyet .bulk-meta label{
   display:flex;flex-direction:column;gap:4px;
   font-size:.82em;font-weight:800;color:#3730a3;text-transform:uppercase;letter-spacing:.4px
 }
-#bulk-preview-area .bulk-mini{
+.khung-duyet .bulk-mini{
   padding:8px 10px;border:2px solid #cbd5e1;border-radius:8px;background:#fff;
   font-family:'Nunito',sans-serif;font-weight:700;font-size:.95em;
   color:var(--primary-dark);cursor:pointer;text-transform:none;letter-spacing:0
 }
-#bulk-preview-area .bulk-ghichu{
+.khung-duyet .bulk-ghichu{
   font-size:.85em;color:#475569;font-weight:700;margin:12px 0 6px
 }
-#bulk-preview-area .bulk-dong-opt{
+.khung-duyet .bulk-dong-opt{
   display:flex;gap:10px;margin-bottom:8px;align-items:flex-start
 }
 /* Ô tròn chọn đáp án — để to cho dễ bấm */
-#bulk-preview-area .bulk-chon{
+.khung-duyet .bulk-chon{
   display:flex;align-items:center;gap:6px;padding:10px 12px;
   border:2px solid #cbd5e1;border-radius:8px;background:#f8fafc;
   cursor:pointer;font-weight:800;flex-shrink:0;margin-top:2px
 }
-#bulk-preview-area .bulk-chon input{width:20px;height:20px;cursor:pointer;margin:0}
-#bulk-preview-area .bulk-chon:has(input:checked){
+.khung-duyet .bulk-chon input{width:20px;height:20px;cursor:pointer;margin:0}
+.khung-duyet .bulk-chon:has(input:checked){
   border-color:var(--accent-green);background:#dcfce7;color:#065f46
 }
-
-/* Thẻ mức độ / bài học ở chế độ xem — bấm vào là đổi ngay, khỏi vào Sửa */
-#bulk-preview-area .pill-sua{
-  border:none;font:inherit;cursor:pointer;
-  background:#e0e7ff;color:#3730a3;border-radius:99px;
-  padding:4px 12px;font-size:.78em;font-weight:800;margin-left:6px
+/* Hàng đầu thẻ: nhãn loại câu + hai ô chọn + cờ nhắc soát */
+.khung-duyet .the-dau{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px
 }
-#bulk-preview-area .pill-sua:hover{background:#c7d2fe}
-#bulk-preview-area .pill-sua.canxem{background:#fee2e2;color:#991b1b}
+.khung-duyet .pill-sua{
+  border:none;font:inherit;background:#e0e7ff;color:#3730a3;border-radius:99px;
+  padding:4px 12px;font-size:.78em;font-weight:800
+}
+.khung-duyet .pill-sua.canxem{background:#fee2e2;color:#991b1b}
+/* Khối lời giải */
+.khung-duyet .loi-giai{
+  background:#f8fafc;border-left:4px solid #cbd5e1;padding:8px 12px;
+  margin-bottom:12px;font-size:.93em
+}
+/* Hàng nút cuối thẻ */
+.khung-duyet .the-nut{display:flex;gap:10px;flex-wrap:wrap}
 
 /* Ô đặt mức độ cho cả lô, nằm trên thanh tiêu đề */
-#bulk-preview-area .bulk-head .lo-mucdo{
+.khung-duyet .bulk-head .lo-mucdo{
   display:flex;align-items:center;gap:6px;background:#fff;
   border:1px solid #c7d2fe;border-radius:10px;padding:5px 10px;
   font-size:.82em;font-weight:800;color:#3730a3
 }
+
+/* =====================================================================
+   CHẾ ĐỘ TOÀN MÀN HÌNH — DỜI HẲN PHẦN TỬ RA NGOÀI <body>
+   Cách cũ giữ nguyên khung tại chỗ rồi đặt position:fixed. Cách đó rất dễ
+   hỏng vì chỉ cần MỘT tổ tiên bất kỳ có transform / filter / contain là
+   position:fixed thôi bám theo màn hình mà bám vào tổ tiên đó — ở đây
+   .game-panel có animation:slideUp kèm transform, nên khung bị nhốt lại,
+   chiều cao tính sai và danh sách bên trong mất luôn khả năng cuộn.
+   Nay khung được DỜI hẳn vào một lớp phủ gắn thẳng vào <body>, rồi trả về
+   chỗ cũ khi thu nhỏ. Không còn tổ tiên nào can thiệp được nữa.
+   ===================================================================== */
+#lop-phu-tmh{
+  position:fixed;inset:0;z-index:9000;background:#f8fafc;
+  display:none;flex-direction:column;padding:14px 20px;overflow:hidden
+}
+#lop-phu-tmh.hien{display:flex}
+/* Khung được dời vào đây phải là flex column và cao hết phần còn lại.
+   Dùng !important vì #bulk-preview-area có style="margin-top:20px" ghi
+   thẳng trong thẻ, mà style trong thẻ thì luôn thắng CSS thường. */
+#lop-phu-tmh > *{
+  flex:1!important;min-height:0!important;
+  display:flex!important;flex-direction:column!important;
+  margin:0!important;padding:0!important;width:auto!important;max-width:none!important;
+  background:transparent!important;border:none!important;box-shadow:none!important
+}
+/* Lớp #preview-content-area chen giữa ở khung Xem trước — nối tiếp chuỗi flex */
+#lop-phu-tmh #preview-content-area{
+  flex:1;min-height:0;display:flex;flex-direction:column
+}
+#lop-phu-tmh .bulk-list{
+  max-height:none;flex:1;min-height:0;border-top:none;padding-top:8px
+}
+#lop-phu-tmh .bulk-card{padding:22px 26px}
+/* Tiêu đề cũ ẩn đi, tên bài đã nằm trên thanh dính rồi */
+#lop-phu-tmh #preview-title{display:none}
+/* Nút CHỐT NẠP to ở cuối danh sách không được co lại */
+#lop-phu-tmh .btn-container{flex:0 0 auto;margin-top:12px}
+body.bulk-khoa-cuon{overflow:hidden}
+
+/* Màn hình rộng: xếp phương án thành 2 cột cho đỡ phải cuộn */
+@media(min-width:1250px){
+  #lop-phu-tmh .bulk-opts{
+    display:grid;grid-template-columns:1fr 1fr;gap:2px 30px
+  }
+}
+/* =====================================================================
+   BỔ SUNG: GIỎ TẠM NHIỀU LƯỢT DÁN  +  KHO ĐỀ TỰ SOẠN BỐN PHẦN
+   Lý do: một đề giấy nhờ AI chuyển sang JSON thường phải chia nhiều lượt
+   (mỗi lượt chỉ ra được dăm câu). Bản cũ mỗi lần "Xem trước" là ghi đè
+   danh sách chờ, chốt nạp xong câu hỏi rơi thẳng vào ngân hàng chung nên
+   đề gốc bị vỡ vụn, không giữ lại được nguyên đề.
+   ===================================================================== */
+.gom-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:center;
+  background:#ecfdf5;border:1px solid #6ee7b7;border-radius:12px;padding:10px 14px;margin:12px 0;
+  font-weight:800;color:#065f46;font-size:.92em;text-align:center}
+.gom-bar .so{background:#059669;color:#fff;border-radius:99px;padding:2px 12px}
+.gom-bar .nhac{font-weight:700;color:#047857;font-size:.94em}
+.gom-luot{font-weight:700;color:#0f766e;font-size:.86em}
+
+.hop-nen{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9500;display:none;
+  align-items:flex-start;justify-content:center;overflow:auto;padding:28px 16px}
+.hop-nen.hien{display:flex}
+.hop{background:#fff;border-radius:18px;max-width:760px;width:100%;padding:24px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);font-family:'Nunito',sans-serif}
+.hop h3{margin:0 0 6px;color:var(--primary-blue);font-family:'Montserrat',sans-serif;text-align:center}
+.hop .chon-dich{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.hop .chon-dich label{display:flex;gap:10px;align-items:flex-start;border:2px solid #e2e8f0;
+  border-radius:12px;padding:12px 14px;cursor:pointer;font-weight:800;color:var(--text-dark)}
+.hop .chon-dich label:hover{border-color:#93c5fd;background:#f8fafc}
+.hop .chon-dich label:has(input:checked){border-color:#3b82f6;background:#eff6ff}
+.hop .chon-dich input{width:20px;height:20px;margin-top:2px;flex-shrink:0}
+.hop .chon-dich .phu{display:block;font-weight:600;font-size:.86em;color:#475569;margin-top:3px}
+.hop .khung-de{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:6px}
+.hop .bang-phan{width:100%;border-collapse:collapse;font-size:.88em;margin-top:10px;background:#fff}
+.hop .bang-phan th{background:#e0e7ff;color:#3730a3;border:1px solid #c7d2fe;padding:7px}
+.hop .bang-phan td{border:1px solid #dbeafe;padding:7px;text-align:center;font-weight:700}
+
+.de-the{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px 18px;margin-bottom:12px}
+.de-the.dang{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.de-the .ten{font-weight:900;color:var(--primary-blue);font-size:1.12em;font-family:'Montserrat',sans-serif}
+.de-the .meta{font-size:.84em;color:#64748b;font-weight:700;margin-top:3px}
+.de-phan{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.de-phan .dau{background:#e0e7ff;color:#3730a3;font-weight:900;padding:9px 14px;font-size:.92em;
+  display:flex;justify-content:space-between;align-items:center;gap:8px}
+.de-cau{border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;font-size:.94em;background:#fff}
+.de-cau .stt{font-weight:900;color:var(--primary-blue);min-width:32px}
+.de-cau .noi{flex:1;min-width:0;overflow-x:auto}
+.de-cau .noi img{max-width:100%;height:auto}
+.de-cau .nut{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:210px}
+.de-cau .nut button{border:1px solid #cbd5e1;background:#f8fafc;border-radius:7px;padding:5px 9px;
+  cursor:pointer;font-weight:800;font-size:.88em;font-family:'Nunito',sans-serif}
+.de-cau .nut button:hover{background:#e2e8f0}
+.o-phan{border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:7px;padding:5px 7px;
+  font-weight:800;font-size:.85em;cursor:pointer;font-family:'Nunito',sans-serif}
 </style>
 </head>
 <body>
 
 <div id="login-wrapper"></div>
 
-<!-- SIDEBAR V15 -->
+<!-- SIDEBAR XƯỞNG -->
 <nav id="app-sidebar" class="sidebar">
   <div style="padding:24px 20px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1)">
       <h2 style="color:#fbbf24; font-size:24px; font-weight:900; margin:0 0 8px; text-transform:uppercase; line-height:1.2; text-shadow:0 2px 4px rgba(0,0,0,0.3); font-family:'Montserrat', sans-serif;">ĐỈNH CAO<br>TRÍ TUỆ</h2>
-      <p style="color:#93c5fd; font-size:12px; margin:0 0 12px; font-weight:bold;">XƯỞNG SOẠN ĐỀ V15 OFFLINE</p>
+      <p style="color:#93c5fd; font-size:12px; margin:0 0 12px; font-weight:bold;">XƯỞNG SOẠN ĐỀ OFFLINE</p>
       <p style="color:#fbbf24; font-size:14px; font-weight:bold; margin:0; text-transform:uppercase;">ADMIN • Quản Trị</p>
   </div>
   <div style="padding:16px 12px; flex:1; display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
@@ -231,6 +316,7 @@ body.bulk-khoa-cuon{overflow:hidden}
       </div>
       <div>
           <div class="ui-menu-label">THIẾT KẾ & TRỰC QUAN</div>
+          <button class="sidebar-btn" data-target="dete" onclick="toggleAdminForm('dete')"><span style="font-size:18px">🗂️</span> Đề Tự Soạn</button>
           <button class="sidebar-btn" data-target="designer" onclick="toggleAdminForm('designer')"><span style="font-size:18px">📐</span> Studio Thiết Kế Đề</button>
           <button class="sidebar-btn" data-target="desmos" onclick="toggleAdminForm('desmos')"><span style="font-size:18px">📈</span> Studio Vẽ Đồ Thị</button>
           <button class="sidebar-btn" data-target="quickexam" onclick="toggleAdminForm('quickexam')"><span style="font-size:18px">🚀</span> Tạo Đề Nhanh</button>
@@ -246,6 +332,7 @@ body.bulk-khoa-cuon{overflow:hidden}
   <div style="padding:20px; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.1)">
       <div id="storage-info" style="color:#93c5fd; margin-bottom:10px; font-size:12px; text-align:center; font-weight:bold;">Đang tải...</div>
       <button class="sidebar-btn" style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; justify-content:center; margin-bottom:0; font-weight:bold;" onclick="clearCustomData()">🗑️ Xóa Ngân Hàng</button>
+      <button class="sidebar-btn" style="background:transparent; border:1px solid #3b82f6; color:#fff; justify-content:center; margin:10px 0 0; font-weight:bold;" onclick="dangXuat()">🚪 Đăng Xuất</button>
   </div>
 </nav>
 
@@ -302,7 +389,7 @@ body.bulk-khoa-cuon{overflow:hidden}
       <div class="form-row">
         <select id="ds-pick-tag" class="select-box" style="margin:0;max-width:280px;padding:8px" onchange="dsRenderPicker()"></select>
         <select id="ds-pick-type" class="select-box" style="margin:0;max-width:170px;padding:8px" onchange="dsRenderPicker()">
-          <option value="mcq">Trắc nghiệm</option><option value="tf">Đúng / Sai</option><option value="sa">Trả lời ngắn</option>
+          <option value="mcq">Trắc nghiệm</option><option value="tf">Đúng / Sai</option><option value="sa">Trả lời ngắn</option><option value="tl">Tự luận</option>
         </select>
         <select id="ds-pick-lvl" class="select-box" style="margin:0;max-width:150px;padding:8px" onchange="dsRenderPicker()">
           <option value="0">Mọi mức độ</option><option value="1">Nhận biết</option><option value="2">Thông hiểu</option>
@@ -364,7 +451,7 @@ body.bulk-khoa-cuon{overflow:hidden}
     <input type="hidden" id="editing-q-id"><input type="hidden" id="editing-q-cat">
     <div class="form-row">
       <select id="new-q-type" class="select-box" style="margin:0;max-width:300px" onchange="renderAddForm()">
-        <option value="mcq">Trắc nghiệm (4 phương án)</option><option value="tf">Đúng / Sai (4 ý)</option><option value="sa">Trả lời ngắn</option>
+        <option value="mcq">Trắc nghiệm (4 phương án)</option><option value="tf">Đúng / Sai (4 ý)</option><option value="sa">Trả lời ngắn</option><option value="tl">Tự luận (có barem)</option>
       </select>
       <select id="new-q-lvl" class="select-box" style="margin:0;max-width:190px">
         <option value="1">Mức 1: Nhận biết</option><option value="2">Mức 2: Thông hiểu</option><option value="3">Mức 3: Vận dụng</option><option value="4">Mức 4: Vận dụng cao</option>
@@ -403,15 +490,41 @@ body.bulk-khoa-cuon{overflow:hidden}
   <!-- PHẦN XEM TRƯỚC DỮ LIỆU TỪ AI (BƯỚC 1 + 2) -->
   <div id="admin-form-bulk" class="admin-form">
     <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🤖 Trạm nhận dữ liệu từ AI</h3>
-    <div class="btn-container" style="margin-top:6px"><button class="btn btn-purple btn-sm" onclick="copyAIPrompt()">📋 Chép lệnh AI</button></div>
+    <div class="btn-container" style="margin-top:6px">
+      <button class="btn btn-purple btn-sm" onclick="copyAIPrompt()">📋 Chép lệnh AI</button>
+      <button class="btn btn-green btn-sm" onclick="document.getElementById('bulk-import-file').click()">📂 Nạp từ tệp (.json)</button>
+      <input type="file" id="bulk-import-file" accept=".json,.txt,application/json" multiple style="display:none" onchange="napTuTepJSON(this)">
+    </div>
     <textarea id="bulk-import-data" class="input-box" placeholder='Dán khối JSON tại đây...' style="margin-bottom:10px;"></textarea>
     
+    <p class="hint" style="margin:0 0 8px">
+      Một đề giấy dài thường phải nhờ AI chuyển thành JSON <b>nhiều lượt</b>. Cứ dán từng khối rồi bấm
+      <b>GOM VÀO GIỎ TẠM</b> — các lượt sẽ cộng dồn lại, gom xong hết mới bấm <b>CHỐT NẠP</b> một lần.
+    </p>
     <div class="btn-container" style="margin-top:6px">
-      <button class="btn btn-purple btn-sm" onclick="previewBulkData()">👀 XEM TRƯỚC DỮ LIỆU</button>
+      <button class="btn btn-purple btn-sm" onclick="previewBulkData()">➕ GOM VÀO GIỎ TẠM</button>
+      <button class="btn btn-gray btn-sm" onclick="boLuotCuoi()">↩️ Bỏ lượt vừa dán</button>
+      <button class="btn btn-red btn-sm" onclick="xoaGioTam()">🗑️ Xóa cả giỏ</button>
     </div>
+    <div id="gom-thanh"></div>
     <div id="bulk-report" class="hint" style="margin-top:10px; color:var(--accent-green); font-weight:bold;"></div>
     
-    <div id="bulk-preview-area" style="margin-top: 20px;"></div>
+    <div id="bulk-preview-area" class="khung-duyet" style="margin-top: 20px;"></div>
+  </div>
+
+  <!-- KHO ĐỀ TỰ SOẠN: giữ nguyên đề gốc theo bốn phần I / II / III / IV -->
+  <div id="admin-form-dete" class="admin-form">
+    <h3 style="text-align:center;color:var(--primary-blue);margin-top:0">🗂️ Đề tự soạn</h3>
+    <p class="hint" style="margin:0 0 10px">
+      Mỗi đề ở đây giữ nguyên trật tự đề gốc, chia theo <b>Phần I — Trắc nghiệm</b>, <b>Phần II — Đúng/Sai</b>,
+      <b>Phần III — Trả lời ngắn</b>, <b>Phần IV — Tự luận</b>. Câu hỏi được đưa vào đây từ
+      <b>Trạm nhận dữ liệu từ AI</b> (bấm CHỐT NẠP rồi chọn “Đề tự soạn”).
+    </p>
+    <div class="btn-container" style="margin-top:6px">
+      <button class="btn btn-teacher btn-sm" onclick="deTaoMoi()">➕ Tạo đề rỗng</button>
+      <button class="btn btn-gray btn-sm" onclick="deVe()">🔄 Làm mới danh sách</button>
+    </div>
+    <div id="de-noidung" style="margin-top:16px"></div>
   </div>
 
   <div id="admin-form-duplicates" class="admin-form">
@@ -438,9 +551,10 @@ body.bulk-khoa-cuon{overflow:hidden}
     </div>
   </div>
 
-  <div id="admin-form-preview" class="admin-form">
+  <div id="admin-form-preview" class="admin-form khung-duyet">
     <h3 style="text-align:center;color:var(--primary-blue);margin-top:0" id="preview-title">👁️ Xem trước câu hỏi</h3>
-    <div style="text-align:center;margin-bottom:15px"><button class="btn btn-gray btn-sm" onclick="toggleAdminForm('stats')">⬅ QUAY LẠI BẢNG THỐNG KÊ</button></div>
+    <!-- Nút "quay lại" nay nằm trên thanh tiêu đề dính bên trong, để lúc cuộn
+         xuống câu 40 vẫn bấm được, không phải kéo ngược lên đầu. -->
     <div id="preview-content-area"></div>
   </div>
 
@@ -462,11 +576,54 @@ body.bulk-khoa-cuon{overflow:hidden}
 </div>
 </main>
 
+<!-- Hộp thoại chọn nơi nhận khi CHỐT NẠP.
+     Phải nằm NGOÀI <main>: .game-panel có animation kèm transform, mà chỉ cần
+     một tổ tiên có transform là position:fixed bám vào tổ tiên đó chứ không
+     bám màn hình nữa — đúng lỗi đã gặp ở chế độ toàn màn hình. -->
+<div id="hop-chotnap" class="hop-nen">
+  <div class="hop">
+    <h3>✅ Chốt nạp — chọn nơi nhận</h3>
+    <div id="chotnap-tomtat" class="hint" style="margin-bottom:4px"></div>
+    <div class="chon-dich">
+      <label><input type="radio" name="dich-nap" value="bank" checked onchange="chotNapDoiDich()">
+        <span>Ngân hàng chung
+          <span class="phu">Câu hỏi vào kho dùng chung, sau này bốc ra bằng ma trận ở Studio Thiết Kế Đề.</span></span></label>
+      <label><input type="radio" name="dich-nap" value="de" onchange="chotNapDoiDich()">
+        <span>Đề tự soạn
+          <span class="phu">Giữ nguyên đề gốc theo bốn phần. Không đụng tới ngân hàng chung.</span></span></label>
+      <label><input type="radio" name="dich-nap" value="ca2" onchange="chotNapDoiDich()">
+        <span>Cả hai
+          <span class="phu">Vừa lưu thành đề nguyên vẹn, vừa bỏ câu hỏi vào ngân hàng để dùng lại về sau.</span></span></label>
+    </div>
+    <div id="chotnap-khungde" class="khung-de" style="display:none">
+      <div class="form-row" style="margin-bottom:8px">
+        <b style="flex:0 0 auto">Đưa vào đề</b>
+        <select id="chotnap-de" class="select-box" style="margin:0;max-width:340px;padding:9px" onchange="chotNapDoiDe()"></select>
+      </div>
+      <div class="form-row" id="chotnap-hang-ten" style="margin-bottom:0">
+        <b style="flex:0 0 auto">Tên đề mới</b>
+        <input type="text" id="chotnap-tende" class="input-box" style="margin:0;max-width:340px;padding:9px"
+               placeholder="VD: Đề KSCL giữa kỳ I — 12A1">
+      </div>
+      <div id="chotnap-bangphan"></div>
+      <p class="hint" style="margin:10px 0 0;text-align:left">
+        Phần luôn đi theo loại câu (trắc nghiệm → I, đúng/sai → II, trả lời ngắn → III, tự luận → IV).
+        Muốn đổi phần cho một câu, đóng hộp này rồi đổi ô <b>Phần</b> ngay trên câu đó trong danh sách chờ duyệt —
+        hệ thống sẽ <b>chuyển đổi dữ liệu</b> và bắt buộc kiểm tra lại trước khi lưu.
+      </p>
+    </div>
+    <div class="btn-container">
+      <button class="btn btn-green btn-sm" onclick="chotNapThucHien()">✅ Xác nhận nạp</button>
+      <button class="btn btn-gray btn-sm" onclick="dongHopChotNap()">Hủy</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // =========================================================
 // MÃ LÕI DATABASE
 // =========================================================
-let memoryDB = { mcq: [], tf: [], sa: [] };
+let memoryDB = { mcq: [], tf: [], sa: [], tl: [] };
 let DM = null; // LỖI CŨ: DM chưa khai báo -> ReferenceError bị try/catch nuốt mất
 let idSeq=0; function newId(){ return 'q_'+Date.now().toString(36)+'_'+(idSeq++)+Math.random().toString(36).slice(2,6); }
 
@@ -489,6 +646,8 @@ async function initStorage() {
     if (!Array.isArray(memoryDB.mcq)) memoryDB.mcq = [];
     if (!Array.isArray(memoryDB.tf)) memoryDB.tf = [];
     if (!Array.isArray(memoryDB.sa)) memoryDB.sa = [];
+    // Kho câu tự luận thêm sau nên ngân hàng cũ chưa có, phải tạo rỗng để không vỡ.
+    if (!Array.isArray(memoryDB.tl)) memoryDB.tl = [];
 }
 async function saveDB(db, silent) {
     memoryDB = db;
@@ -496,6 +655,26 @@ async function saveDB(db, silent) {
     } catch (e) { if (!silent) alert('❌ Trình duyệt hết bộ nhớ lưu trữ! Hãy tải file Backup về máy tính.'); return false; }
 }
 function loadDB() { return memoryDB; }
+
+// =========================================================
+// BAREM CHẤM TỰ LUẬN
+// Nhập theo từng dòng "điểm | nội dung ý", ví dụ:
+//   0.5 | Tính đúng y' và nêu tập xác định
+//   0.5 | Giải đúng phương trình y' = 0
+// Máy chấm của V17 cho điểm theo đúng từng ý này, nên barem càng rõ thì chấm càng chuẩn.
+// =========================================================
+function tlBaremRaChu(barem){
+  return (barem||[]).map(b => `${(+b.diem||0)} | ${String(b.noiDung||'').trim()}`).join('\n');
+}
+function tlChuRaBarem(text){
+  return String(text||'').split('\n').map(x=>x.trim()).filter(Boolean).map((dong,i)=>{
+    const m = dong.match(/^([0-9]+(?:[.,][0-9]+)?)\s*[|;]\s*(.+)$/);
+    if(m) return { id:'b'+(i+1), diem: parseFloat(m[1].replace(',','.'))||0, noiDung: m[2].trim() };
+    return { id:'b'+(i+1), diem: 0, noiDung: dong };
+  });
+}
+function tlTongDiem(barem){ return Math.round((barem||[]).reduce((t,b)=>t+(+b.diem||0),0)*100)/100; }
+const TL_GOI_Y = "0.5 | Nêu tập xác định và tính đúng đạo hàm\n0.5 | Giải đúng phương trình đạo hàm bằng 0\n0.5 | Lập bảng biến thiên hoặc xét dấu chính xác\n0.5 | Kết luận đúng yêu cầu đề bài";
 
 const CURRICULUM = [
   { chuong:'chuong1', ten:'Chương I — Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số', tap:'Tập 1', bai:[
@@ -521,15 +700,127 @@ const CURRICULUM = [
   { chuong:'chuong6', ten:'Chương VI — Xác suất có điều kiện', tap:'Tập 2', bai:[
     ['chuong6_bai18','Bài 18: Xác suất có điều kiện'],
     ['chuong6_bai19','Bài 19: Công thức xác suất toàn phần và công thức Bayes']
+  ]},
+
+  // ===================== KHỐI 10 — Kết nối tri thức với cuộc sống =====================
+  { khoi:'k10', chuong:'k10_chuong1', ten:'Chương I — Mệnh đề và tập hợp', tap:'Tập 1', bai:[
+    ['k10_chuong1_bai1','Bài 1: Mệnh đề'],
+    ['k10_chuong1_bai2','Bài 2: Tập hợp và các phép toán trên tập hợp']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong2', ten:'Chương II — Bất phương trình và hệ bất phương trình bậc nhất hai ẩn', tap:'Tập 1', bai:[
+    ['k10_chuong2_bai3','Bài 3: Bất phương trình bậc nhất hai ẩn'],
+    ['k10_chuong2_bai4','Bài 4: Hệ bất phương trình bậc nhất hai ẩn']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong3', ten:'Chương III — Hệ thức lượng trong tam giác', tap:'Tập 1', bai:[
+    ['k10_chuong3_bai5','Bài 5: Giá trị lượng giác của một góc từ 0° đến 180°'],
+    ['k10_chuong3_bai6','Bài 6: Hệ thức lượng trong tam giác']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong4', ten:'Chương IV — Vectơ', tap:'Tập 1', bai:[
+    ['k10_chuong4_bai7','Bài 7: Các khái niệm mở đầu'],
+    ['k10_chuong4_bai8','Bài 8: Tổng và hiệu của hai vectơ'],
+    ['k10_chuong4_bai9','Bài 9: Tích của một vectơ với một số'],
+    ['k10_chuong4_bai10','Bài 10: Vectơ trong mặt phẳng tọa độ'],
+    ['k10_chuong4_bai11','Bài 11: Tích vô hướng của hai vectơ']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong5', ten:'Chương V — Các số đặc trưng của mẫu số liệu không ghép nhóm', tap:'Tập 1', bai:[
+    ['k10_chuong5_bai12','Bài 12: Số gần đúng và sai số'],
+    ['k10_chuong5_bai13','Bài 13: Các số đặc trưng đo xu thế trung tâm'],
+    ['k10_chuong5_bai14','Bài 14: Các số đặc trưng đo độ phân tán']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong6', ten:'Chương VI — Hàm số, đồ thị và ứng dụng', tap:'Tập 2', bai:[
+    ['k10_chuong6_bai15','Bài 15: Hàm số'],
+    ['k10_chuong6_bai16','Bài 16: Hàm số bậc hai'],
+    ['k10_chuong6_bai17','Bài 17: Dấu của tam thức bậc hai'],
+    ['k10_chuong6_bai18','Bài 18: Phương trình quy về phương trình bậc hai']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong7', ten:'Chương VII — Phương pháp tọa độ trong mặt phẳng', tap:'Tập 2', bai:[
+    ['k10_chuong7_bai19','Bài 19: Phương trình đường thẳng'],
+    ['k10_chuong7_bai20','Bài 20: Vị trí tương đối giữa hai đường thẳng. Góc và khoảng cách'],
+    ['k10_chuong7_bai21','Bài 21: Đường tròn trong mặt phẳng tọa độ'],
+    ['k10_chuong7_bai22','Bài 22: Ba đường conic']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong8', ten:'Chương VIII — Đại số tổ hợp', tap:'Tập 2', bai:[
+    ['k10_chuong8_bai23','Bài 23: Quy tắc đếm'],
+    ['k10_chuong8_bai24','Bài 24: Hoán vị, chỉnh hợp và tổ hợp'],
+    ['k10_chuong8_bai25','Bài 25: Nhị thức Newton']
+  ]},
+  { khoi:'k10', chuong:'k10_chuong9', ten:'Chương IX — Tính xác suất theo định nghĩa cổ điển', tap:'Tập 2', bai:[
+    ['k10_chuong9_bai26','Bài 26: Biến cố và định nghĩa cổ điển của xác suất'],
+    ['k10_chuong9_bai27','Bài 27: Thực hành tính xác suất theo định nghĩa cổ điển']
+  ]},
+
+  // ===================== KHỐI 11 — Kết nối tri thức với cuộc sống =====================
+  { khoi:'k11', chuong:'k11_chuong1', ten:'Chương I — Hàm số lượng giác và phương trình lượng giác', tap:'Tập 1', bai:[
+    ['k11_chuong1_bai1','Bài 1: Giá trị lượng giác của góc lượng giác'],
+    ['k11_chuong1_bai2','Bài 2: Công thức lượng giác'],
+    ['k11_chuong1_bai3','Bài 3: Hàm số lượng giác'],
+    ['k11_chuong1_bai4','Bài 4: Phương trình lượng giác cơ bản']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong2', ten:'Chương II — Dãy số. Cấp số cộng và cấp số nhân', tap:'Tập 1', bai:[
+    ['k11_chuong2_bai5','Bài 5: Dãy số'],
+    ['k11_chuong2_bai6','Bài 6: Cấp số cộng'],
+    ['k11_chuong2_bai7','Bài 7: Cấp số nhân']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong3', ten:'Chương III — Các số đặc trưng đo xu thế trung tâm của mẫu số liệu ghép nhóm', tap:'Tập 1', bai:[
+    ['k11_chuong3_bai8','Bài 8: Mẫu số liệu ghép nhóm'],
+    ['k11_chuong3_bai9','Bài 9: Các số đặc trưng đo xu thế trung tâm']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong4', ten:'Chương IV — Quan hệ song song trong không gian', tap:'Tập 1', bai:[
+    ['k11_chuong4_bai10','Bài 10: Đường thẳng và mặt phẳng trong không gian'],
+    ['k11_chuong4_bai11','Bài 11: Hai đường thẳng song song'],
+    ['k11_chuong4_bai12','Bài 12: Đường thẳng và mặt phẳng song song'],
+    ['k11_chuong4_bai13','Bài 13: Hai mặt phẳng song song'],
+    ['k11_chuong4_bai14','Bài 14: Phép chiếu song song']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong5', ten:'Chương V — Giới hạn. Hàm số liên tục', tap:'Tập 1', bai:[
+    ['k11_chuong5_bai15','Bài 15: Giới hạn của dãy số'],
+    ['k11_chuong5_bai16','Bài 16: Giới hạn của hàm số'],
+    ['k11_chuong5_bai17','Bài 17: Hàm số liên tục']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong6', ten:'Chương VI — Hàm số mũ và hàm số lôgarit', tap:'Tập 2', bai:[
+    ['k11_chuong6_bai18','Bài 18: Lũy thừa với số mũ thực'],
+    ['k11_chuong6_bai19','Bài 19: Lôgarit'],
+    ['k11_chuong6_bai20','Bài 20: Hàm số mũ và hàm số lôgarit'],
+    ['k11_chuong6_bai21','Bài 21: Phương trình, bất phương trình mũ và lôgarit']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong7', ten:'Chương VII — Quan hệ vuông góc trong không gian', tap:'Tập 2', bai:[
+    ['k11_chuong7_bai22','Bài 22: Hai đường thẳng vuông góc'],
+    ['k11_chuong7_bai23','Bài 23: Đường thẳng vuông góc với mặt phẳng'],
+    ['k11_chuong7_bai24','Bài 24: Phép chiếu vuông góc. Góc giữa đường thẳng và mặt phẳng'],
+    ['k11_chuong7_bai25','Bài 25: Hai mặt phẳng vuông góc'],
+    ['k11_chuong7_bai26','Bài 26: Khoảng cách'],
+    ['k11_chuong7_bai27','Bài 27: Thể tích']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong8', ten:'Chương VIII — Các quy tắc tính xác suất', tap:'Tập 2', bai:[
+    ['k11_chuong8_bai28','Bài 28: Biến cố hợp, biến cố giao, biến cố độc lập'],
+    ['k11_chuong8_bai29','Bài 29: Công thức cộng xác suất'],
+    ['k11_chuong8_bai30','Bài 30: Công thức nhân xác suất cho hai biến cố độc lập']
+  ]},
+  { khoi:'k11', chuong:'k11_chuong9', ten:'Chương IX — Đạo hàm', tap:'Tập 2', bai:[
+    ['k11_chuong9_bai31','Bài 31: Định nghĩa và ý nghĩa của đạo hàm'],
+    ['k11_chuong9_bai32','Bài 32: Các quy tắc tính đạo hàm'],
+    ['k11_chuong9_bai33','Bài 33: Đạo hàm cấp hai']
   ]}
 ];
+
+// Chương nào không ghi khối thì là khối 12 — danh mục cũ của thầy cô không có
+// trường này nên phải mặc định như vậy để dữ liệu cũ vẫn chạy đúng.
+const DS_KHOI = [
+  { ma:'k12', ten:'Khối 12' },
+  { ma:'k11', ten:'Khối 11' },
+  { ma:'k10', ten:'Khối 10' }
+];
+const khoiCua = c => (c && c.khoi) ? c.khoi : 'k12';
+const tenKhoi = k => (DS_KHOI.find(x => x.ma === k) || {}).ten || 'Khối 12';
+// Nhãn dùng trong các ô chọn bài: khối 12 để trơn như cũ, hai khối kia ghi rõ.
+const nhanChuong = c => (khoiCua(c) === 'k12' ? '' : tenKhoi(khoiCua(c)) + ' · ') + c.ten;
 let TAG_NAME = {}; CURRICULUM.forEach(c => c.bai.forEach(b => TAG_NAME[b[0]] = b[1]));
 const LVL_NAME = {1:'Nhận biết',2:'Thông hiểu',3:'Vận dụng',4:'Vận dụng cao'};
 let TAG_ORDER={}; (function(){ let i=0; CURRICULUM.forEach(c=>c.bai.forEach(b=>TAG_ORDER[b[0]]=i++)); })();
 
 function buildDropdowns(){
   let a='', b='<option value="all">TỔNG ÔN TẤT CẢ</option>';
-  CURRICULUM.forEach(c=>{ a += `<optgroup label="${c.ten}">`; b += `<optgroup label="${c.ten}"><option value="${c.chuong}">► Ôn ${c.ten}</option>`; c.bai.forEach(([v,t])=>{ a+=`<option value="${v}">${t}</option>`; b+=`<option value="${v}">${t}</option>`; }); a+='</optgroup>'; b+='</optgroup>'; });
+  CURRICULUM.forEach(c=>{ const nh = nhanChuong(c); a += `<optgroup label="${nh}">`; b += `<optgroup label="${nh}"><option value="${c.chuong}">► Ôn ${nh}</option>`; c.bai.forEach(([v,t])=>{ a+=`<option value="${v}">${t}</option>`; b+=`<option value="${v}">${t}</option>`; }); a+='</optgroup>'; b+='</optgroup>'; });
   const tg = document.getElementById('new-q-tag'), ts = document.getElementById('topic-select');
   if(tg) tg.innerHTML=a; if(ts) ts.innerHTML=b;
 }
@@ -545,11 +836,16 @@ function show(id){
 }
 
 function toggleAdminForm(type){
-  ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam'].forEach(t=>{ const el = document.getElementById('admin-form-'+t); if(el) el.style.display='none'; });
+  ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam','dete'].forEach(t=>{ const el = document.getElementById('admin-form-'+t); if(el) el.style.display='none'; });
+  // Rời khung Xem trước / Trạm AI thì tắt luôn chế độ toàn màn hình, nếu
+  // không lớp phủ vẫn treo trên màn hình che hết mọi thứ.
+  tatTMH();             // trả khung đang phóng to về chỗ cũ
+  xtEditState = null;   // rời màn Xem trước thì bỏ ô sửa đang mở dở
   const el = document.getElementById('admin-form-'+type); if(el) el.style.display='block';
   document.querySelectorAll('.sidebar-btn').forEach(btn => { btn.classList.remove('active'); if(btn.dataset.target === type) btn.classList.add('active'); });
   if(type==='stats') { setTimeout(renderStats, 100); }
   if(type==='designer') { if(typeof dsOpen === 'function') dsOpen(); }
+  if(type==='dete') { if(typeof deVe === 'function') deVe(); }
 }
 
 function updateStorageInfo() {
@@ -566,7 +862,9 @@ function moRong(html) { return html; }
 function safeHtml(t){ return moRong(cleanText(t)); }
 function normalizeForDup(text) { return String(text || '').replace(/\s+/g, '').replace(/<[^>]*>?/gm, '').toLowerCase(); }
 
-const AI_PROMPT = `Bạn là giáo viên Toán 12. Hãy soạn câu hỏi và TRẢ VỀ DUY NHẤT KHỐI JSON: {"mcq":[{"tag":"chuong1_bai1","lvl":2,"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"..."}],"tf":[{"tag":"chuong1_bai1","lvl":3,"q":"...","stmts":[{"t":"Ý a","ans":true},{"t":"Ý b","ans":false},{"t":"Ý c","ans":true},{"t":"Ý d","ans":false}],"exp":"..."}],"sa":[{"tag":"chuong1_bai1","lvl":4,"q":"...","ans":"12","exp":"..."}]}`;
+const AI_PROMPT = `Bạn là giáo viên Toán 12. Hãy soạn câu hỏi và TRẢ VỀ DUY NHẤT KHỐI JSON: {"mcq":[{"tag":"chuong1_bai1","lvl":2,"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"..."}],"tf":[{"tag":"chuong1_bai1","lvl":3,"q":"...","stmts":[{"t":"Ý a","ans":true},{"t":"Ý b","ans":false},{"t":"Ý c","ans":true},{"t":"Ý d","ans":false}],"exp":"..."}],"sa":[{"tag":"chuong1_bai1","lvl":4,"q":"...","ans":"12","exp":"..."}],"tl":[{"tag":"chuong1_bai1","lvl":3,"q":"Đề bài tự luận...","dapAnMau":"Lời giải chuẩn đầy đủ các bước...","barem":[{"noiDung":"Tính đúng đạo hàm","diem":0.5},{"noiDung":"Giải đúng y' = 0","diem":0.5},{"noiDung":"Lập đúng bảng biến thiên","diem":0.5},{"noiDung":"Kết luận đúng","diem":0.5}],"exp":"..."}]}
+Với câu tự luận ("tl"): barem phải tách thành từng ý nhỏ chấm được độc lập, mỗi ý ghi rõ điểm; "dapAnMau" là lời giải chuẩn đầy đủ để máy đối chiếu.
+NẾU ĐỀ DÀI: hãy chia thành nhiều lượt trả lời, mỗi lượt một khối JSON hoàn chỉnh theo ĐÚNG thứ tự câu của đề gốc, KHÔNG lặp lại câu đã trả ở lượt trước, và mỗi lượt phải là một khối JSON độc lập mở bằng { và đóng bằng }.`;
 // LỖI CŨ: navigator.clipboard không tồn tại khi mở bằng file:// -> TypeError, nút chết im lặng.
 function copyAIPrompt(){
   const xong = ()=>alert("Đã copy lệnh AI! Dán vào Gemini / ChatGPT / Claude để nhờ soạn câu hỏi.");
@@ -590,6 +888,7 @@ function validateQ(q, cat) {
     if (cat === "mcq" && (!Array.isArray(q.opts) || q.opts.length !== 4)) return "cần 4 phương án";
     if (cat === "tf" && (!Array.isArray(q.stmts) || q.stmts.length !== 4)) return "cần 4 ý";
     if (cat === "sa" && (q.ans === undefined || String(q.ans).trim() === "")) return 'thiếu "ans"';
+    if (cat === "tl" && (!Array.isArray(q.barem) || !q.barem.length)) return 'câu tự luận thiếu "barem"';
     return null;
 }
 function chuanHoa(s) { return String(s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
@@ -600,6 +899,103 @@ function chuanHoa(s) { return String(s || "").replace(/<[^>]*>/g, "").replace(/\
 let bulkDraftData = null;
 let bulkEditState = null;
 
+/* Bài đang mở ở màn Xem trước, và câu đang được sửa NGAY TRONG THẺ.
+   Bản cũ bấm "Sửa" là nhảy sang tab "Nhập / Sửa Câu Hỏi" — mất chỗ đang
+   xem, sửa xong phải tự bấm quay lại rồi cuộn tìm lại câu. Nay xổ ô soạn
+   thảo ngay tại chỗ, giống hệt khung Trạm nhận dữ liệu AI. */
+let xtHienTai = { tag: null, name: null };
+let xtEditState = null;   // { id, cat }
+
+/* Lớp phủ toàn màn hình: khung nào đang được phóng to, và dấu mốc ghi
+   chỗ cũ của nó để lát trả về đúng vị trí. Khai báo ở đây để
+   toggleAdminForm() phía trên gọi tatTMH() lúc nào cũng an toàn. */
+let neoTMH = null;
+let phanTuTMH = null;
+
+/* Phần được gán sẵn theo loại câu — vẫn đổi tay được ở từng thẻ. */
+const PHAN_MAC_DINH = { mcq: 1, tf: 2, sa: 3, tl: 4 };
+const PHAN_TYPE = { 1: 'mcq', 2: 'tf', 3: 'sa', 4: 'tl' };   // chiều ngược lại của PHAN_MAC_DINH
+const LA_MA = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV' };
+
+/* LỖI ĐÃ SỬA: "Phần" và "loại câu" LUÔN đi cùng nhau (Phần I luôn là trắc
+   nghiệm, Phần IV luôn là tự luận…) vì V17 chấm điểm theo "type" chứ không
+   theo "partNo". Bản trước chỉ đổi NHÃN Phần mà giữ nguyên cấu trúc dữ liệu
+   cũ — một câu "trả lời ngắn" bị gắn nhãn "Phần IV" vẫn có type:"sa" và
+   không có barem, khiến V17 đếm nhầm nó là trả lời ngắn dù hiển thị ở
+   Phần IV. Nay đổi Phần = CHUYỂN ĐỔI THẬT SỰ cấu trúc dữ liệu, có đoán sẵn
+   giá trị hợp lý từ dữ liệu cũ rồi bắt buộc thầy cô rà lại trước khi lưu. */
+function chuyenDoiLoaiCau(q, denCat) {
+    const cu = q._cat;
+    if (cu === denCat) return false;
+    const goi = { opts: q.opts, stmts: q.stmts, ans: q.ans, barem: q.barem, dapAnMau: q.dapAnMau };
+    delete q.opts; delete q.stmts; delete q.ans; delete q.barem; delete q.dapAnMau;
+    if (denCat === 'mcq') {
+        q.opts = (Array.isArray(goi.opts) && goi.opts.length === 4) ? goi.opts.slice()
+               : (Array.isArray(goi.stmts) && goi.stmts.length === 4) ? goi.stmts.map(x => x.t || '')
+               : ['', '', '', ''];
+        q.ans = 0;
+    } else if (denCat === 'tf') {
+        q.stmts = (Array.isArray(goi.stmts) && goi.stmts.length === 4) ? goi.stmts.map(x => ({ t: x.t || '', ans: !!x.ans }))
+                : (Array.isArray(goi.opts) && goi.opts.length === 4) ? goi.opts.map(o => ({ t: o || '', ans: false }))
+                : [0, 1, 2, 3].map(() => ({ t: '', ans: false }));
+    } else if (denCat === 'sa') {
+        q.ans = (typeof goi.ans === 'string') ? goi.ans : (goi.dapAnMau ? stripTags(goi.dapAnMau).slice(0, 120) : '');
+    } else if (denCat === 'tl') {
+        q.dapAnMau = goi.dapAnMau || (typeof goi.ans === 'string' ? goi.ans : '') || '';
+        q.barem = (Array.isArray(goi.barem) && goi.barem.length) ? goi.barem.map(b => ({ ...b }))
+                : [{ id: 'b1', diem: 1, noiDung: 'Trình bày đúng đáp án' }];
+    }
+    q._cat = denCat;
+    return true;
+}
+const PHAN_TIEU_DE = {
+    1: 'PHẦN I — TRẮC NGHIỆM',
+    2: 'PHẦN II — ĐÚNG / SAI',
+    3: 'PHẦN III — TRẢ LỜI NGẮN',
+    4: 'PHẦN IV — TỰ LUẬN'
+};
+
+/* Mỗi phần tử là một LƯỢT DÁN: { n: số câu nhận được, at: giờ dán }.
+   Nhờ nó mà nút "Bỏ lượt vừa dán" biết phải nhặt ra những câu nào. */
+let bulkLots = [];
+
+/* =====================================================================
+   NẠP JSON TỪ TỆP
+   VÌ SAO thêm: một đề dài AI trả về nhiều lượt, thầy cô hay lưu mỗi lượt thành
+   một tệp .json rồi mới ngồi dán lại từng khối — vừa lâu vừa dễ sót một tệp.
+   Nay chọn thẳng nhiều tệp một lần, mỗi tệp được gom vào giỏ như một lượt dán,
+   nên nút "Bỏ lượt vừa dán" vẫn hoạt động đúng từng tệp.
+
+   Nội dung đang gõ dở trong ô dán được giữ lại: hàm mượn ô đó làm chỗ trung
+   chuyển rồi trả lại nguyên trạng, tránh nuốt mất công thầy cô đang soạn.
+   ===================================================================== */
+async function napTuTepJSON(input) {
+    const dsTep = Array.from(input.files || []);
+    input.value = "";   // đặt lại để lần sau chọn đúng tệp đó vẫn kích hoạt được
+    if (!dsTep.length) return;
+
+    const oRaw = document.getElementById("bulk-import-data");
+    const bao  = document.getElementById("bulk-report");
+    const giuLai = oRaw.value;
+    const dong = [];
+
+    for (const tep of dsTep) {
+        let noiDung = "";
+        try { noiDung = await tep.text(); }
+        catch (e) { dong.push("❌ " + tep.name + " — không đọc được tệp"); continue; }
+        if (!noiDung.trim()) { dong.push("❌ " + tep.name + " — tệp rỗng"); continue; }
+
+        oRaw.value = noiDung;
+        previewBulkData();                       // dùng lại đúng đường gom của nút GOM VÀO GIỎ TẠM
+        const ketQua = (bao.textContent || "").trim();
+        const hong = /sai cú pháp|Chưa dán/i.test(ketQua);
+        dong.push((hong ? "❌ " : "✅ ") + tep.name + " — " + ketQua);
+    }
+
+    oRaw.value = giuLai;
+    bao.innerHTML = dong.map(escapeHtml).join("<br>");
+}
+
 function previewBulkData() {
     var oRaw = document.getElementById("bulk-import-data"), bao = document.getElementById("bulk-report");
     var raw = oRaw.value.trim();
@@ -608,59 +1004,149 @@ function previewBulkData() {
     try { data = JSON.parse(raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim()); }
     catch (e) { bao.innerHTML = '<span style="color:#ef4444">JSON sai cú pháp: ' + escapeHtml(e.message) + "</span>"; return; }
 
-    let them = { mcq: [], tf: [], sa: [] }, boQua = 0, loi = [];
+    /* THAY ĐỔI CỐT LÕI: KHÔNG ghi đè danh sách chờ nữa mà CỘNG DỒN vào giỏ tạm.
+       Một đề giấy 40 câu thường phải nhờ AI chuyển làm 5–6 lượt; bản cũ mỗi lượt
+       lại xóa sạch lượt trước nên buộc phải chốt nạp từng mẩu, đề vỡ vụn. */
+    if (!bulkDraftData) { bulkDraftData = { mcq: [], tf: [], sa: [], tl: [] }; bulkLots = []; }
+    ["mcq", "tf", "sa", "tl"].forEach(c => { if (!Array.isArray(bulkDraftData[c])) bulkDraftData[c] = []; });
+    const luot = bulkLots.length + 1;
+
+    let boQua = 0, trungGio = 0, loi = [], themMoi = 0;
     const db = loadDB();
-    ["mcq", "tf", "sa"].forEach(cat => {
+    const demGio = () => bulkDraftData.mcq.length + bulkDraftData.tf.length + bulkDraftData.sa.length + bulkDraftData.tl.length;
+
+    ["mcq", "tf", "sa", "tl"].forEach(cat => {
         if (!Array.isArray(data[cat])) return;
         data[cat].forEach((q, i) => {
-            // LỖI CŨ: TRUONG_TOI_DA và NAP_TOI_DA khai báo nhưng không hề được dùng
-            if (them.mcq.length + them.tf.length + them.sa.length >= NAP_TOI_DA) { return; }
+            if (demGio() >= NAP_TOI_DA) { return; }
             var e = validateQ(q, cat);
             if (e) { loi.push(cat + "[" + i + "]: " + e); return; }
             if (String(q.q).length > TRUONG_TOI_DA) { loi.push(cat + "[" + i + "]: nội dung quá dài (ảnh nhúng quá nặng)"); return; }
             if (db[cat].some(x => x.tag === q.tag && chuanHoa(x.q) === chuanHoa(q.q))) { boQua++; return; }
+            // Chống trùng NGAY TRONG GIỎ: AI hay lặp lại vài câu của lượt trước khi được nhắc "soạn tiếp".
+            if (bulkDraftData[cat].some(x => chuanHoa(x.q) === chuanHoa(q.q))) { trungGio++; return; }
             var moi = { id: newId(), tag: q.tag||"chuong1_bai1", lvl: parseInt(q.lvl) || 1, q: cleanText(q.q), exp: cleanText(q.exp) };
             if (cat === "mcq") { moi.opts = q.opts.map(cleanText); moi.ans = q.ans; }
             if (cat === "tf") { moi.stmts = q.stmts.map(s => ({ t: cleanText(s.t), ans: !!s.ans })); }
             if (cat === "sa") { moi.ans = String(q.ans).trim(); }
-            them[cat].push(moi);
+            if (cat === "tl") {
+                moi.barem = q.barem.map((b, j) => ({ id: 'b' + (j + 1), noiDung: cleanText(b.noiDung || b.text || ''), diem: parseFloat(b.diem) || 0 }));
+                moi.dapAnMau = cleanText(q.dapAnMau || q.ans || '');
+            }
+            moi._luot = luot;                       // thuộc lượt dán nào
+            moi._cat = cat;                         // loại câu — PHẦN luôn suy ra từ đây (xem PHAN_MAC_DINH)
+            bulkDraftData[cat].push(moi); themMoi++;
         });
     });
-    
-    bulkDraftData = them;
+
+    bulkLots.push({ n: themMoi, at: new Date().toLocaleTimeString('vi-VN') });
     bulkEditState = null;
-    
-    let msg = '';
-    if (boQua) msg += `Bỏ qua ${boQua} câu trùng. `;
-    if (loi.length) msg += `Lỗi ${loi.length} câu. `;
-    bao.innerHTML = msg ? `<span style="color:#d97706">${msg}</span>` : '<span style="color:green">Phân tích JSON thành công. Vui lòng kiểm tra bên dưới!</span>';
-    
+
+    let msg = `<span style="color:green">Lượt ${luot}: nhận thêm <b>${themMoi}</b> câu. </span>`;
+    if (trungGio) msg += `<span style="color:#d97706">Bỏ ${trungGio} câu đã có sẵn trong giỏ. </span>`;
+    if (boQua) msg += `<span style="color:#d97706">Bỏ ${boQua} câu trùng ngân hàng. </span>`;
+    if (loi.length) msg += `<span style="color:#ef4444">Lỗi ${loi.length} câu: ${escapeHtml(loi.slice(0,3).join('; '))}${loi.length>3?'…':''}</span>`;
+    bao.innerHTML = msg;
+
+    // Dọn ô dán để lượt sau dán vào cho gọn — dữ liệu đã nằm an toàn trong giỏ.
+    oRaw.value = '';
     renderBulkPreview();
 }
 
-/* Bật/tắt chế độ toàn màn hình cho khung duyệt */
+/* Vẽ thanh trạng thái giỏ tạm: đã gom bao nhiêu câu, qua mấy lượt dán. */
+function veThanhGom() {
+    const o = document.getElementById('gom-thanh'); if (!o) return;
+    if (!bulkDraftData || !bulkLots.length) {
+        o.innerHTML = '<div class="gom-bar" style="background:#f8fafc;border-color:#cbd5e1;color:#64748b">🧺 Giỏ tạm đang trống — dán khối JSON đầu tiên rồi bấm “Gom vào giỏ tạm”.</div>';
+        return;
+    }
+    const t = ['mcq','tf','sa','tl'].reduce((s,c)=>s+(bulkDraftData[c]||[]).length,0);
+    const ke = bulkLots.map((l,i)=>`lượt ${i+1}: ${l.n} câu`).join(' · ');
+    o.innerHTML = `<div class="gom-bar">
+        <span>🧺 Giỏ tạm: <span class="so">${t} câu</span> gom qua <span class="so">${bulkLots.length} lượt dán</span></span>
+        <span class="gom-luot">(${ke})</span>
+        <span class="nhac">Dán tiếp khối JSON kế rồi bấm “Gom vào giỏ tạm”. Gom xong cả đề mới bấm CHỐT NẠP.</span>
+      </div>`;
+}
+
+/* Bỏ đúng những câu của lượt dán vừa rồi — dùng khi AI trả về sai bét cả khối. */
+function boLuotCuoi() {
+    if (!bulkDraftData || !bulkLots.length) { alert('Giỏ tạm đang trống.'); return; }
+    const luot = bulkLots.length, n = bulkLots[luot-1].n;
+    if (!confirm(`Bỏ lượt dán thứ ${luot} (${n} câu) ra khỏi giỏ tạm?\n\nCác lượt trước vẫn được giữ nguyên.`)) return;
+    ['mcq','tf','sa','tl'].forEach(cat => { bulkDraftData[cat] = (bulkDraftData[cat]||[]).filter(q => q._luot !== luot); });
+    bulkLots.pop();
+    bulkEditState = null;
+    if (!bulkLots.length) bulkDraftData = null;
+    document.getElementById('bulk-report').innerHTML = `<span style="color:#d97706">Đã bỏ lượt ${luot}.</span>`;
+    renderBulkPreview();
+}
+
+function xoaGioTam() {
+    if (!bulkDraftData) { alert('Giỏ tạm đang trống.'); return; }
+    const t = ['mcq','tf','sa','tl'].reduce((s,c)=>s+(bulkDraftData[c]||[]).length,0);
+    if (!confirm(`Xóa sạch giỏ tạm (${t} câu, ${bulkLots.length} lượt dán)?\n\nViệc này không hoàn tác được.`)) return;
+    bulkDraftData = null; bulkLots = []; bulkEditState = null;
+    document.getElementById('bulk-report').innerHTML = '';
+    renderBulkPreview();
+}
+
+/* ---------- Lớp phủ toàn màn hình dùng chung ---------- */
+
+function layLopPhu() {
+    let o = document.getElementById('lop-phu-tmh');
+    if (!o) { o = document.createElement('div'); o.id = 'lop-phu-tmh'; document.body.appendChild(o); }
+    return o;
+}
+function dangTMH(el) { return phanTuTMH === el; }
+
+function batTMH(el) {
+    if (phanTuTMH) tatTMH();
+    const lp = layLopPhu();
+    // Cắm một dấu mốc vào đúng chỗ cũ để lát nữa trả khung về nguyên vị trí
+    neoTMH = document.createComment('cho-cua-' + (el.id || 'khung'));
+    el.parentNode.insertBefore(neoTMH, el);
+    lp.appendChild(el);
+    lp.classList.add('hien');
+    document.body.classList.add('bulk-khoa-cuon');
+    phanTuTMH = el;
+}
+function tatTMH() {
+    if (!phanTuTMH) return;
+    if (neoTMH && neoTMH.parentNode) {
+        neoTMH.parentNode.insertBefore(phanTuTMH, neoTMH);
+        neoTMH.remove();
+    }
+    layLopPhu().classList.remove('hien');
+    document.body.classList.remove('bulk-khoa-cuon');
+    phanTuTMH = null; neoTMH = null;
+}
+
+/* Bật/tắt chế độ toàn màn hình cho khung duyệt dữ liệu AI */
 function toggleBulkFull() {
     const area = document.getElementById('bulk-preview-area');
-    const bat = !area.classList.contains('bulk-full');
-    area.classList.toggle('bulk-full', bat);
-    document.body.classList.toggle('bulk-khoa-cuon', bat);
+    if (dangTMH(area)) tatTMH(); else batTMH(area);
     const nut = document.getElementById('nut-bulk-full');
-    if (nut) nut.innerHTML = bat ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH';
+    if (nut) nut.innerHTML = dangTMH(area) ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH';
+    // Danh sách vừa đổi khung chứa, kéo về đầu cho khỏi hụt hẫng
+    const ds = document.getElementById('bulk-list');
+    if (ds) ds.scrollTop = 0;
 }
 
 /* Bấm Esc là thoát toàn màn hình — khỏi phải đi tìm nút */
 document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     const area = document.getElementById('bulk-preview-area');
-    if (area && area.classList.contains('bulk-full')) toggleBulkFull();
+    if (dangTMH(area)) toggleBulkFull();
 });
 
 function renderBulkPreview() {
     const area = document.getElementById('bulk-preview-area');
+    veThanhGom();
     if(!bulkDraftData) {
         area.innerHTML = '';
         // đang ở toàn màn hình mà hết dữ liệu thì trả lại màn hình bình thường
-        if (area.classList.contains('bulk-full')) toggleBulkFull();
+        if (dangTMH(area)) toggleBulkFull();
         return;
     }
 
@@ -668,18 +1154,18 @@ function renderBulkPreview() {
     // lần Sửa / Lưu / Xóa nên nhảy vọt về câu 1, duyệt 22 câu rất mệt.
     const cuonCu = (document.getElementById('bulk-list') || {}).scrollTop || 0;
 
-    let total = bulkDraftData.mcq.length + bulkDraftData.tf.length + bulkDraftData.sa.length;
+    let total = bulkDraftData.mcq.length + bulkDraftData.tf.length + bulkDraftData.sa.length + (bulkDraftData.tl||[]).length;
     if(total === 0) {
         area.innerHTML = '<p class="hint">Không có câu hỏi mới nào hợp lệ để nạp.</p>';
         return;
     }
 
-    const dangFull = area.classList.contains('bulk-full');
-    const dem = `${bulkDraftData.mcq.length} trắc nghiệm · ${bulkDraftData.tf.length} đúng–sai · ${bulkDraftData.sa.length} trả lời ngắn`;
+    const dangFull = dangTMH(area);
+    const dem = `${bulkDraftData.mcq.length} trắc nghiệm · ${bulkDraftData.tf.length} đúng–sai · ${bulkDraftData.sa.length} trả lời ngắn · ${(bulkDraftData.tl||[]).length} tự luận`;
 
     // Đếm số câu AI tự nhận là chưa chắc đáp án, để nhắc thầy cô soát trước
     let canSoat = 0;
-    ['mcq','tf','sa'].forEach(c => bulkDraftData[c].forEach(q => { if (canKiemTra(q)) canSoat++; }));
+    ['mcq','tf','sa','tl'].forEach(c => (bulkDraftData[c]||[]).forEach(q => { if (canKiemTra(q)) canSoat++; }));
 
     let h = `<div class="bulk-head">
                <div>
@@ -689,8 +1175,8 @@ function renderBulkPreview() {
                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
                  <!-- Ô đặt MỨC ĐỘ cho cả lô: AI thường gán tất cả về "Nhận biết",
                       trước đây thầy cô phải mở từng câu để sửa. -->
-                 <div class="lo-mucdo">
-                   <span>Mức độ cả lô</span>
+                 <div class="lo-mucdo" title="Đặt mức độ này cho tất cả câu đang chờ duyệt">
+                   <span>Mức độ</span>
                    <select id="lo-mucdo-chon" class="bulk-mini" style="padding:6px 8px">
                      ${[1,2,3,4].map(v => `<option value="${v}">${LVL_NAME[v]}</option>`).join('')}
                    </select>
@@ -702,8 +1188,8 @@ function renderBulkPreview() {
              </div>`;
     h += `<div class="bulk-list" id="bulk-list">`;
 
-    ['mcq', 'tf', 'sa'].forEach(cat => {
-        bulkDraftData[cat].forEach((q, i) => {
+    ['mcq', 'tf', 'sa', 'tl'].forEach(cat => {
+        (bulkDraftData[cat]||[]).forEach((q, i) => {
             const dangSua = bulkEditState && bulkEditState.cat === cat && bulkEditState.index === i;
             h += `<div class="bulk-card${dangSua ? ' dang-sua' : ''}" id="the-${cat}-${i}">`;
 
@@ -723,7 +1209,7 @@ function renderBulkPreview() {
                         </label>
                         <label style="flex:1 1 320px">Thuộc bài
                           <select id="b-edit-tag" class="bulk-mini" style="width:100%">
-                            ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(c.ten)}">`
+                            ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(nhanChuong(c))}">`
                                 + c.bai.map(([v, t]) => `<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
                                 + `</optgroup>`).join('')}
                           </select>
@@ -762,6 +1248,11 @@ function renderBulkPreview() {
                 } else if (cat === 'sa') {
                      h += `<div class="bulk-ghichu">Đáp án (nhiều đáp án chấp nhận được thì ngăn bằng dấu <b>|</b>, ví dụ <code>0.5|1/2</code>):</div>`;
                      h += `<input type="text" id="b-edit-ans" value="${escapeHtml(q.ans)}" class="input-box bulk-edit" style="padding:10px;">`;
+                } else if (cat === 'tl') {
+                     h += `<div class="bulk-ghichu">Đáp án mẫu (lời giải chuẩn để máy đối chiếu khi chấm):</div>`;
+                     h += `<textarea id="b-edit-dapanmau" class="input-box bulk-edit" style="min-height:100px;">${escapeHtml(q.dapAnMau||'')}</textarea>`;
+                     h += `<div class="bulk-ghichu">Barem chấm — mỗi dòng một ý, viết theo dạng <b>điểm | nội dung ý</b>:</div>`;
+                     h += `<textarea id="b-edit-barem" class="input-box bulk-edit" style="min-height:110px;">${escapeHtml(tlBaremRaChu(q.barem))}</textarea>`;
                 }
                 h += `<textarea id="b-edit-exp" class="input-box bulk-edit" style="min-height:90px;" placeholder="Lời giải chi tiết...">${escapeHtml(q.exp)}</textarea>`;
 
@@ -778,9 +1269,14 @@ function renderBulkPreview() {
                                 onchange="datMucDo('${cat}',${i},this.value)">
                           ${[1,2,3,4].map(v => `<option value="${v}"${(+q.lvl||1)===v?' selected':''}>${LVL_NAME[v]}</option>`).join('')}
                         </select>
+                        <select class="bulk-mini" style="padding:5px 8px;font-size:.85em;background:#eef2ff;color:#3730a3;font-weight:800"
+                                title="Câu này sẽ nằm ở phần nào nếu nạp vào đề tự soạn"
+                                onchange="datPhan('${cat}',${i},this.value)">
+                          ${[1,2,3,4].map(p => `<option value="${p}"${PHAN_MAC_DINH[cat]===p?' selected':''}>Phần ${LA_MA[p]}</option>`).join('')}
+                        </select>
                         <select class="bulk-mini" style="padding:5px 8px;font-size:.85em;max-width:260px"
                                 onchange="datBaiHoc('${cat}',${i},this.value)">
-                          ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(c.ten)}">`
+                          ${CURRICULUM.map(c => `<optgroup label="${escapeHtml(nhanChuong(c))}">`
                               + c.bai.map(([v, t]) => `<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
                               + `</optgroup>`).join('')}
                         </select>
@@ -801,6 +1297,12 @@ function renderBulkPreview() {
                     h += `</ul>`;
                 } else if (cat === 'sa') {
                     h += `<div style="color:var(--accent-green); font-weight:bold; margin-bottom:12px;">Đáp án: ${escapeHtml(q.ans)}</div>`;
+                } else if (cat === 'tl') {
+                    h += `<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:10px 12px;margin-bottom:12px">
+                            <b style="color:#5b21b6">Barem ${tlTongDiem(q.barem)} điểm</b>
+                            <ul style="margin:6px 0 0;padding-left:20px">${(q.barem||[]).map(b=>`<li>${(+b.diem||0)} đ — ${escapeHtml(b.noiDung||'')}</li>`).join('')}</ul>
+                          </div>`;
+                    if (q.dapAnMau) h += `<div style="background:#f8fafc;border-left:4px solid #cbd5e1;padding:8px 12px;margin-bottom:12px;font-size:.93em"><b>Đáp án mẫu:</b> ${safeHtml(q.dapAnMau)}</div>`;
                 }
                 if (q.exp) h += `<div style="background:#f8fafc;border-left:4px solid #cbd5e1;padding:8px 12px;margin-bottom:12px;font-size:.93em"><b>Lời giải:</b> ${safeHtml(q.exp)}</div>`;
 
@@ -813,7 +1315,7 @@ function renderBulkPreview() {
         });
     });
     h += `</div>`;
-    h += `<div class="btn-container" style="margin-top:16px;"><button class="btn btn-green" style="font-size: 18px; padding: 16px 30px;" onclick="confirmBulkImport()">✅ CHỐT NẠP VÀO XƯỞNG (${total} CÂU)</button></div>`;
+    h += `<div class="btn-container" style="margin-top:16px;"><button class="btn btn-green" style="font-size: 18px; padding: 16px 30px;" onclick="confirmBulkImport()">✅ CHỐT NẠP (${total} CÂU)</button></div>`;
     area.innerHTML = h;
     typeset(area);
 
@@ -840,6 +1342,20 @@ function datBaiHoc(cat, idx, v) {
     if (v && bulkDraftData && bulkDraftData[cat] && bulkDraftData[cat][idx])
         bulkDraftData[cat][idx].tag = v;
 }
+/* Đổi phần I/II/III/IV cho một câu. Chỉ có tác dụng khi nạp vào ĐỀ TỰ SOẠN;
+   nạp vào ngân hàng chung thì phần không có ý nghĩa gì. */
+function datPhan(cat, idx, v) {
+    if (!bulkDraftData || !bulkDraftData[cat] || !bulkDraftData[cat][idx]) return;
+    const denCat = PHAN_TYPE[parseInt(v)] || cat;
+    if (denCat === cat) return;
+    const q = bulkDraftData[cat][idx];
+    if (!confirm(`Chuyển câu này từ "${LABEL[cat]}" sang "${LABEL[denCat]}"?\n\nDữ liệu sẽ được chuyển đổi (đoán sẵn từ nội dung cũ) — thầy cô cần kiểm tra và hoàn thiện lại ngay sau đây rồi mới lưu.`)) { renderBulkPreview(); return; }
+    bulkDraftData[cat].splice(idx, 1);
+    chuyenDoiLoaiCau(q, denCat);
+    bulkDraftData[denCat].push(q);
+    bulkEditState = { cat: denCat, index: bulkDraftData[denCat].length - 1 };
+    renderBulkPreview();
+}
 
 /* Đặt một mức độ cho tất cả câu đang chờ duyệt. AI hay gán hết về "Nhận biết",
    thầy cô chỉnh chung một lượt rồi mới sửa lẻ vài câu. */
@@ -849,7 +1365,7 @@ function apDungMucDoCaLo() {
     if (!o) return;
     const v = parseInt(o.value) || 1;
     let n = 0;
-    ['mcq', 'tf', 'sa'].forEach(cat => bulkDraftData[cat].forEach(q => { q.lvl = v; n++; }));
+    ['mcq', 'tf', 'sa', 'tl'].forEach(cat => (bulkDraftData[cat]||[]).forEach(q => { q.lvl = v; n++; }));
     if (!confirm(`Đặt mức độ "${LVL_NAME[v]}" cho cả ${n} câu đang chờ duyệt?`)) return;
     bulkEditState = null;
     renderBulkPreview();
@@ -895,6 +1411,10 @@ function saveBulkEdit(cat, idx) {
     } else if (cat === 'sa') {
         q.ans = document.getElementById('b-edit-ans').value.trim();
         if (!q.ans) { alert('Câu trả lời ngắn chưa có đáp án.'); return; }
+    } else if (cat === 'tl') {
+        q.dapAnMau = document.getElementById('b-edit-dapanmau').value.trim();
+        q.barem = tlChuRaBarem(document.getElementById('b-edit-barem').value);
+        if (!q.barem.length) { alert('Câu tự luận chưa có barem. Không có barem thì máy không chấm được.'); return; }
     }
     if (!String(q.q).trim()) { alert('Nội dung câu hỏi đang để trống.'); return; }
     bulkEditState = null;
@@ -905,26 +1425,489 @@ function deleteBulkItem(cat, idx) {
     bulkDraftData[cat].splice(idx, 1);
     renderBulkPreview();
 }
-async function confirmBulkImport() {
-    if(!bulkDraftData) return;
-    const db = loadDB();
-    let added = 0;
-    ['mcq', 'tf', 'sa'].forEach(cat => {
-        bulkDraftData[cat].forEach(q => { db[cat].push(q); added++; });
-    });
-    if(added > 0 && await saveDB(db)) {
-        // Thoát toàn màn hình trước khi báo, nếu không thầy nạp xong vẫn thấy
-        // màn hình trắng phủ kín, tưởng máy treo.
-        const area = document.getElementById('bulk-preview-area');
-        if (area.classList.contains('bulk-full')) toggleBulkFull();
-        alert(`🎉 Tuyệt vời! Đã nạp thành công ${added} câu vào Xưởng.`);
-        document.getElementById("bulk-import-data").value = '';
-        bulkDraftData = null;
-        area.innerHTML = '';
-        document.getElementById('bulk-report').innerHTML = '';
-    } else if (added === 0) {
-        alert('Không có câu nào được nạp.');
+/* =========================================================
+   CHỐT NẠP — nay hỏi NƠI NHẬN trước: ngân hàng chung, đề tự soạn, hoặc cả hai.
+   Bản cũ đẩy thẳng vào ngân hàng nên không giữ lại được nguyên đề gốc.
+   ========================================================= */
+function bulkGomTatCa() {
+    const ra = [];
+    ['mcq','tf','sa','tl'].forEach(cat => (bulkDraftData && bulkDraftData[cat] || []).forEach(q => ra.push({ cat, q })));
+    return ra;
+}
+
+function confirmBulkImport() {
+    if (!bulkDraftData) return;
+    const tatCa = bulkGomTatCa();
+    if (!tatCa.length) { alert('Giỏ tạm không có câu nào để nạp.'); return; }
+
+    // Thoát toàn màn hình, nếu không hộp thoại bị lớp phủ che mất.
+    const area = document.getElementById('bulk-preview-area');
+    if (dangTMH(area)) toggleBulkFull();
+
+    const dem = { mcq: 0, tf: 0, sa: 0, tl: 0 };
+    tatCa.forEach(({ cat }) => dem[cat]++);
+    document.getElementById('chotnap-tomtat').innerHTML =
+        `Giỏ tạm có <b>${tatCa.length} câu</b> gom qua <b>${bulkLots.length} lượt dán</b> — `
+        + `${dem.mcq} trắc nghiệm · ${dem.tf} đúng–sai · ${dem.sa} trả lời ngắn · ${dem.tl} tự luận.`;
+
+    // Nạp lại danh sách đề tự soạn vào ô chọn
+    const sel = document.getElementById('chotnap-de');
+    const ds = deDoc();
+    sel.innerHTML = '<option value="__new__">➕ Tạo đề mới…</option>'
+        + ds.map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${deDemCau(d)} câu)</option>`).join('');
+    sel.value = (DE_DANG && ds.some(d => d.id === DE_DANG)) ? DE_DANG : '__new__';
+
+    const r = document.querySelector('input[name="dich-nap"][value="bank"]');
+    if (r) r.checked = true;
+    chotNapDoiDich();
+    chotNapDoiDe();
+    veBangPhan(tatCa);
+    document.getElementById('hop-chotnap').classList.add('hien');
+}
+
+function veBangPhan(tatCa) {
+    const d = [0, 0, 0, 0, 0];
+    tatCa.forEach(({ cat }) => { d[PHAN_MAC_DINH[cat] || 1]++; });
+    document.getElementById('chotnap-bangphan').innerHTML =
+        `<table class="bang-phan"><tr><th>Phần I<br>Trắc nghiệm</th><th>Phần II<br>Đúng / Sai</th><th>Phần III<br>Trả lời ngắn</th><th>Phần IV<br>Tự luận</th></tr>
+         <tr><td>${d[1]} câu</td><td>${d[2]} câu</td><td>${d[3]} câu</td><td>${d[4]} câu</td></tr></table>`;
+}
+
+function chotNapDoiDich() {
+    const v = (document.querySelector('input[name="dich-nap"]:checked') || {}).value || 'bank';
+    document.getElementById('chotnap-khungde').style.display = (v === 'de' || v === 'ca2') ? 'block' : 'none';
+}
+function chotNapDoiDe() {
+    const moi = document.getElementById('chotnap-de').value === '__new__';
+    document.getElementById('chotnap-hang-ten').style.display = moi ? 'flex' : 'none';
+}
+function dongHopChotNap() { document.getElementById('hop-chotnap').classList.remove('hien'); }
+
+async function chotNapThucHien() {
+    if (!bulkDraftData) { dongHopChotNap(); return; }
+    const tatCa = bulkGomTatCa();
+    if (!tatCa.length) { alert('Giỏ tạm không có câu nào.'); return; }
+
+    const dich = (document.querySelector('input[name="dich-nap"]:checked') || {}).value || 'bank';
+    let vaoDe = 0, tenDe = '', vaoBank = 0;
+
+    // --- nhánh ĐỀ TỰ SOẠN ---
+    if (dich === 'de' || dich === 'ca2') {
+        const chon = document.getElementById('chotnap-de').value;
+        let de;
+        if (chon === '__new__') {
+            const ten = (document.getElementById('chotnap-tende').value || '').trim();
+            if (!ten) { alert('Hãy đặt tên cho đề tự soạn.'); return; }
+            de = deTaoObj(ten);
+        } else {
+            de = deDoc().find(x => x.id === chon);
+            if (!de) { alert('Không tìm thấy đề đã chọn.'); return; }
+            deChuanHoa(de);
+        }
+        tatCa.forEach(({ cat, q }) => {
+            const p = PHAN_MAC_DINH[cat] || 1;
+            const ban = JSON.parse(JSON.stringify(q));
+            ban._cat = cat;
+            delete ban._luot;
+            de.parts['p' + p].push(ban);
+            vaoDe++;
+        });
+        de.updatedAt = new Date().toISOString();
+        if (!deLuu(de)) return;      // hết bộ nhớ thì dừng, chưa động tới ngân hàng
+        DE_DANG = de.id; tenDe = de.name;
     }
+
+    // --- nhánh NGÂN HÀNG CHUNG ---
+    if (dich === 'bank' || dich === 'ca2') {
+        const db = loadDB();
+        tatCa.forEach(({ cat, q }) => {
+            const ban = JSON.parse(JSON.stringify(q));
+            delete ban._luot; delete ban._cat;
+            db[cat].push(ban); vaoBank++;
+        });
+        if (!await saveDB(db)) return;
+    }
+
+    dongHopChotNap();
+    let bao = '🎉 Đã nạp xong!\n';
+    if (vaoBank) bao += `\n• ${vaoBank} câu vào NGÂN HÀNG CHUNG`;
+    if (vaoDe) bao += `\n• ${vaoDe} câu vào đề tự soạn “${tenDe}”`;
+    alert(bao);
+
+    document.getElementById("bulk-import-data").value = '';
+    bulkDraftData = null; bulkLots = []; bulkEditState = null;
+    document.getElementById('bulk-preview-area').innerHTML = '';
+    document.getElementById('bulk-report').innerHTML = '';
+    veThanhGom();
+    updateStorageInfo();
+    if (vaoDe) toggleAdminForm('dete');
+}
+
+// =========================================================
+// KHO ĐỀ TỰ SOẠN — giữ nguyên đề gốc theo bốn phần I / II / III / IV
+// Câu hỏi ở đây là BẢN SAO ĐỘC LẬP, không phải con trỏ tới ngân hàng, để
+// sau này xóa hay sửa ngân hàng thì đề cũ vẫn còn nguyên như lúc soạn.
+// =========================================================
+const DE_KEY = 'dctt_v15_dethuson';
+let DE_DANG = null;   // id đề đang mở xem
+
+function deDoc() {
+  try { const a = JSON.parse(localStorage.getItem(DE_KEY)); return Array.isArray(a) ? a : []; }
+  catch (e) { return []; }
+}
+function deGhiDS(ds) {
+  try { localStorage.setItem(DE_KEY, JSON.stringify(ds)); return true; }
+  catch (e) {
+    alert('❌ Không lưu được đề tự soạn: bộ nhớ trình duyệt đã đầy.\n\nHãy vào Đề Tự Soạn, xuất bớt vài đề cũ ra file JSON rồi xóa đi, sau đó thử lại.');
+    return false;
+  }
+}
+function deChuanHoa(de) {
+  if (!de.parts) de.parts = {};
+  [1, 2, 3, 4].forEach(p => { if (!Array.isArray(de.parts['p' + p])) de.parts['p' + p] = []; });
+  if (!de.code) de.code = String(Math.floor(Math.random() * 900000) + 100000);
+  if (!de.thoiGian) de.thoiGian = 90;
+  if (!de.createdAt) de.createdAt = new Date().toISOString();
+  if (!de.updatedAt) de.updatedAt = de.createdAt;
+  return de;
+}
+function deTaoObj(ten) {
+  return deChuanHoa({
+    id: 'de_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+    name: ten,
+    code: String(Math.floor(Math.random() * 900000) + 100000),
+    thoiGian: 90,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    parts: { p1: [], p2: [], p3: [], p4: [] }
+  });
+}
+function deLuu(de) {
+  const ds = deDoc();
+  const i = ds.findIndex(x => x.id === de.id);
+  if (i >= 0) ds[i] = de; else ds.push(de);
+  return deGhiDS(ds);
+}
+function deLay(id) { const de = deDoc().find(x => x.id === id); return de ? deChuanHoa(de) : null; }
+function deDemCau(de) { deChuanHoa(de); return [1, 2, 3, 4].reduce((t, p) => t + de.parts['p' + p].length, 0); }
+
+function deTaoMoi() {
+  const ten = (prompt('Tên đề mới:', 'Đề KSCL — 12A') || '').trim();
+  if (!ten) return;
+  const de = deTaoObj(ten);
+  if (!deLuu(de)) return;
+  DE_DANG = de.id;
+  deVe();
+}
+function deDoiTen(id) {
+  const de = deLay(id); if (!de) return;
+  const ten = (prompt('Tên đề:', de.name) || '').trim(); if (!ten) return;
+  const tg = parseInt(prompt('Thời gian làm bài (phút):', de.thoiGian), 10);
+  de.name = ten;
+  if (tg > 0) de.thoiGian = tg;
+  de.updatedAt = new Date().toISOString();
+  if (deLuu(de)) deVe();
+}
+function deXoa(id) {
+  const de = deLay(id); if (!de) return;
+  if (!confirm(`Xóa hẳn đề “${de.name}” (${deDemCau(de)} câu)?\n\nNên bấm “Xuất JSON” lưu ra file trước cho chắc. Việc này không hoàn tác được.`)) return;
+  const ds = deDoc().filter(x => x.id !== id);
+  if (deGhiDS(ds)) { if (DE_DANG === id) DE_DANG = null; deVe(); }
+}
+function deMo(id) { DE_DANG = (DE_DANG === id) ? null : id; deVe(); }
+
+function deChuyen(id, phan, i, huong) {
+  const de = deLay(id); if (!de) return;
+  const a = de.parts['p' + phan], j = i + huong;
+  if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]];
+  de.updatedAt = new Date().toISOString();
+  if (deLuu(de)) deVe();
+}
+/* Câu đang mở sửa ngay trong khung Đề Tự Soạn — {deId, phan, idx}.
+   Dùng chung cho hai việc: sửa nội dung bình thường, và hoàn thiện dữ liệu
+   ngay sau khi chuyển loại câu (xem chuyenDoiLoaiCau ở trên). */
+let deEditState = null;
+
+function deDoiPhan(id, phan, i, moi) {
+  moi = parseInt(moi) || phan;
+  if (moi === phan) { deVe(); return; }
+  const de = deLay(id); if (!de) return;
+  const q = de.parts['p' + phan][i]; if (!q) { deVe(); return; }
+  const denCat = PHAN_TYPE[moi];
+  if (!confirm(`Chuyển câu này từ "${PHAN_TIEU_DE[phan]}" sang "${PHAN_TIEU_DE[moi]}"?\n\nDữ liệu sẽ được chuyển đổi (đoán sẵn từ nội dung cũ) — thầy cô cần kiểm tra và hoàn thiện lại ngay sau đây rồi mới lưu.`)) { deVe(); return; }
+  de.parts['p' + phan].splice(i, 1);
+  chuyenDoiLoaiCau(q, denCat);
+  de.parts['p' + moi].push(q);
+  const idxMoi = de.parts['p' + moi].length - 1;
+  de.updatedAt = new Date().toISOString();
+  if (!deLuu(de)) return;
+  DE_DANG = id;
+  deEditState = { deId: id, phan: moi, idx: idxMoi };
+  deVe();
+}
+
+/* Vá một câu ĐÃ NẰM SẴN ở phần này nhưng dữ liệu (type) vẫn thuộc loại
+   khác — dấu vết của lỗi cũ (đổi nhãn Phần mà không đổi dữ liệu). Dùng cho
+   những đề đã soạn từ trước khi có bản vá này. */
+function deVaCau(id, phan, i) {
+  const de = deLay(id); if (!de) return;
+  const q = de.parts['p' + phan][i]; if (!q) return;
+  const denCat = PHAN_TYPE[phan];
+  if (q._cat === denCat) { deVe(); return; }
+  if (!confirm(`Câu này đang ghi là loại "${LABEL[q._cat] || q._cat}" nhưng nằm ở ${PHAN_TIEU_DE[phan]}.\n\nChuyển đổi dữ liệu cho khớp? Thầy cô cần kiểm tra và hoàn thiện lại ngay sau đây.`)) return;
+  chuyenDoiLoaiCau(q, denCat);
+  de.updatedAt = new Date().toISOString();
+  if (!deLuu(de)) return;
+  deEditState = { deId: id, phan, idx: i };
+  deVe();
+}
+
+function deBatDauSua(id, phan, i) { deEditState = { deId: id, phan, idx: i }; deVe(); }
+function huyDeEdit() { deEditState = null; deVe(); }
+
+function luuSuaCauDe(id, phan, idx) {
+  const de = deLay(id); if (!de) return;
+  const q = de.parts['p' + phan][idx]; if (!q) return;
+  const cat = q._cat;
+  const oQ = document.getElementById('de-edit-q'), oExp = document.getElementById('de-edit-exp');
+  q.q = oQ ? oQ.value : q.q;
+  q.exp = oExp ? oExp.value : q.exp;
+  if (cat === 'mcq') {
+    q.opts = [0, 1, 2, 3].map(j => document.getElementById(`de-edit-opt-${j}`).value);
+    const chon = document.querySelector('input[name="de-edit-dapan"]:checked');
+    if (!chon) { alert('Thầy cô chưa chọn đáp án đúng cho câu này.'); return; }
+    q.ans = parseInt(chon.value);
+    if (q.opts.some(o => !String(o).trim())) { alert('Có phương án đang để trống.'); return; }
+  } else if (cat === 'tf') {
+    q.stmts = [0, 1, 2, 3].map(j => ({
+      t: document.getElementById(`de-edit-stmt-${j}`).value,
+      ans: document.getElementById(`de-edit-stmt-ans-${j}`).value === '1'
+    }));
+    if (q.stmts.some(st => !String(st.t).trim())) { alert('Có ý a)/b)/c)/d) đang để trống.'); return; }
+  } else if (cat === 'sa') {
+    q.ans = document.getElementById('de-edit-ans').value.trim();
+    if (!q.ans) { alert('Câu trả lời ngắn chưa có đáp án.'); return; }
+  } else if (cat === 'tl') {
+    q.dapAnMau = document.getElementById('de-edit-dapanmau').value.trim();
+    q.barem = tlChuRaBarem(document.getElementById('de-edit-barem').value);
+    if (!q.barem.length) { alert('Câu tự luận chưa có barem — không có barem thì máy không chấm được.'); return; }
+  }
+  if (!String(q.q).trim()) { alert('Nội dung câu hỏi đang để trống.'); return; }
+  de.updatedAt = new Date().toISOString();
+  if (!deLuu(de)) return;
+  deEditState = null;
+  deVe();
+}
+
+function deBoCau(id, phan, i) {
+  const de = deLay(id); if (!de) return;
+  if (!confirm('Bỏ câu này ra khỏi đề? (Câu vẫn còn trong ngân hàng nếu trước đó thầy cô đã nạp vào ngân hàng.)')) return;
+  de.parts['p' + phan].splice(i, 1);
+  de.updatedAt = new Date().toISOString();
+  if (deLuu(de)) deVe();
+}
+
+/* Nạp toàn bộ câu của một đề vào ngân hàng chung, bỏ qua câu đã có. */
+async function deNapVaoNganHang(id) {
+  const de = deLay(id); if (!de) return;
+  const db = loadDB();
+  let them = 0, bo = 0;
+  [1, 2, 3, 4].forEach(p => de.parts['p' + p].forEach(q => {
+    const cat = q._cat || 'mcq';
+    if (!Array.isArray(db[cat])) db[cat] = [];
+    if (db[cat].some(x => x.tag === q.tag && chuanHoa(x.q) === chuanHoa(q.q))) { bo++; return; }
+    const ban = JSON.parse(JSON.stringify(q));
+    delete ban._cat;
+    ban.id = newId();
+    db[cat].push(ban); them++;
+  }));
+  if (!them) { alert(`Không có câu nào mới — cả ${bo} câu của đề đều đã nằm trong ngân hàng.`); return; }
+  if (!confirm(`Nạp ${them} câu của đề “${de.name}” vào ngân hàng chung?${bo ? `\n(${bo} câu đã có sẵn sẽ được bỏ qua.)` : ''}`)) return;
+  if (await saveDB(db)) alert(`✅ Đã nạp ${them} câu vào ngân hàng chung.`);
+}
+
+/* Xuất đề ra JSON đúng định dạng V17 đang nhận.
+   KHÁC với Studio Thiết Kế Đề: KHÔNG đảo thứ tự phương án, vì đây là đề gốc
+   thầy cô gõ lại từ bản giấy — đảo đi là sai so với bản in trên tay. */
+function deXuat(id) {
+  const de = deLay(id); if (!de) return;
+  if (!deDemCau(de)) { alert('Đề này chưa có câu nào.'); return; }
+  let soLech = 0;
+  [1, 2, 3, 4].forEach(p => de.parts['p' + p].forEach(q => { if (q._cat !== PHAN_TYPE[p]) soLech++; }));
+  if (soLech > 0 && !confirm(`⚠ Đề này có ${soLech} câu đang lệch giữa Phần và loại câu (dấu vết của các đề soạn từ bản cũ).\n\nXuất ra thì V17 có thể đếm nhầm số câu mỗi phần. Nên vào từng câu có dấu ⚠ trong khung "Mở đề" và bấm "Vá cho khớp" trước.\n\nVẫn cứ xuất luôn?`)) return;
+  const testPaper = [];
+  [1, 2, 3, 4].forEach(p => {
+    const arr = de.parts['p' + p];
+    arr.forEach((q, i) => {
+      const item = JSON.parse(JSON.stringify(q));
+      const cat = q._cat || 'mcq';
+      delete item._cat; delete item._luot;
+      item.type = cat;
+      item.partNo = p;
+      item.part = PHAN_TIEU_DE[p];
+      item.partQNum = i + 1;
+      item.partTotal = arr.length;
+      if (cat === 'mcq' && Array.isArray(q.opts)) {
+        item.display = q.opts.map((t, idx) => ({ t: t, isTrue: idx === q.ans }));
+      }
+      testPaper.push(item);
+    });
+  });
+  const bundle = {
+    title: de.name,
+    code: de.code,
+    durationMinutes: de.thoiGian || 90,
+    scoring: { mcq: 0.25, sa: 0.5, tf: [0, 0.1, 0.25, 0.5, 1.0], scale10: true },
+    createdAt: new Date().toISOString(),
+    questions: testPaper
+  };
+  const tenFile = 'De_' + String(de.name).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40) + '_' + de.code + '.json';
+  taiFile(JSON.stringify(bundle, null, 2), 'application/json', tenFile);
+  alert(`🎉 Đã xuất đề “${de.name}”!\n\n• Mã đề: ${de.code}\n• ${testPaper.length} câu, giữ nguyên thứ tự thầy cô đã sắp\n\nTải file này lên V17 (dinhcaotritue.com) để phát cho học sinh.`);
+}
+
+function deVeDapAn(q) {
+  const cat = q._cat || 'mcq';
+  if (cat === 'mcq' && Array.isArray(q.opts)) {
+    return '<ul style="list-style:none;padding:0;margin:6px 0 0">' + q.opts.map((o, j) =>
+      `<li style="padding:2px 0;${j === q.ans ? 'color:var(--accent-green);font-weight:800' : ''}">${String.fromCharCode(65 + j)}. ${safeHtml(o)}</li>`).join('') + '</ul>';
+  }
+  if (cat === 'tf' && Array.isArray(q.stmts)) {
+    return '<ul style="list-style:none;padding:0;margin:6px 0 0">' + q.stmts.map((st, j) =>
+      `<li style="padding:2px 0">${String.fromCharCode(97 + j)}) ${safeHtml(st.t)} — <b style="color:${st.ans ? 'var(--accent-green)' : 'var(--accent-red)'}">${st.ans ? 'ĐÚNG' : 'SAI'}</b></li>`).join('') + '</ul>';
+  }
+  if (cat === 'sa') return `<div style="color:var(--accent-green);font-weight:800;margin-top:6px">Đáp án: ${escapeHtml(q.ans || '')}</div>`;
+  if (cat === 'tl') return `<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:8px 12px;margin-top:6px">
+      <b style="color:#5b21b6">Barem ${tlTongDiem(q.barem)} điểm</b>
+      <ul style="margin:4px 0 0;padding-left:20px">${(q.barem || []).map(b => `<li>${(+b.diem || 0)} đ — ${escapeHtml(b.noiDung || '')}</li>`).join('')}</ul></div>`;
+  return '';
+}
+
+/* Form sửa một câu ngay tại chỗ trong Đề Tự Soạn — hình dạng theo loại câu,
+   giống hệt khung sửa ở Trạm nhận dữ liệu AI để thầy cô khỏi phải học lại. */
+function deVeFormSua(de, phan, i, q) {
+  const cat = q._cat;
+  let h = `<div style="font-weight:bold;color:#6d28d9;margin-bottom:10px">✏️ Đang sửa: [${(LABEL[cat]||'?').toUpperCase()}] — ${PHAN_TIEU_DE[phan]}</div>`;
+  h += `<textarea id="de-edit-q" class="input-box bulk-edit" style="min-height:120px">${escapeHtml(q.q || '')}</textarea>`;
+  if (cat === 'mcq') {
+    h += `<div class="bulk-ghichu">Chấm tròn ô bên trái để chọn đáp án đúng:</div>`;
+    (Array.isArray(q.opts) ? q.opts : ['', '', '', '']).forEach((o, j) => {
+      h += `<div class="bulk-dong-opt">
+              <label class="bulk-chon" title="Chọn ${String.fromCharCode(65 + j)} làm đáp án đúng">
+                <input type="radio" name="de-edit-dapan" value="${j}"${j === q.ans ? ' checked' : ''}>
+                <span>${String.fromCharCode(65 + j)}.</span>
+              </label>
+              <textarea id="de-edit-opt-${j}" class="input-box bulk-edit" style="flex:1;min-height:52px;padding:8px">${escapeHtml(o)}</textarea>
+            </div>`;
+    });
+  } else if (cat === 'tf') {
+    h += `<div class="bulk-ghichu">Chọn Đúng hoặc Sai cho từng ý:</div>`;
+    (Array.isArray(q.stmts) ? q.stmts : [0,1,2,3].map(()=>({t:'',ans:false}))).forEach((st, j) => {
+      h += `<div class="bulk-dong-opt">
+              <span style="font-weight:bold;width:22px;padding-top:12px">${String.fromCharCode(97 + j)})</span>
+              <textarea id="de-edit-stmt-${j}" class="input-box bulk-edit" style="flex:1;min-height:52px;padding:8px">${escapeHtml(st.t || '')}</textarea>
+              <select id="de-edit-stmt-ans-${j}" class="bulk-mini" style="margin-top:8px">
+                <option value="1"${st.ans ? ' selected' : ''}>ĐÚNG</option>
+                <option value="0"${st.ans ? '' : ' selected'}>SAI</option>
+              </select>
+            </div>`;
+    });
+  } else if (cat === 'sa') {
+    h += `<div class="bulk-ghichu">Đáp án (nhiều đáp án chấp nhận được thì ngăn bằng dấu <b>|</b>):</div>`;
+    h += `<input type="text" id="de-edit-ans" value="${escapeHtml(q.ans || '')}" class="input-box bulk-edit" style="padding:10px">`;
+  } else if (cat === 'tl') {
+    h += `<div class="bulk-ghichu">Đáp án mẫu (lời giải chuẩn để máy đối chiếu khi chấm):</div>`;
+    h += `<textarea id="de-edit-dapanmau" class="input-box bulk-edit" style="min-height:100px">${escapeHtml(q.dapAnMau || '')}</textarea>`;
+    h += `<div class="bulk-ghichu">Barem chấm — mỗi dòng một ý, dạng <b>điểm | nội dung ý</b>:</div>`;
+    h += `<textarea id="de-edit-barem" class="input-box bulk-edit" style="min-height:110px">${escapeHtml(tlBaremRaChu(q.barem))}</textarea>`;
+  }
+  h += `<textarea id="de-edit-exp" class="input-box bulk-edit" style="min-height:90px" placeholder="Lời giải chi tiết...">${escapeHtml(q.exp || '')}</textarea>`;
+  h += `<div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-green btn-sm" onclick="luuSuaCauDe('${de.id}',${phan},${i})">💾 Lưu chỉnh sửa</button>
+          <button class="btn btn-gray btn-sm" onclick="huyDeEdit()">Hủy</button>
+        </div>`;
+  return h;
+}
+
+function deVePhan(de) {
+  let h = '<div style="margin-top:14px">';
+  [1, 2, 3, 4].forEach(p => {
+    const arr = de.parts['p' + p];
+    h += `<div class="de-phan"><div class="dau"><span>${PHAN_TIEU_DE[p]}</span><span>${arr.length} câu</span></div>`;
+    if (!arr.length) {
+      h += '<div class="de-cau"><span class="noi" style="color:#94a3b8;font-weight:700">Phần này chưa có câu nào.</span></div>';
+    }
+    arr.forEach((q, i) => {
+      const dangSua = deEditState && deEditState.deId === de.id && deEditState.phan === p && deEditState.idx === i;
+      if (dangSua) {
+        h += `<div class="de-cau" style="display:block;background:#faf5ff;border-top-color:#8b5cf6">${deVeFormSua(de, p, i, q)}</div>`;
+        return;
+      }
+      // LỆCH: câu nằm ở phần này nhưng dữ liệu vẫn thuộc loại khác — dấu vết
+      // của lỗi cũ (đổi Phần mà không đổi dữ liệu). Cho vá tại chỗ.
+      const lech = q._cat !== PHAN_TYPE[p];
+      h += `<div class="de-cau">
+              <span class="stt">${i + 1}.</span>
+              <div class="noi">
+                ${lech ? `<div style="margin-bottom:8px"><span class="pill-sua canxem">⚠ Dữ liệu đang là "${escapeHtml(LABEL[q._cat] || q._cat || '?')}", chưa khớp ${PHAN_TIEU_DE[p]}</span>
+                    <button class="btn btn-red btn-sm" style="margin:0 0 0 6px;padding:4px 10px" onclick="deVaCau('${de.id}',${p},${i})">🔧 Vá cho khớp</button></div>` : ''}
+                <div>${safeHtml(q.q)}</div>
+                ${deVeDapAn(q)}
+                <div style="margin-top:8px">
+                  <span class="tag-pill">${LABEL[q._cat] || '?'}</span>
+                  <span class="tag-pill">${LVL_NAME[+q.lvl || 1]}</span>
+                  <span class="tag-pill">${escapeHtml(TAG_NAME[q.tag] || q.tag || '—')}</span>
+                </div>
+              </div>
+              <div class="nut">
+                <button title="Đưa lên trên" onclick="deChuyen('${de.id}',${p},${i},-1)">▲</button>
+                <button title="Đưa xuống dưới" onclick="deChuyen('${de.id}',${p},${i},1)">▼</button>
+                <button title="Sửa câu này" onclick="deBatDauSua('${de.id}',${p},${i})">✏️</button>
+                <select class="o-phan" title="Chuyển sang phần khác (sẽ chuyển đổi luôn dữ liệu)" onchange="deDoiPhan('${de.id}',${p},${i},this.value)">
+                  ${[1, 2, 3, 4].map(x => `<option value="${x}"${x === p ? ' selected' : ''}>Phần ${LA_MA[x]}</option>`).join('')}
+                </select>
+                <button title="Bỏ khỏi đề" style="color:#b91c1c" onclick="deBoCau('${de.id}',${p},${i})">✕</button>
+              </div>
+            </div>`;
+    });
+    h += '</div>';
+  });
+  return h + '</div>';
+}
+
+function deVe() {
+  const box = document.getElementById('de-noidung'); if (!box) return;
+  const ds = deDoc();
+  if (!ds.length) {
+    box.innerHTML = '<p class="hint">Chưa có đề tự soạn nào.<br>Cách nhanh nhất: sang <b>Nạp Hàng Loạt (AI)</b>, dán JSON nhiều lượt cho đủ cả đề, rồi bấm <b>CHỐT NẠP</b> và chọn <b>Đề tự soạn</b>.</p>';
+    return;
+  }
+  let h = '';
+  ds.forEach(de => {
+    deChuanHoa(de);
+    const mo = DE_DANG === de.id;
+    const dem = [1, 2, 3, 4].map(p => `P${LA_MA[p]}: ${de.parts['p' + p].length}`).join(' · ');
+    h += `<div class="de-the${mo ? ' dang' : ''}">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+              <div style="min-width:220px;flex:1 1 260px">
+                <div class="ten">${escapeHtml(de.name)}</div>
+                <div class="meta">Mã đề ${escapeHtml(de.code)} · ${de.thoiGian} phút · <b>${deDemCau(de)} câu</b> (${dem})</div>
+                <div class="meta">Sửa lần cuối: ${new Date(de.updatedAt).toLocaleString('vi-VN')}</div>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                <button class="btn btn-teacher btn-sm" style="margin:0" onclick="deMo('${de.id}')">${mo ? '🗕 Thu lại' : '📂 Mở đề'}</button>
+                <button class="btn btn-purple btn-sm" style="margin:0" onclick="deXuat('${de.id}')">⬇️ Xuất JSON cho V17</button>
+                <button class="btn btn-green btn-sm" style="margin:0" onclick="deNapVaoNganHang('${de.id}')">📥 Nạp vào ngân hàng</button>
+                <button class="btn btn-gray btn-sm" style="margin:0" onclick="deDoiTen('${de.id}')">✏️ Sửa thông tin</button>
+                <button class="btn btn-red btn-sm" style="margin:0" onclick="deXoa('${de.id}')">🗑️ Xóa</button>
+              </div>
+            </div>`;
+    if (mo) h += deVePhan(de);
+    h += '</div>';
+  });
+  box.innerHTML = h;
+  typeset(box);
 }
 
 // =========================================================
@@ -959,20 +1942,23 @@ async function deleteDup(id, cat) {
 // ĐÃ KHÔI PHỤC NÚT XEM TRONG THỐNG KÊ NGÂN HÀNG
 // ---------------------------------------------------------
 function renderStats(){
-  const db=loadDB(); let html='<table class="stats-table"><tr><th style="text-align:left">Bài học</th><th>TN</th><th>Đ/S</th><th>Ngắn</th><th>Tổng</th><th>Thao tác</th></tr>';
-  let T={mcq:0,tf:0,sa:0};
+  const db=loadDB(); let html='<table class="stats-table"><tr><th style="text-align:left">Bài học</th><th>TN</th><th>Đ/S</th><th>Ngắn</th><th>Tự luận</th><th>Tổng</th><th>Thao tác</th></tr>';
+  let T={mcq:0,tf:0,sa:0,tl:0};
   CURRICULUM.forEach(c=>{
-    html+=`<tr style="background:#f1f5f9"><td colspan="6" style="text-align:left;font-weight:800;color:var(--primary-blue)">${c.ten}</td></tr>`;
+    // Có ba khối nên danh mục rất dài; chương nào chưa có câu hỏi thì ẩn đi cho gọn.
+    const coCau = c.bai.some(([tag])=>db.mcq.some(q=>q.tag===tag)||db.tf.some(q=>q.tag===tag)||db.sa.some(q=>q.tag===tag)||(db.tl||[]).some(q=>q.tag===tag));
+    if(!coCau) return;
+    html+=`<tr style="background:#f1f5f9"><td colspan="7" style="text-align:left;font-weight:800;color:var(--primary-blue)">${nhanChuong(c)}</td></tr>`;
     c.bai.forEach(([tag,name])=>{
-      const m=db.mcq.filter(q=>q.tag===tag), f=db.tf.filter(q=>q.tag===tag), s=db.sa.filter(q=>q.tag===tag), tot=m.length+f.length+s.length;
-      T.mcq+=m.length; T.tf+=f.length; T.sa+=s.length;
+      const m=db.mcq.filter(q=>q.tag===tag), f=db.tf.filter(q=>q.tag===tag), s=db.sa.filter(q=>q.tag===tag), l=(db.tl||[]).filter(q=>q.tag===tag), tot=m.length+f.length+s.length+l.length;
+      T.mcq+=m.length; T.tf+=f.length; T.sa+=s.length; T.tl+=l.length;
       if(tot>0){
-          html+=`<tr><td style="text-align:left;font-size:.88em;font-weight:600">${name}</td><td>${m.length}</td><td>${f.length}</td><td>${s.length}</td><td style="font-weight:800;color:var(--primary-blue)">${tot}</td>
+          html+=`<tr><td style="text-align:left;font-size:.88em;font-weight:600">${name}</td><td>${m.length}</td><td>${f.length}</td><td>${s.length}</td><td>${l.length}</td><td style="font-weight:800;color:var(--primary-blue)">${tot}</td>
           <td><button class="btn btn-teacher btn-sm" style="margin:0;padding:5px 10px" onclick="previewQuestions('${tag}', '${escapeHtml(String(name).replace(/['"\\]/g, ""))}')">👁️ Xem</button></td></tr>`;
       }
     });
   });
-  html+=`<tr style="background:#e2e8f0;font-weight:900;color:var(--primary-blue)"><td style="text-align:right">TỔNG CỘNG</td><td>${T.mcq}</td><td>${T.tf}</td><td>${T.sa}</td><td style="color:var(--accent-red);font-size:1.1em">${T.mcq+T.tf+T.sa}</td><td></td></tr></table>`;
+  html+=`<tr style="background:#e2e8f0;font-weight:900;color:var(--primary-blue)"><td style="text-align:right">TỔNG CỘNG</td><td>${T.mcq}</td><td>${T.tf}</td><td>${T.sa}</td><td>${T.tl}</td><td style="color:var(--accent-red);font-size:1.1em">${T.mcq+T.tf+T.sa+T.tl}</td><td></td></tr></table>`;
   const st = document.getElementById('stats-content');
   if(st) st.innerHTML=html;
 }
@@ -982,7 +1968,24 @@ function renderAddForm(){
   if(!area) return;
   if(type==='mcq'){ area.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><input type="text" id="opt-A" class="input-box" style="margin:0" placeholder="A"><input type="text" id="opt-B" class="input-box" style="margin:0" placeholder="B"><input type="text" id="opt-C" class="input-box" style="margin:0" placeholder="C"><input type="text" id="opt-D" class="input-box" style="margin:0" placeholder="D"></div><div class="form-row" style="margin-top:10px;"><b>Đáp án đúng:</b><select id="mcq-ans" class="select-box" style="margin:0;width:100px"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>`; }
   else if(type==='tf'){ area.innerHTML=['a','b','c','d'].map(k=>`<div class="form-row"><input type="text" id="stmt-${k}" class="input-box" style="margin:0;flex:1" placeholder="Ý ${k})"><select id="ans-${k}" class="select-box" style="margin:0;width:100px"><option value="true">Đúng</option><option value="false">Sai</option></select></div>`).join(''); }
+  else if(type==='tl'){
+    area.innerHTML=`<textarea id="tl-dapanmau" class="input-box" style="min-height:110px" placeholder="Đáp án mẫu — lời giải chuẩn đầy đủ các bước. Máy chấm dựa vào đây để đối chiếu."></textarea>
+      <div class="bulk-ghichu" style="margin-top:6px">Barem chấm — mỗi dòng một ý, viết theo dạng <b>điểm | nội dung ý</b>. Ý càng tách nhỏ và rõ ràng thì máy chấm càng chuẩn:</div>
+      <textarea id="tl-barem" class="input-box" style="min-height:130px" oninput="tlCapNhatTong()">${TL_GOI_Y}</textarea>
+      <div class="form-row" style="align-items:center">
+        <span id="tl-tong" style="font-weight:800;color:#5b21b6"></span>
+        <button type="button" class="btn btn-gray btn-sm" style="margin:0" onclick="document.getElementById('tl-barem').value=TL_GOI_Y;tlCapNhatTong()">Dùng barem mẫu</button>
+      </div>`;
+    tlCapNhatTong();
+  }
   else{ area.innerHTML=`<input type="text" id="sa-exact-ans" class="input-box" placeholder="Đáp án (VD: 0,5|1/2)">`; }
+}
+
+function tlCapNhatTong(){
+  const o=document.getElementById('tl-barem'), t=document.getElementById('tl-tong');
+  if(!o||!t) return;
+  const b=tlChuRaBarem(o.value);
+  t.innerText=`Tổng điểm câu này: ${tlTongDiem(b)} · ${b.length} ý`;
 }
 
 async function saveCustomQuestion(){
@@ -994,6 +1997,11 @@ async function saveCustomQuestion(){
   const q={ id: editingId||newId(), tag, lvl, q:qContent, exp };
   if(type==='mcq'){ const opts=['A','B','C','D'].map(k=>document.getElementById('opt-'+k).value.trim()); q.opts=opts; q.ans=parseInt(document.getElementById('mcq-ans').value); }
   else if(type==='tf'){ q.stmts=['a','b','c','d'].map(k=>({t:document.getElementById('stmt-'+k).value.trim(), ans:document.getElementById('ans-'+k).value==='true'})); }
+  else if(type==='tl'){
+    q.dapAnMau=document.getElementById('tl-dapanmau').value.trim();
+    q.barem=tlChuRaBarem(document.getElementById('tl-barem').value);
+    if(!q.barem.length){ alert('Câu tự luận chưa có barem. Không có barem thì máy chấm sẽ chấm cảm tính.'); return; }
+  }
   else{ q.ans=document.getElementById('sa-exact-ans').value.trim(); }
   
   const db=loadDB();
@@ -1015,61 +2023,326 @@ async function saveCustomQuestion(){
   }
 }
 
+/* Ghi lại bài đang xem để các thao tác Sửa / Chuyển / Xóa dựng lại đúng bài,
+   và để nút toàn màn hình biết đang mở bài nào. */
+/* xtHienTai và xtEditState nay khai báo cùng chỗ với bulkDraftData ở trên,
+   để toggleAdminForm() gọi tới lúc nào cũng an toàn. */
+
+function toggleXemTruocFull() {
+  const o = document.getElementById('admin-form-preview');
+  if (dangTMH(o)) tatTMH(); else batTMH(o);
+  const nut = document.getElementById('nut-xt-full');
+  if (nut) nut.innerHTML = dangTMH(o) ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH';
+  const ds = document.getElementById('xt-list');
+  if (ds) ds.scrollTop = 0;
+}
+
+/* Esc thoát toàn màn hình — dùng chung cho cả hai khung */
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  const xt = document.getElementById('admin-form-preview');
+  if (dangTMH(xt)) toggleXemTruocFull();
+});
+
 function previewQuestions(tag, name){
-  document.getElementById('admin-form-stats').style.display='none'; document.getElementById('admin-form-preview').style.display='block'; document.getElementById('preview-title').innerText='👁️ '+(TAG_NAME[tag]||tag);
-  const db=loadDB(); let html='';
-  const block=(list,cat,label,color)=>list.forEach((q,i)=>{
-    html+=`<div class="preview-item">
-      <div class="action-badges" id="b-${q.id}"><div class="badge-edit" onclick="loadQuestionForEdit('${q.id}','${cat}')">Sửa</div><div class="badge-move" onclick="showMoveSelect('${q.id}')">Chuyển</div><div class="badge-delete" onclick="deleteQuestion('${q.id}','${cat}','${tag}','${name}')">Xóa</div></div>
-      <div id="m-${q.id}" style="display:none; position:absolute; top:-14px; right:16px; background:#fff; padding:4px; border:2px solid var(--primary-blue); z-index:10; border-radius:8px;">
-        <select id="s-${q.id}" style="padding:4px; max-width:150px;"></select>
-        <button style="background:green;color:white;border:none;border-radius:4px;padding:4px;" onclick="confirmMove('${q.id}','${cat}','${tag}','${name}')">Lưu</button>
-        <button style="background:gray;color:white;border:none;border-radius:4px;padding:4px;" onclick="cancelMove('${q.id}')">Hủy</button>
-      </div>
-      <div style="font-weight:700;color:${color};margin-bottom:8px">[${label}] Câu ${i+1} <span class="tag-pill">${LVL_NAME[+q.lvl||1]}</span></div><div>${safeHtml(q.q)}</div>`;
-    if(cat==='mcq') html+='<ul style="list-style:none;padding:0;margin-top:8px">'+(q.opts||[]).map((o,j)=>`<li style="padding:4px;${j===q.ans?'color:var(--accent-green);font-weight:700':''}">${String.fromCharCode(65+j)}. ${safeHtml(o)}</li>`).join('')+'</ul>';
-    if(cat==='tf') html+='<ul style="list-style:none;padding:0;margin-top:8px">'+(q.stmts||[]).map((s,j)=>`<li style="padding:4px">${String.fromCharCode(97+j)}) ${safeHtml(s.t)} — <b>${s.ans?'ĐÚNG':'SAI'}</b></li>`).join('')+'</ul>';
-    if(cat==='sa') html+=`<div style="margin-top:8px;font-weight:700;color:var(--accent-green)">Đáp án: ${escapeHtml(cleanText(q.ans))}</div>`;
-    html+=`</div>`;
+  // Xem sang bài khác thì đóng ô sửa đang mở, tránh sửa nhầm câu của bài cũ
+  if (xtHienTai.tag !== tag) xtEditState = null;
+  xtHienTai = { tag: tag, name: name };
+  document.getElementById('admin-form-stats').style.display='none';
+  const khung = document.getElementById('admin-form-preview');
+  khung.style.display='block';
+  document.getElementById('preview-title').innerText='👁️ '+(TAG_NAME[tag]||tag);
+
+  // Giữ nguyên chỗ đang cuộn: xóa hay chuyển một câu thì dựng lại cả danh
+  // sách, bản cũ nhảy vọt về đầu nên duyệt bài nhiều câu rất mất công.
+  const cuonCu = (document.getElementById('xt-list') || {}).scrollTop || 0;
+
+  const db=loadDB();
+  const dsMcq = db.mcq.filter(q=>q.tag===tag);
+  const dsTf  = db.tf .filter(q=>q.tag===tag);
+  const dsSa  = db.sa .filter(q=>q.tag===tag);
+  const dsTl  = (db.tl||[]).filter(q=>q.tag===tag);
+  const tong  = dsMcq.length + dsTf.length + dsSa.length + dsTl.length;
+  const dangFull = dangTMH(khung);
+  // Đếm câu mà lời giải tự nhận là chưa chắc đáp án, giống bên Trạm AI
+  let canSoat = 0;
+  [dsMcq, dsTf, dsSa, dsTl].forEach(ds => ds.forEach(q => { if (canKiemTra(q)) canSoat++; }));
+
+  let html='';
+  const block=(list,cat,label)=>list.forEach((q,i)=>{
+    const dangSua = xtEditState && xtEditState.id === q.id && xtEditState.cat === cat;
+
+    /* ĐANG SỬA: xổ ô soạn thảo ngay trong thẻ, dùng đúng bộ ô của khung
+       Trạm nhận dữ liệu AI. Bản cũ nhảy sang tab "Nhập / Sửa Câu Hỏi",
+       thầy cô mất chỗ đang xem và phải tự bấm quay lại. */
+    if (dangSua) {
+      html+=`<div class="bulk-card dang-sua" id="the-${q.id}">
+               <div style="font-weight:bold;color:#6d28d9;margin-bottom:10px">✏️ Đang sửa: [${label.toUpperCase()}] Câu ${i+1}</div>
+               <div class="bulk-meta">
+                 <label>Mức độ
+                   <select id="x-edit-lvl" class="bulk-mini">
+                     ${[1,2,3,4].map(v=>`<option value="${v}"${(+q.lvl||1)===v?' selected':''}>${LVL_NAME[v]}</option>`).join('')}
+                   </select>
+                 </label>
+                 <label style="flex:1 1 320px">Thuộc bài
+                   <select id="x-edit-tag" class="bulk-mini" style="width:100%">
+                     ${CURRICULUM.map(c=>`<optgroup label="${escapeHtml(nhanChuong(c))}">`
+                         + c.bai.map(([v,t])=>`<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
+                         + `</optgroup>`).join('')}
+                   </select>
+                 </label>
+               </div>
+               <textarea id="x-edit-q" class="input-box bulk-edit" style="min-height:130px">${escapeHtml(q.q||'')}</textarea>`;
+      if (cat==='mcq') {
+        html+=`<div class="bulk-ghichu">Chấm tròn ô bên trái để chọn đáp án đúng:</div>`;
+        [0,1,2,3].forEach(j=>{
+          html+=`<div class="bulk-dong-opt">
+                   <label class="bulk-chon" title="Chọn ${String.fromCharCode(65+j)} làm đáp án đúng">
+                     <input type="radio" name="x-edit-dapan" value="${j}"${j===q.ans?' checked':''}>
+                     <span>${String.fromCharCode(65+j)}.</span>
+                   </label>
+                   <textarea id="x-edit-opt-${j}" class="input-box bulk-edit" style="flex:1;min-height:52px;padding:8px">${escapeHtml(cleanText(q.opts&&q.opts[j]||''))}</textarea>
+                 </div>`;
+        });
+      } else if (cat==='tf') {
+        html+=`<div class="bulk-ghichu">Chọn Đúng hoặc Sai cho từng ý:</div>`;
+        [0,1,2,3].forEach(j=>{
+          const s=(q.stmts&&q.stmts[j])||{t:'',ans:false};
+          html+=`<div class="bulk-dong-opt">
+                   <span style="font-weight:bold;width:22px;padding-top:12px">${String.fromCharCode(97+j)})</span>
+                   <textarea id="x-edit-stmt-${j}" class="input-box bulk-edit" style="flex:1;min-height:52px;padding:8px">${escapeHtml(cleanText(s.t||''))}</textarea>
+                   <select id="x-edit-stmt-ans-${j}" class="bulk-mini" style="margin-top:8px">
+                     <option value="1"${s.ans?' selected':''}>ĐÚNG</option>
+                     <option value="0"${s.ans?'':' selected'}>SAI</option>
+                   </select>
+                 </div>`;
+        });
+      } else if (cat==='tl') {
+        html+=`<div class="bulk-ghichu">Đáp án mẫu (lời giải chuẩn để máy đối chiếu khi chấm):</div>
+               <textarea id="x-edit-dapanmau" class="input-box bulk-edit" style="min-height:100px">${escapeHtml(q.dapAnMau||'')}</textarea>
+               <div class="bulk-ghichu">Barem chấm — mỗi dòng một ý, dạng <b>điểm | nội dung ý</b>:</div>
+               <textarea id="x-edit-barem" class="input-box bulk-edit" style="min-height:110px">${escapeHtml(tlBaremRaChu(q.barem))}</textarea>`;
+      } else {
+        html+=`<div class="bulk-ghichu">Đáp án (nhiều đáp án chấp nhận được thì ngăn bằng dấu <b>|</b>, ví dụ <code>0.5|1/2</code>):</div>
+               <input type="text" id="x-edit-ans" class="input-box bulk-edit" style="padding:10px" value="${escapeHtml(cleanText(q.ans||''))}">`;
+      }
+      html+=`<textarea id="x-edit-exp" class="input-box bulk-edit" style="min-height:90px" placeholder="Lời giải chi tiết...">${escapeHtml(q.exp||'')}</textarea>
+             <div class="the-nut">
+               <button class="btn btn-green btn-sm" onclick="luuXtEdit('${q.id}','${cat}')">💾 LƯU CHỈNH SỬA</button>
+               <button class="btn btn-gray btn-sm" onclick="huyXtEdit()">HỦY SỬA</button>
+             </div>
+           </div>`;
+      return;
+    }
+
+    /* Thẻ câu hỏi dựng theo ĐÚNG mẫu bên Trạm nhận dữ liệu AI:
+       hàng đầu là nhãn loại câu + ô chọn Mức độ + ô chọn Bài học + cờ nhắc
+       soát đáp án; cuối thẻ là hai nút to Sửa / Xóa.
+       Ba huy hiệu Sửa–Chuyển–Xóa treo ở góc phải đã bỏ: chúng đè lên nội
+       dung câu hỏi, bấm rất dễ trượt, và nút "Chuyển" phải mở thêm một ô
+       chọn nữa — nay ô chọn Bài học ngay trên thẻ làm luôn việc đó. */
+    html+=`<div class="bulk-card" id="the-${q.id}">
+             <div class="the-dau">
+               <span style="font-weight:bold;color:var(--primary-blue)">[${label.toUpperCase()}] Câu ${i+1}</span>
+               <select class="bulk-mini" style="padding:5px 8px;font-size:.85em"
+                       onchange="doiMucDoNganHang('${q.id}','${cat}',this.value)">
+                 ${[1,2,3,4].map(v=>`<option value="${v}"${(+q.lvl||1)===v?' selected':''}>${LVL_NAME[v]}</option>`).join('')}
+               </select>
+               <select class="bulk-mini" style="padding:5px 8px;font-size:.85em;max-width:260px"
+                       onchange="chuyenBaiNganHang('${q.id}','${cat}',this.value)">
+                 ${CURRICULUM.map(c=>`<optgroup label="${escapeHtml(nhanChuong(c))}">`
+                     + c.bai.map(([v,t])=>`<option value="${v}"${q.tag===v?' selected':''}>${escapeHtml(t)}</option>`).join('')
+                     + `</optgroup>`).join('')}
+               </select>
+               ${canKiemTra(q) ? '<span class="pill-sua canxem">⚠ Cần soát đáp án</span>' : ''}
+             </div>
+             <div style="margin-bottom:12px">${safeHtml(q.q)}</div>`;
+    if(cat==='mcq') html+='<ul class="bulk-opts" style="list-style:none;padding:0;margin:0 0 12px 0">'+(q.opts||[]).map((o,j)=>`<li style="padding:4px;${j===q.ans?'color:var(--accent-green);font-weight:700':''}">${String.fromCharCode(65+j)}. ${safeHtml(o)}</li>`).join('')+'</ul>';
+    if(cat==='tf') html+='<ul style="list-style:none;padding:0;margin:0 0 12px 0">'+(q.stmts||[]).map((s,j)=>`<li style="padding:4px">${String.fromCharCode(97+j)}) ${safeHtml(s.t)} — <b>${s.ans?'ĐÚNG':'SAI'}</b></li>`).join('')+'</ul>';
+    if(cat==='sa') html+=`<div style="margin-bottom:12px;font-weight:700;color:var(--accent-green)">Đáp án: ${escapeHtml(cleanText(q.ans))}</div>`;
+    if(cat==='tl'){
+      html+=`<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:10px 12px;margin-bottom:12px">
+               <b style="color:#5b21b6">Barem ${tlTongDiem(q.barem)} điểm</b>
+               <ul style="margin:6px 0 0;padding-left:20px">${(q.barem||[]).map(b=>`<li>${(+b.diem||0)} đ — ${escapeHtml(b.noiDung||'')}</li>`).join('')}</ul>
+             </div>`;
+      if(q.dapAnMau) html+=`<div class="loi-giai"><b>Đáp án mẫu:</b> ${safeHtml(q.dapAnMau)}</div>`;
+    }
+    if(q.exp) html+=`<div class="loi-giai"><b>Lời giải:</b> ${safeHtml(q.exp)}</div>`;
+    html+=`<div class="the-nut">
+             <button class="btn btn-purple btn-sm" onclick="suaXtTaiCho('${q.id}','${cat}')">✏️ SỬA CÂU NÀY</button>
+             <button class="btn btn-red btn-sm" onclick="deleteQuestion('${q.id}','${cat}','${tag}','${escapeHtml(String(name).replace(/['"\\]/g,''))}')">🗑️ XÓA CÂU NÀY</button>
+           </div>
+         </div>`;
   });
-  block(db.mcq.filter(q=>q.tag===tag),'mcq','Trắc nghiệm','var(--primary-blue)'); block(db.tf .filter(q=>q.tag===tag),'tf','Đúng / Sai','#b45309'); block(db.sa .filter(q=>q.tag===tag),'sa','Trả lời ngắn','var(--accent-red)');
-  document.getElementById('preview-content-area').innerHTML = html || '<p>Trống.</p>'; 
-  typeset(document.getElementById('preview-content-area'));
+  block(dsMcq,'mcq','Trắc nghiệm');
+  block(dsTf ,'tf','Đúng – Sai');
+  block(dsSa ,'sa','Trả lời ngắn');
+  block(dsTl ,'tl','Tự luận');
+
+  const dem = `${dsMcq.length} trắc nghiệm · ${dsTf.length} đúng–sai · ${dsSa.length} trả lời ngắn · ${dsTl.length} tự luận`;
+  let h = `<div class="bulk-head">
+             <div>
+               <b>${escapeHtml(TAG_NAME[tag]||tag)}: ${tong} câu</b>
+               <div class="dem">${dem}${canSoat ? ` · <span style="color:#b91c1c">⚠ ${canSoat} câu cần soát đáp án</span>` : ''}</div>
+             </div>
+             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+               <div class="lo-mucdo" title="Đặt mức độ này cho tất cả câu của bài đang xem">
+                 <span>Mức độ</span>
+                 <select id="xt-mucdo-chon" class="bulk-mini" style="padding:6px 8px">
+                   ${[1,2,3,4].map(v => `<option value="${v}">${LVL_NAME[v]}</option>`).join('')}
+                 </select>
+                 <button class="btn btn-gray btn-sm" style="margin:0;padding:6px 10px" onclick="apDungMucDoCaBai()">Áp dụng</button>
+               </div>
+               <button class="btn btn-gray btn-sm" style="margin:0" onclick="quayLaiThongKe()">⬅ BẢNG THỐNG KÊ</button>
+               <button id="nut-xt-full" class="btn btn-teacher btn-sm" style="margin:0" onclick="toggleXemTruocFull()">${dangFull ? '🗗 THU NHỎ' : '⛶ TOÀN MÀN HÌNH'}</button>
+             </div>
+           </div>
+           <div class="bulk-list" id="xt-list">${html || '<p class="hint">Bài này chưa có câu hỏi nào.</p>'}</div>`;
+
+  const vung = document.getElementById('preview-content-area');
+  vung.innerHTML = h;
+  typeset(vung);
+  const ds = document.getElementById('xt-list');
+  if (ds) {
+    ds.scrollTop = cuonCu;
+    // Vừa bấm Sửa thì kéo đúng thẻ đó vào giữa khung và đặt con trỏ sẵn
+    if (xtEditState) {
+      const the = document.getElementById('the-' + xtEditState.id);
+      if (the) the.scrollIntoView({ block: 'center' });
+      const o = document.getElementById('x-edit-q');
+      if (o) o.focus();
+    }
+  }
+}
+
+/* Thoát toàn màn hình trước khi quay về bảng thống kê, nếu không khung phủ
+   kín màn hình vẫn nằm đó che mất bảng. */
+function quayLaiThongKe() {
+  const o = document.getElementById('admin-form-preview');
+  if (dangTMH(o)) toggleXemTruocFull();
+  toggleAdminForm('stats');
+}
+
+/* Mở ô sửa ngay trong thẻ */
+function suaXtTaiCho(id, cat) { xtEditState = { id: id, cat: cat }; previewQuestions(xtHienTai.tag, xtHienTai.name); }
+function huyXtEdit() { xtEditState = null; previewQuestions(xtHienTai.tag, xtHienTai.name); }
+
+/* Lưu chỉnh sửa thẳng vào ngân hàng, không rời màn hình */
+async function luuXtEdit(id, cat) {
+  const db = loadDB();
+  const q = db[cat].find(x => x.id === id);
+  if (!q) { xtEditState = null; return; }
+
+  const noiDung = document.getElementById('x-edit-q').value;
+  if (!String(noiDung).trim()) { alert('Nội dung câu hỏi đang để trống.'); return; }
+
+  if (cat === 'mcq') {
+    const opts = [0,1,2,3].map(j => document.getElementById('x-edit-opt-' + j).value);
+    if (opts.some(o => !String(o).trim())) { alert('Có phương án đang để trống.'); return; }
+    const chon = document.querySelector('input[name="x-edit-dapan"]:checked');
+    if (!chon) { alert('Thầy cô chưa chọn đáp án đúng cho câu này.'); return; }
+    q.opts = opts;
+    q.ans = parseInt(chon.value);
+  } else if (cat === 'tf') {
+    q.stmts = [0,1,2,3].map(j => ({
+      t: document.getElementById('x-edit-stmt-' + j).value,
+      ans: document.getElementById('x-edit-stmt-ans-' + j).value === '1'
+    }));
+    if (q.stmts.some(s => !String(s.t).trim())) { alert('Có ý đang để trống.'); return; }
+  } else if (cat === 'tl') {
+    q.dapAnMau = document.getElementById('x-edit-dapanmau').value.trim();
+    q.barem = tlChuRaBarem(document.getElementById('x-edit-barem').value);
+    if (!q.barem.length) { alert('Câu tự luận chưa có barem.'); return; }
+  } else {
+    const ans = document.getElementById('x-edit-ans').value.trim();
+    if (!ans) { alert('Câu trả lời ngắn chưa có đáp án.'); return; }
+    q.ans = ans;
+  }
+
+  q.q = noiDung;
+  q.exp = document.getElementById('x-edit-exp').value;
+  q.lvl = parseInt(document.getElementById('x-edit-lvl').value) || 1;
+  const tagMoi = document.getElementById('x-edit-tag').value;
+  const doiBai = tagMoi && tagMoi !== q.tag;
+  if (tagMoi) q.tag = tagMoi;
+
+  if (await saveDB(db)) {
+    xtEditState = null;
+    previewQuestions(xtHienTai.tag, xtHienTai.name);
+    renderStats();
+    if (doiBai) alert('Đã lưu. Câu này đã chuyển sang bài "' + (TAG_NAME[tagMoi] || tagMoi) + '" nên không còn nằm trong danh sách bài đang xem.');
+  }
+}
+
+/* Đổi mức độ của một câu đã nằm trong ngân hàng, lưu thẳng không cần dựng lại */
+async function doiMucDoNganHang(id, cat, v) {
+  const db = loadDB();
+  const q = db[cat].find(x => x.id === id);
+  if (!q) return;
+  q.lvl = parseInt(v) || 1;
+  await saveDB(db);
+}
+
+/* Chuyển câu sang bài học khác — thay cho nút "Chuyển" và ô chọn bật lên
+   ở góc phải của bản cũ. Chuyển xong phải dựng lại danh sách vì câu đó
+   không còn thuộc bài đang xem nữa. */
+async function chuyenBaiNganHang(id, cat, tagMoi) {
+  if (!tagMoi) return;
+  const db = loadDB();
+  const q = db[cat].find(x => x.id === id);
+  if (!q || q.tag === tagMoi) return;
+  q.tag = tagMoi;
+  if (await saveDB(db)) {
+    previewQuestions(xtHienTai.tag, xtHienTai.name);
+    renderStats();
+  }
+}
+
+/* Đặt một mức độ cho tất cả câu của bài đang xem */
+async function apDungMucDoCaBai() {
+  const o = document.getElementById('xt-mucdo-chon');
+  if (!o || !xtHienTai.tag) return;
+  const v = parseInt(o.value) || 1;
+  const db = loadDB();
+  let n = 0;
+  ['mcq', 'tf', 'sa'].forEach(cat => db[cat].forEach(q => { if (q.tag === xtHienTai.tag) { q.lvl = v; n++; } }));
+  if (!n) return;
+  if (!confirm(`Đặt mức độ "${LVL_NAME[v]}" cho cả ${n} câu của bài này?`)) return;
+  if (await saveDB(db)) previewQuestions(xtHienTai.tag, xtHienTai.name);
 }
 
 function loadQuestionForEdit(id,cat){
-  const db=loadDB(); const q=db[cat].find(x=>x.id===id); if(!q) return; toggleAdminForm('manual');
+  const db=loadDB(); const q=db[cat].find(x=>x.id===id); if(!q) return;
+  // Đang ở toàn màn hình mà nhảy sang form soạn thảo thì khung phủ kín vẫn
+  // nằm đè lên, thầy cô không thấy ô nhập — phải thu lại trước.
+  const o=document.getElementById('admin-form-preview');
+  if(dangTMH(o)) toggleXemTruocFull();
+  toggleAdminForm('manual');
   document.getElementById('manual-form-title').innerText='✏️ Đang SỬA câu hỏi (lưu xong sẽ tự thoát chế độ sửa)';
   document.getElementById('editing-q-id').value=id; document.getElementById('editing-q-cat').value=cat;
   document.getElementById('new-q-type').value=cat; document.getElementById('new-q-tag').value=q.tag; document.getElementById('new-q-lvl').value=+q.lvl||1;
   document.getElementById('new-q-content').value=q.q||''; document.getElementById('new-q-exp').value=q.exp||''; renderAddForm();
   if(cat==='mcq'){ ['A','B','C','D'].forEach((k,i)=>document.getElementById('opt-'+k).value=cleanText(q.opts?.[i]||'')); document.getElementById('mcq-ans').value=q.ans??0; }
   else if(cat==='tf'){ ['a','b','c','d'].forEach((k,i)=>{ document.getElementById('stmt-'+k).value=cleanText(q.stmts?.[i]?.t||''); document.getElementById('ans-'+k).value=q.stmts?.[i]?.ans?'true':'false'; }); }
+  else if(cat==='tl'){ document.getElementById('tl-dapanmau').value=cleanText(q.dapAnMau||''); document.getElementById('tl-barem').value=tlBaremRaChu(q.barem); tlCapNhatTong(); }
   else{ document.getElementById('sa-exact-ans').value=cleanText(q.ans||''); }
 }
 
-function showMoveSelect(id) {
-  document.getElementById('b-' + id).style.display = 'none'; document.getElementById('m-' + id).style.display = 'flex';
-  const sel = document.getElementById('s-' + id);
-  if (sel.options.length === 0) {
-      let opts = ''; CURRICULUM.forEach(c => { opts += `<optgroup label="${c.ten}">`; c.bai.forEach(([v, t]) => { opts += `<option value="${v}">${t}</option>`; }); opts += `</optgroup>`; });
-      sel.innerHTML = opts;
-  }
-}
-function cancelMove(id) { document.getElementById('b-' + id).style.display = 'flex'; document.getElementById('m-' + id).style.display = 'none'; }
-async function confirmMove(id, cat, oldTag, oldName) {
-  const newTag = document.getElementById('s-' + id).value; if (newTag === oldTag) { cancelMove(id); return; }
-  const db = loadDB(); const qIndex = db[cat].findIndex(q => q.id === id);
-  if (qIndex > -1) { db[cat][qIndex].tag = newTag; if (await saveDB(db)) previewQuestions(oldTag, oldName); }
-}
+/* Ba hàm showMoveSelect / cancelMove / confirmMove của bản cũ đã bỏ:
+   chúng phục vụ nút "Chuyển" và ô chọn bật lên ở góc phải thẻ. Nay ô chọn
+   Bài học nằm sẵn trên đầu mỗi thẻ nên không cần nữa. */
 
-async function deleteQuestion(id,cat,tag,name){ if(!confirm('Xóa?')) return; const db=loadDB(); db[cat]=db[cat].filter(q=>q.id!==id); if(await saveDB(db)) previewQuestions(tag, name); }
+async function deleteQuestion(id,cat,tag,name){
+  if(!confirm('Xóa hẳn câu này khỏi ngân hàng? Thao tác này không hoàn tác được.')) return;
+  const db=loadDB(); db[cat]=db[cat].filter(q=>q.id!==id);
+  if(await saveDB(db)){ previewQuestions(tag, name); renderStats(); }
+}
 
 function exportBank(){
   const d=new Date(), ts=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
-  taiFile(JSON.stringify({...loadDB()}, null, 1), 'application/json', `V15_XuongOffline_Backup_${ts}.json`);
+  taiFile(JSON.stringify({...loadDB()}, null, 1), 'application/json', `XuongOffline_Backup_${ts}.json`);
 }
-async function clearCustomData(){ if(prompt('Gõ XOA để xóa:')==='XOA'){ exportBank(); setTimeout(async ()=>{ if(await saveDB({mcq:[],tf:[],sa:[]})) location.reload(); },800); } }
+async function clearCustomData(){ if(prompt('Gõ XOA để xóa:')==='XOA'){ exportBank(); setTimeout(async ()=>{ if(await saveDB({mcq:[],tf:[],sa:[],tl:[]})) location.reload(); },800); } }
 
 // LỖI CŨ: nút "Khôi phục từ file Backup" gọi restoreBank() nhưng HÀM NÀY CHƯA HỀ ĐƯỢC VIẾT.
 // Hai nút radio Gộp / Thay thế cũng vì thế mà vô tác dụng.
@@ -1092,12 +2365,12 @@ async function restoreBank(input){
     let db, them = 0, trung = 0;
     if(thayThe){
       if(!confirm(`⚠️ THAY THẾ toàn bộ ngân hàng hiện tại bằng ${tongNguon} câu trong file?\nDữ liệu cũ sẽ mất. Nên bấm Tải file Backup trước.`)){ input.value=''; return; }
-      db = { mcq: [], tf: [], sa: [] };
+      db = { mcq: [], tf: [], sa: [], tl: [] };
     } else {
       db = loadDB();
     }
 
-    ['mcq','tf','sa'].forEach(cat => {
+    ['mcq','tf','sa','tl'].forEach(cat => {
       nguon[cat].forEach(q => {
         if(validateQ(q, cat)) return;
         if(db[cat].some(x => x.tag === q.tag && chuanHoa(x.q) === chuanHoa(q.q))){ trung++; return; }
@@ -1172,11 +2445,11 @@ document.addEventListener("paste", async function (e) {
 // STUDIO THIẾT KẾ ĐỀ ĐÃ ĐƯỢC VÁ LỖI CÚ PHÁP HOÀN CHỈNH
 // =========================================================
 const TPL_KEY='dcttTemplatesV12';
-const LABEL={mcq:'trắc nghiệm', tf:'đúng/sai', sa:'trả lời ngắn'};
-const PART_NAME={mcq:'Phần I', tf:'Phần II', sa:'Phần III'};
+const LABEL={mcq:'trắc nghiệm', tf:'đúng/sai', sa:'trả lời ngắn', tl:'tự luận'};
+const PART_NAME={mcq:'Phần I', tf:'Phần II', sa:'Phần III', tl:'Phần IV'};
 const SC_DEFAULT={ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true };
 
-let DS={ scope:[], cells:{}, tab:'mcq', manual:{mcq:[],tf:[],sa:[]}, scoring:{ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true }, order:'lvl', name:'' };
+let DS={ scope:[], cells:{}, tab:'mcq', manual:{mcq:[],tf:[],sa:[],tl:[]}, scoring:{ mcq:0.25, sa:0.5, tf:[0,0.1,0.25,0.5,1.0], scale10:true }, order:'lvl', name:'' };
 let dsReady=false;
 
 function dsCells(tag){ if(!DS.cells[tag]) DS.cells[tag]={mcq:[0,0,0,0],tf:[0,0,0,0],sa:[0,0,0,0]}; return DS.cells[tag]; }
@@ -1186,9 +2459,9 @@ function dsScopeSorted(){ return DS.scope.slice().sort((a,b)=>TAG_ORDER[a]-TAG_O
 function dsOpen(){
   if(!dsReady){
     const ch=document.getElementById('ds-chuong-quick');
-    if(ch) ch.innerHTML='<option value="">— Chọn nhanh cả chương —</option>' + CURRICULUM.map(c=>`<option value="${c.chuong}">${c.ten}</option>`).join('');
+    if(ch) ch.innerHTML='<option value="">— Chọn nhanh cả chương —</option>' + CURRICULUM.map(c=>`<option value="${c.chuong}">${nhanChuong(c)}</option>`).join('');
     const pk=document.getElementById('ds-pick-tag');
-    if(pk) pk.innerHTML='<option value="all">Tất cả các bài</option>' + CURRICULUM.map(c=>`<optgroup label="${c.ten}">`+c.bai.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')+'</optgroup>').join('');
+    if(pk) pk.innerHTML='<option value="all">Tất cả các bài</option>' + CURRICULUM.map(c=>`<optgroup label="${nhanChuong(c)}">`+c.bai.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')+'</optgroup>').join('');
     
     const db = loadDB();
     DS.scope = Object.keys(TAG_ORDER).filter(tag => db.mcq.some(q=>q.tag===tag)||db.tf.some(q=>q.tag===tag)||db.sa.some(q=>q.tag===tag));
@@ -1271,21 +2544,22 @@ function dsQuickFill(){
 }
 
 function dsCounts(){
-  const n={mcq:0,tf:0,sa:0}, lv=[0,0,0,0];
+  const n={mcq:0,tf:0,sa:0,tl:0}, lv=[0,0,0,0]; let tlDiem=0;
   DS.scope.forEach(tag=>{ const c=dsCells(tag); ['mcq','tf','sa'].forEach(t=>c[t].forEach((v,i)=>{ n[t]+=v; lv[i]+=v; })); });
   const db=loadDB();
-  ['mcq','tf','sa'].forEach(t=>DS.manual[t].forEach(id=>{ const q=db[t].find(x=>x.id===id); if(q){ n[t]++; lv[(+q.lvl||1)-1]++; } }));
-  return {n,lv};
+  // Ma trận chỉ chia ba phần trắc nghiệm; câu tự luận luôn do thầy cô chỉ định tay ở Bước 3.
+  ['mcq','tf','sa','tl'].forEach(t=>(DS.manual[t]||[]).forEach(id=>{ const q=(db[t]||[]).find(x=>x.id===id); if(q){ n[t]++; lv[(+q.lvl||1)-1]++; if(t==='tl') tlDiem+=tlTongDiem(q.barem); } }));
+  return {n,lv,tlDiem};
 }
 function dsTotalPoints(){
-  const {n}=dsCounts(), s=DS.scoring;
-  return { mcq:n.mcq*s.mcq, tf:n.tf*s.tf[4], sa:n.sa*s.sa, all:n.mcq*s.mcq + n.tf*s.tf[4] + n.sa*s.sa };
+  const {n,tlDiem}=dsCounts(), s=DS.scoring;
+  return { mcq:n.mcq*s.mcq, tf:n.tf*s.tf[4], sa:n.sa*s.sa, tl:tlDiem, all:n.mcq*s.mcq + n.tf*s.tf[4] + n.sa*s.sa + tlDiem };
 }
 function dsSummary(){
   const {n,lv}=dsCounts(), p=dsTotalPoints();
-  const totalQ=n.mcq+n.tf+n.sa, totalLv=lv.reduce((a,b)=>a+b,0)||1;
+  const totalQ=n.mcq+n.tf+n.sa+n.tl, totalLv=lv.reduce((a,b)=>a+b,0)||1;
   const ds = document.getElementById('ds-summary');
-  if(ds) ds.innerHTML= `<b>Đề gồm ${totalQ} câu</b> — ${n.mcq} trắc nghiệm · ${n.tf} đúng/sai · ${n.sa} trả lời ngắn<br>Phân bố mức độ: NB ${lv[0]} · TH ${lv[1]} · VD ${lv[2]} · VDC ${lv[3]}<br>Điểm tối đa: <b>${p.all.toFixed(2)}</b> (I: ${p.mcq.toFixed(2)} · II: ${p.tf.toFixed(2)} · III: ${p.sa.toFixed(2)})`;
+  if(ds) ds.innerHTML= `<b>Đề gồm ${totalQ} câu</b> — ${n.mcq} trắc nghiệm · ${n.tf} đúng/sai · ${n.sa} trả lời ngắn · ${n.tl} tự luận<br>Phân bố mức độ: NB ${lv[0]} · TH ${lv[1]} · VD ${lv[2]} · VDC ${lv[3]}<br>Điểm tối đa: <b>${p.all.toFixed(2)}</b> (I: ${p.mcq.toFixed(2)} · II: ${p.tf.toFixed(2)} · III: ${p.sa.toFixed(2)} · IV: ${p.tl.toFixed(2)})`;
 }
 
 function dsRenderPicker(){
@@ -1311,7 +2585,7 @@ function dsToggleManual(type,id,on){
 }
 function dsRenderCart(){
   const db=loadDB(); const ul=document.getElementById('ds-cart'); let h=''; let n=0;
-  ['mcq','tf','sa'].forEach(type=>{
+  ['mcq','tf','sa','tl'].forEach(type=>{
     DS.manual[type].forEach((id,idx)=>{
       const q=db[type].find(x=>x.id===id); if(!q) return; n++;
       const txt=stripTags(q.q);
@@ -1354,7 +2628,7 @@ function dsLoadTemplate(){
   const i=document.getElementById('ds-tpl-list').value;
   const list=dsTemplates(); const t=list[i];
   if(!t){ alert('Chưa chọn mẫu.'); return; }
-  DS.scope=[...(t.scope||[])]; DS.cells=JSON.parse(JSON.stringify(t.cells||{})); DS.manual=Object.assign({mcq:[],tf:[],sa:[]}, JSON.parse(JSON.stringify(t.manual||{}))); DS.scoring=Object.assign(JSON.parse(JSON.stringify(SC_DEFAULT)), t.scoring||{}); DS.order=t.order||'lvl'; DS.name=t.name;
+  DS.scope=[...(t.scope||[])]; DS.cells=JSON.parse(JSON.stringify(t.cells||{})); DS.manual=Object.assign({mcq:[],tf:[],sa:[],tl:[]}, JSON.parse(JSON.stringify(t.manual||{}))); DS.scoring=Object.assign(JSON.parse(JSON.stringify(SC_DEFAULT)), t.scoring||{}); DS.order=t.order||'lvl'; DS.name=t.name;
   document.getElementById('sc-mcq').value=DS.scoring.mcq; document.getElementById('sc-sa').value=DS.scoring.sa; [1,2,3,4].forEach(k=>document.getElementById('sc-tf'+k).value=DS.scoring.tf[k]); document.getElementById('sc-scale10').checked=DS.scoring.scale10!==false; document.getElementById('ds-order').value=DS.order; document.getElementById('ds-tpl-name').value=DS.name;
   dsRenderScope(); dsRenderMatrix(); dsRenderPicker(); dsRenderCart(); dsSync(); alert(`Đã nạp mẫu "${t.name}".`);
 }
@@ -1369,8 +2643,8 @@ function generateGame(){
   const db=loadDB();
   
   const isQuick = document.getElementById('admin-form-quickexam').style.display === 'block';
-  let need={mcq:0,tf:0,sa:0};
-  let sel={mcq:[],tf:[],sa:[]};
+  let need={mcq:0,tf:0,sa:0,tl:0};
+  let sel={mcq:[],tf:[],sa:[],tl:[]};
   let rng=Math.random;
   function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
   function shuffleArray(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -1385,12 +2659,13 @@ function generateGame(){
       else if(modeVal==='2') need={mcq:12,tf:4,sa:3};
       else if(modeVal==='3') need={mcq:12,tf:4,sa:6};
       else if(modeVal==='custom') need={ mcq:+document.getElementById('custom-num-mcq').value||0, tf: +document.getElementById('custom-num-tf').value||0, sa: +document.getElementById('custom-num-sa').value||0 };
-      const pool={ mcq:db.mcq.filter(q=>(topic==='all'||q.tag===topic)), tf:db.tf.filter(q=>(topic==='all'||q.tag===topic)), sa:db.sa.filter(q=>(topic==='all'||q.tag===topic)) };
+      const pool={ mcq:db.mcq.filter(q=>(topic==='all'||q.tag===topic)), tf:db.tf.filter(q=>(topic==='all'||q.tag===topic)), sa:db.sa.filter(q=>(topic==='all'||q.tag===topic)), tl:(db.tl||[]).filter(q=>(topic==='all'||q.tag===topic)) };
       const getQ = (p, n) => shuffleArray(p).slice(0, n);
-      sel={ mcq:getQ(pool.mcq,need.mcq), tf:getQ(pool.tf,need.tf), sa:getQ(pool.sa,need.sa) };
+      // Đề luyện nhanh không kèm tự luận: chấm tự luận cần gọi máy chủ nên chỉ dùng cho bài kiểm tra chính thức.
+      sel={ mcq:getQ(pool.mcq,need.mcq), tf:getQ(pool.tf,need.tf), sa:getQ(pool.sa,need.sa), tl:[] };
   } else {
       const used=new Set();
-      ['mcq','tf','sa'].forEach(t=>DS.manual[t].forEach(id=>{ const q=db[t].find(x=>x.id===id); if(q && !used.has(id)){ used.add(id); sel[t].push(JSON.parse(JSON.stringify(q))); } }));
+      ['mcq','tf','sa','tl'].forEach(t=>(DS.manual[t]||[]).forEach(id=>{ const q=(db[t]||[]).find(x=>x.id===id); if(q && !used.has(id)){ used.add(id); sel[t].push(JSON.parse(JSON.stringify(q))); } }));
       dsScopeSorted().forEach(tag=>{
         const c=dsCells(tag);
         ['mcq','tf','sa'].forEach(t=>{
@@ -1404,7 +2679,7 @@ function generateGame(){
       });
   }
 
-  if(sel.mcq.length+sel.tf.length+sel.sa.length === 0) { alert("Chưa đủ câu hỏi để tạo đề!"); return; }
+  if(sel.mcq.length+sel.tf.length+sel.sa.length+sel.tl.length === 0) { alert("Chưa đủ câu hỏi để tạo đề!"); return; }
 
   // LỖI CŨ: Bước 5 "Thứ tự câu trong đề" được lưu vào DS.order nhưng KHÔNG BAO GIỜ được dùng.
   if(!isQuick){
@@ -1416,7 +2691,7 @@ function generateGame(){
       const chieu = kieu==='lvl_desc' ? -1 : 1;
       return arr.slice().sort((a,b)=>chieu*(((+a.lvl||1)-(+b.lvl||1)) || ((TAG_ORDER[a.tag]??999)-(TAG_ORDER[b.tag]??999))));
     };
-    sel.mcq=sapXep(sel.mcq); sel.tf=sapXep(sel.tf); sel.sa=sapXep(sel.sa);
+    sel.mcq=sapXep(sel.mcq); sel.tf=sapXep(sel.tf); sel.sa=sapXep(sel.sa); sel.tl=sapXep(sel.tl);
   }
 
   let testPaper=[];
@@ -1433,6 +2708,8 @@ function generateGame(){
   push(sel.mcq,'mcq',1,'PHẦN I — TRẮC NGHIỆM');
   push(sel.tf ,'tf' ,2,'PHẦN II — ĐÚNG / SAI');
   push(sel.sa ,'sa' ,3,'PHẦN III — TRẢ LỜI NGẮN');
+  // V17 nhận type "tl" là câu tự luận và chấm theo barem đi kèm.
+  push(sel.tl ,'tl' ,4,'PHẦN IV — TỰ LUẬN');
 
   // LỖI CŨ: Bước 4 "Thang điểm" hoàn toàn không đi vào file JSON -> cài đặt điểm bị vứt bỏ.
   const thangDiem = isQuick
@@ -1448,8 +2725,8 @@ function generateGame(){
     createdAt: new Date().toISOString(),
     questions: testPaper
   };
-  taiFile(JSON.stringify(bundle, null, 2), "application/json", `De_V15_${examCode}.json`);
-  alert(`🎉 Đã xuất đề thành công!\n\n• ${sel.mcq.length} trắc nghiệm · ${sel.tf.length} đúng/sai · ${sel.sa.length} trả lời ngắn\n• Mã đề: ${examCode}\n\nAnh tải file này lên HỆ THỐNG PHÁT ĐỀ ONLINE (V17) để học sinh làm bài nhé.`);
+  taiFile(JSON.stringify(bundle, null, 2), "application/json", `De_${examCode}.json`);
+  alert(`🎉 Đã xuất đề thành công!\n\n• ${sel.mcq.length} trắc nghiệm · ${sel.tf.length} đúng/sai · ${sel.sa.length} trả lời ngắn · ${sel.tl.length} tự luận\n• Mã đề: ${examCode}\n\nAnh tải file này lên HỆ THỐNG PHÁT ĐỀ ONLINE (V17) để học sinh làm bài nhé.`);
 }
 
 // LỖI CŨ: nút "▶ Tạo đề JSON" của Studio Thiết Kế Đề gọi dsBuild() nhưng HÀM NÀY CHƯA HỀ ĐƯỢC VIẾT
@@ -1462,11 +2739,31 @@ function dsBuild(){
 // =========================================================
 // QUẢN LÝ DANH MỤC BÀI HỌC
 // =========================================================
+var DM_KHOI = 'k12'; // khối đang xem trong màn hình Danh mục bài học
+
+function dmChonKhoi(k) { DM_KHOI = k; dmVe(); }
+
 function dmVe() {
   var box = document.getElementById("dm-bang"); if (!box) return;
   if (!DM) { box.innerHTML = '<p class="hint">Chưa tải được danh mục bài học.</p>'; return; }
-  var h = "";
+
+  // Thanh chọn khối: bấm khối nào thì chỉ hiện danh mục của khối đó.
+  var h = '<div class="form-row" style="margin:0 0 14px">';
+  DS_KHOI.forEach(function (k) {
+    var soChuong = DM.filter(function (c) { return khoiCua(c) === k.ma; }).length;
+    var soBai = DM.filter(function (c) { return khoiCua(c) === k.ma; })
+                  .reduce(function (t, c) { return t + c.bai.length; }, 0);
+    var dang = DM_KHOI === k.ma;
+    h += '<button class="btn ' + (dang ? 'btn-teacher' : 'btn-gray') + '" style="margin:0;flex:1 1 150px;text-align:left" '
+       + 'onclick="dmChonKhoi(\'' + k.ma + '\')">' + k.ten
+       + '<span style="display:block;font-size:.78em;font-weight:600;opacity:.85">' + soChuong + ' chương · ' + soBai + ' bài</span></button>';
+  });
+  h += '</div>';
+  h += '<p class="hint" style="margin:0 0 12px">Đang sửa danh mục <b>' + tenKhoi(DM_KHOI) + '</b> — sách Kết nối tri thức với cuộc sống. '
+     + 'Mã bài của khối 10 và 11 có tiền tố <code>k10_</code>, <code>k11_</code> nên không lẫn với khối 12.</p>';
+
   DM.forEach(function (c, ci) {
+    if (khoiCua(c) !== DM_KHOI) return;
     h += '<div class="ds-step" style="border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; background:#fff;"><div class="form-row" style="margin-bottom:8px">'
       + '<input class="input-box" style="margin:0;flex:1 1 320px" value="' + escapeHtml(c.ten)
       + '" oninput="dmSuaChuong(' + ci + ',this.value)" placeholder="Tên chương">'
@@ -1487,7 +2784,7 @@ function dmVe() {
     });
     h += '<button class="btn btn-gray btn-sm" style="margin:6px 0 0" onclick="dmThemBai(' + ci + ')">+ Thêm bài</button></div>';
   });
-  h += '<button class="btn btn-teacher btn-sm" onclick="dmThemChuong()">+ Thêm chương</button>';
+  h += '<button class="btn btn-teacher btn-sm" onclick="dmThemChuong()">+ Thêm chương vào ' + tenKhoi(DM_KHOI) + '</button>';
   box.innerHTML = h;
 }
 
@@ -1498,18 +2795,27 @@ function dmSuaMa(i, j, v) { DM[i].bai[j][0] = String(v).trim(); }
 function dmSuaTen(i, j, v) { DM[i].bai[j][1] = v; }
 function dmXoaBai(i, j) { DM[i].bai.splice(j, 1); dmVe(); }
 function dmThemBai(i) {
-  var so = String(DM[i].chuong).replace(/\D/g, "") || (i + 1);
+  // Mã chương có thể là "chuong3" hoặc "k10_chuong3"; chỉ lấy số ở CUỐI chuỗi,
+  // nếu không thì "k10_chuong3" sẽ ra "103" và sinh mã bài sai bét.
+  var khoiNay = khoiCua(DM[i]);
+  var tt = dmTienTo(khoiNay);
+  var so = (String(DM[i].chuong).match(/(\d+)\s*$/) || [])[1] || (i + 1);
   var caoNhat = 0;
   DM.forEach(function (c) {
+    if (khoiCua(c) !== khoiNay) return;
     c.bai.forEach(function (b) { var m = /_bai(\d+)$/.exec(b[0]); if (m && +m[1] > caoNhat) caoNhat = +m[1]; });
   });
-  DM[i].bai.push(["chuong" + so + "_bai" + (caoNhat + 1), "Bài mới"]);
+  DM[i].bai.push([tt + "chuong" + so + "_bai" + (caoNhat + 1), "Bài mới"]);
   dmVe();
 }
 function dmXoaChuong(i) { if (confirm("Xóa cả chương này khỏi danh mục?")) { DM.splice(i, 1); dmVe(); } }
+function dmTienTo(khoi) { return khoi === 'k12' ? '' : khoi + '_'; }
+
 function dmThemChuong() {
-  var n = DM.length + 1;
-  DM.push({ chuong: "chuong" + n, ten: "Chương mới", tap: "Tập 1", bai: [["chuong" + n + "_bai1", "Bài 1"]] });
+  var tt = dmTienTo(DM_KHOI);
+  var trongKhoi = DM.filter(function (c) { return khoiCua(c) === DM_KHOI; });
+  var n = trongKhoi.length + 1;
+  DM.push({ khoi: DM_KHOI, chuong: tt + "chuong" + n, ten: "Chương mới", tap: "Tập 1", bai: [[tt + "chuong" + n + "_bai1", "Bài 1"]] });
   dmVe();
 }
 
@@ -1519,6 +2825,17 @@ async function dmTaiVe() {
       if (saved && saved !== "undefined" && saved !== "null") { DM = JSON.parse(saved); }
       if (!Array.isArray(DM) || DM.length === 0) DM = JSON.parse(JSON.stringify(CURRICULUM));
   } catch (e) { DM = JSON.parse(JSON.stringify(CURRICULUM)); }
+
+  // Danh mục thầy cô đã lưu từ trước chỉ có khối 12. Thêm khối 10, 11 vào mà
+  // KHÔNG đụng gì tới phần khối 12 đã chỉnh sửa — 227 câu đang gắn thẻ vẫn nguyên.
+  var thieu = CURRICULUM.filter(function (c) {
+    return khoiCua(c) !== 'k12' && !DM.some(function (d) { return d.chuong === c.chuong; });
+  });
+  if (thieu.length) {
+    thieu.forEach(function (c) { DM.push(JSON.parse(JSON.stringify(c))); });
+    try { localStorage.setItem('dctt_v15_dm', JSON.stringify(DM)); } catch (e) {}
+  }
+
   dmVe();
 }
 function dmLayMacDinh() { if (!confirm("Thay bằng danh mục mặc định ban đầu?")) return; DM = JSON.parse(JSON.stringify(CURRICULUM)); localStorage.setItem('dctt_v15_dm', JSON.stringify(DM)); alert("Đã khôi phục."); dmTaiVe(); }
@@ -1560,16 +2877,34 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 </script>
+<script src="mathviz.js"></script>
+
+<script>
+/* =====================================================================
+   ĐĂNG XUẤT
+   VÌ SAO không xoá cookie bằng JavaScript: cookie phiên "user_session" do máy
+   chủ đặt kèm cờ HttpOnly, trình duyệt không cho mã trong trang đọc hay xoá.
+   Nên phải nhờ máy chủ xoá hộ, qua địa chỉ /api/v17?action=logout.
+
+   Cảnh báo trước khi đi: ngân hàng câu hỏi của xưởng nằm trong localStorage
+   của trình duyệt, đăng xuất KHÔNG làm mất. Nhưng câu đang gõ dở trên biểu mẫu
+   thì mất, nên vẫn hỏi lại cho chắc.
+   ===================================================================== */
+function dangXuat(){
+  if(!confirm("Đăng xuất khỏi hệ thống?\n\nNgân hàng câu hỏi đã lưu vẫn còn nguyên trong máy. Chỉ nội dung đang soạn dở (chưa bấm lưu) là mất.")) return;
+  window.location.href = "/api/v17?action=logout";
+}
+</script>
 <script>
 // Mở thẳng chức năng theo đường dẫn, ví dụ /v17.html#bulk (nút bên phần mềm V17 gửi sang).
 (function () {
-  var OK = ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam'];
+  var OK = ['manual','bulk','stats','preview','desmos','backup','designer','anhhtml','duplicates','curriculum','quickexam','dete'];
   function openFromHash() {
     var t = (location.hash || '').replace('#', '');
     if (OK.indexOf(t) >= 0 && typeof toggleAdminForm === 'function') toggleAdminForm(t);
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(openFromHash, 50); });
-  else setTimeout(openFromHash, 50);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(openFromHash, 300); });
+  else setTimeout(openFromHash, 300);
   window.addEventListener('hashchange', openFromHash);
 })();
 </script>
