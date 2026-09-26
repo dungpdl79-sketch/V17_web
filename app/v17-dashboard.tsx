@@ -77,6 +77,18 @@ const V15_FEATURES = [
   "Danh Mục Bài Học"
 ];
 
+// Mỗi nút Xưởng mở thẳng đúng chức năng trong trang /v17.html (Xưởng V15).
+// LỖI CŨ: mở "/v15.html" nhưng file đã đổi tên thành v17.html -> trang 404.
+const V15_TARGET: Record<string, string> = {
+  "Nhập / Sửa Câu Hỏi": "manual",
+  "Nạp Hàng Loạt (AI)": "bulk",
+  "Xưởng Ảnh → HTML": "anhhtml",
+  "Thống Kê Ngân Hàng": "stats",
+  "Lọc Câu Trùng": "duplicates",
+  "Danh Mục Bài Học": "curriculum",
+};
+const openXuong = (id?: string) => window.open("/v17.html" + (id && V15_TARGET[id] ? "#" + V15_TARGET[id] : ""), "_blank");
+
 const TEACHER_GROUPS = [
   {
     title: "XƯỞNG BIÊN SOẠN (MỞ TAB V15)",
@@ -385,7 +397,7 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
                     <button
                       key={item.id}
                       onClick={() => {
-                        if (isV15) window.open("/v15.html", "_blank");
+                        if (isV15) openXuong(item.id);
                         else setActive(item.id);
                       }}
                       style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "10px 14px", borderRadius: "8px", border: isActive ? "1px solid #60a5fa" : "1px solid transparent", background: isActive ? "#2563eb" : "transparent", color: "#fff", fontSize: "14px", fontWeight: isActive ? "bold" : 600, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
@@ -520,7 +532,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
           Hệ thống mở Xưởng V15 ở một tab mới để bảo toàn dữ liệu đang soạn.<br /><br />
           Nếu trình duyệt chặn pop-up, bấm nút bên dưới để mở thủ công.
         </p>
-        <button onClick={() => window.open("/v15.html", "_blank")} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>Mở Xưởng V15 Ngay</button>
+        <button onClick={() => openXuong()} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>Mở Xưởng V15 Ngay</button>
       </div>
     );
   }
@@ -555,7 +567,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
               <h3 style={{ margin: 0 }}>Danh sách câu hỏi gốc ({previewQs.length} câu)</h3>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <button onClick={() => window.open('/v15.html', '_blank')} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #fcd34d", background: "#fffbeb", color: "#b45309", cursor: "pointer", fontWeight: "bold" }}>🖼️ Mở Xưởng Ảnh</button>
+                <button onClick={() => openXuong("Xưởng Ảnh → HTML")} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #fcd34d", background: "#fffbeb", color: "#b45309", cursor: "pointer", fontWeight: "bold" }}>🖼️ Mở Xưởng Ảnh</button>
                 <button onClick={() => { setPreviewData(null); setEditIdx(null); }} style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #cbd5e1", background: "#f8fafc", cursor: "pointer", fontWeight: "bold" }}>Hủy bỏ</button>
                 <button
                   style={{ background: "#1e3a8a", color: "#fff", border: "none", padding: "10px 16px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}
