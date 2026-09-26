@@ -72,6 +72,7 @@ const V15_FEATURES = [
   "Nhập / Sửa Câu Hỏi",
   "Nạp Hàng Loạt (AI)",
   "Xưởng Ảnh → HTML",
+  "Đề Tự Soạn",
   "Thống Kê Ngân Hàng",
   "Lọc Câu Trùng",
   "Danh Mục Bài Học"
@@ -83,6 +84,7 @@ const V15_TARGET: Record<string, string> = {
   "Nhập / Sửa Câu Hỏi": "manual",
   "Nạp Hàng Loạt (AI)": "bulk",
   "Xưởng Ảnh → HTML": "anhhtml",
+  "Đề Tự Soạn": "dete",
   "Thống Kê Ngân Hàng": "stats",
   "Lọc Câu Trùng": "duplicates",
   "Danh Mục Bài Học": "curriculum",
@@ -98,6 +100,7 @@ const TEACHER_GROUPS = [
         id === "Nhập / Sửa Câu Hỏi" ? "📝" :
         id === "Nạp Hàng Loạt (AI)" ? "🤖" :
         id === "Xưởng Ảnh → HTML" ? "🖼️" :
+        id === "Đề Tự Soạn" ? "🗂️" :
         id === "Thống Kê Ngân Hàng" ? "📊" :
         id === "Lọc Câu Trùng" ? "🔍" : "📚"
     }))
@@ -357,6 +360,17 @@ export default function Dashboard({ initialUser, logoutAction, changePasswordAct
       script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js";
       script.async = true;
       document.head.appendChild(script);
+    }
+    // MathViz: dựng bảng biến thiên / xét dấu / đồ thị (thẻ data-mathviz) trong đề của học sinh.
+    // Tắt chế độ tự quét để không tranh sửa DOM với React; triggerMath() sẽ gọi renderAll().
+    if (!document.getElementById("mathviz-script")) {
+      (window as any).MATHVIZ_NO_AUTO = true;
+      const mv = document.createElement("script");
+      mv.id = "mathviz-script";
+      mv.src = "/mathviz.js";
+      mv.async = true;
+      mv.onload = () => { try { (window as any).MathViz?.renderAll?.(); } catch {} };
+      document.head.appendChild(mv);
     }
   }, []);
 
