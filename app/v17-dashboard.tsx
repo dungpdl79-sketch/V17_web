@@ -97,41 +97,57 @@ const CSS_GIAO_DIEN = `
 // DANH MỤC CHƯƠNG / BÀI — giữ đúng mã bài của Xưởng V15 (chuong1_bai1…)
 // để học liệu và ngân hàng câu hỏi khớp nhau.
 // =====================================================================
-const CHUONG_TRINH = [
-  { ma: "chuong1", so: "I", ten: "Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số", bai: [
-    ["chuong1_bai1", "Bài 1: Tính đơn điệu và cực trị của hàm số"],
-    ["chuong1_bai2", "Bài 2: Giá trị lớn nhất và giá trị nhỏ nhất của hàm số"],
-    ["chuong1_bai3", "Bài 3: Đường tiệm cận của đồ thị hàm số"],
-    ["chuong1_bai4", "Bài 4: Khảo sát sự biến thiên và vẽ đồ thị của hàm số"],
-    ["chuong1_bai5", "Bài 5: Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn"],
-  ]},
-  { ma: "chuong2", so: "II", ten: "Vectơ và hệ trục tọa độ trong không gian", bai: [
-    ["chuong2_bai6", "Bài 6: Vectơ trong không gian"],
-    ["chuong2_bai7", "Bài 7: Hệ trục tọa độ trong không gian"],
-    ["chuong2_bai8", "Bài 8: Biểu thức tọa độ của các phép toán vectơ"],
-  ]},
-  { ma: "chuong3", so: "III", ten: "Các số đặc trưng đo mức độ phân tán của mẫu số liệu ghép nhóm", bai: [
-    ["chuong3_bai9", "Bài 9: Khoảng biến thiên và khoảng tứ phân vị"],
-    ["chuong3_bai10", "Bài 10: Phương sai và độ lệch chuẩn"],
-  ]},
-  { ma: "chuong4", so: "IV", ten: "Nguyên hàm và tích phân", bai: [
-    ["chuong4_bai11", "Bài 11: Nguyên hàm"],
-    ["chuong4_bai12", "Bài 12: Tích phân"],
-    ["chuong4_bai13", "Bài 13: Ứng dụng hình học của tích phân"],
-  ]},
-  { ma: "chuong5", so: "V", ten: "Phương pháp tọa độ trong không gian", bai: [
-    ["chuong5_bai14", "Bài 14: Phương trình mặt phẳng"],
-    ["chuong5_bai15", "Bài 15: Phương trình đường thẳng trong không gian"],
-    ["chuong5_bai16", "Bài 16: Công thức tính góc trong không gian"],
-    ["chuong5_bai17", "Bài 17: Phương trình mặt cầu"],
-  ]},
-  { ma: "chuong6", so: "VI", ten: "Xác suất có điều kiện", bai: [
-    ["chuong6_bai18", "Bài 18: Xác suất có điều kiện"],
-    ["chuong6_bai19", "Bài 19: Công thức xác suất toàn phần và công thức Bayes"],
-  ]},
-];
+type ChuongHoc = { ma: string; so: string; ten: string; bai: string[][] };
+// Chương trình Toán THPT (Kết nối tri thức) cho cả 3 khối, lấy đúng mã bài của Xưởng
+// (khối 12 giữ mã cũ chuong1_bai1… để học liệu đã soạn không bị mất).
+// LỖI CŨ: chỉ có chương trình lớp 12, nên học sinh lớp 10, 11 vào "Bài Cần Làm"
+// cũng thấy "Chương I — Ứng dụng đạo hàm…" của lớp 12.
+const CHUONG_TRINH_THEO_KHOI: Record<string, ChuongHoc[]> = {
+  "10": [
+    { ma: "k10_chuong1", so: "I", ten: "Mệnh đề và tập hợp", bai: [["k10_chuong1_bai1", "Bài 1: Mệnh đề"], ["k10_chuong1_bai2", "Bài 2: Tập hợp và các phép toán trên tập hợp"]] },
+    { ma: "k10_chuong2", so: "II", ten: "Bất phương trình và hệ bất phương trình bậc nhất hai ẩn", bai: [["k10_chuong2_bai3", "Bài 3: Bất phương trình bậc nhất hai ẩn"], ["k10_chuong2_bai4", "Bài 4: Hệ bất phương trình bậc nhất hai ẩn"]] },
+    { ma: "k10_chuong3", so: "III", ten: "Hệ thức lượng trong tam giác", bai: [["k10_chuong3_bai5", "Bài 5: Giá trị lượng giác của một góc từ 0° đến 180°"], ["k10_chuong3_bai6", "Bài 6: Hệ thức lượng trong tam giác"]] },
+    { ma: "k10_chuong4", so: "IV", ten: "Vectơ", bai: [["k10_chuong4_bai7", "Bài 7: Các khái niệm mở đầu"], ["k10_chuong4_bai8", "Bài 8: Tổng và hiệu của hai vectơ"], ["k10_chuong4_bai9", "Bài 9: Tích của một vectơ với một số"], ["k10_chuong4_bai10", "Bài 10: Vectơ trong mặt phẳng tọa độ"], ["k10_chuong4_bai11", "Bài 11: Tích vô hướng của hai vectơ"]] },
+    { ma: "k10_chuong5", so: "V", ten: "Các số đặc trưng của mẫu số liệu không ghép nhóm", bai: [["k10_chuong5_bai12", "Bài 12: Số gần đúng và sai số"], ["k10_chuong5_bai13", "Bài 13: Các số đặc trưng đo xu thế trung tâm"], ["k10_chuong5_bai14", "Bài 14: Các số đặc trưng đo độ phân tán"]] },
+    { ma: "k10_chuong6", so: "VI", ten: "Hàm số, đồ thị và ứng dụng", bai: [["k10_chuong6_bai15", "Bài 15: Hàm số"], ["k10_chuong6_bai16", "Bài 16: Hàm số bậc hai"], ["k10_chuong6_bai17", "Bài 17: Dấu của tam thức bậc hai"], ["k10_chuong6_bai18", "Bài 18: Phương trình quy về phương trình bậc hai"]] },
+    { ma: "k10_chuong7", so: "VII", ten: "Phương pháp tọa độ trong mặt phẳng", bai: [["k10_chuong7_bai19", "Bài 19: Phương trình đường thẳng"], ["k10_chuong7_bai20", "Bài 20: Vị trí tương đối giữa hai đường thẳng. Góc và khoảng cách"], ["k10_chuong7_bai21", "Bài 21: Đường tròn trong mặt phẳng tọa độ"], ["k10_chuong7_bai22", "Bài 22: Ba đường conic"]] },
+    { ma: "k10_chuong8", so: "VIII", ten: "Đại số tổ hợp", bai: [["k10_chuong8_bai23", "Bài 23: Quy tắc đếm"], ["k10_chuong8_bai24", "Bài 24: Hoán vị, chỉnh hợp và tổ hợp"], ["k10_chuong8_bai25", "Bài 25: Nhị thức Newton"]] },
+    { ma: "k10_chuong9", so: "IX", ten: "Tính xác suất theo định nghĩa cổ điển", bai: [["k10_chuong9_bai26", "Bài 26: Biến cố và định nghĩa cổ điển của xác suất"], ["k10_chuong9_bai27", "Bài 27: Thực hành tính xác suất theo định nghĩa cổ điển"]] },
+  ],
+  "11": [
+    { ma: "k11_chuong1", so: "I", ten: "Hàm số lượng giác và phương trình lượng giác", bai: [["k11_chuong1_bai1", "Bài 1: Giá trị lượng giác của góc lượng giác"], ["k11_chuong1_bai2", "Bài 2: Công thức lượng giác"], ["k11_chuong1_bai3", "Bài 3: Hàm số lượng giác"], ["k11_chuong1_bai4", "Bài 4: Phương trình lượng giác cơ bản"]] },
+    { ma: "k11_chuong2", so: "II", ten: "Dãy số. Cấp số cộng và cấp số nhân", bai: [["k11_chuong2_bai5", "Bài 5: Dãy số"], ["k11_chuong2_bai6", "Bài 6: Cấp số cộng"], ["k11_chuong2_bai7", "Bài 7: Cấp số nhân"]] },
+    { ma: "k11_chuong3", so: "III", ten: "Các số đặc trưng đo xu thế trung tâm của mẫu số liệu ghép nhóm", bai: [["k11_chuong3_bai8", "Bài 8: Mẫu số liệu ghép nhóm"], ["k11_chuong3_bai9", "Bài 9: Các số đặc trưng đo xu thế trung tâm"]] },
+    { ma: "k11_chuong4", so: "IV", ten: "Quan hệ song song trong không gian", bai: [["k11_chuong4_bai10", "Bài 10: Đường thẳng và mặt phẳng trong không gian"], ["k11_chuong4_bai11", "Bài 11: Hai đường thẳng song song"], ["k11_chuong4_bai12", "Bài 12: Đường thẳng và mặt phẳng song song"], ["k11_chuong4_bai13", "Bài 13: Hai mặt phẳng song song"], ["k11_chuong4_bai14", "Bài 14: Phép chiếu song song"]] },
+    { ma: "k11_chuong5", so: "V", ten: "Giới hạn. Hàm số liên tục", bai: [["k11_chuong5_bai15", "Bài 15: Giới hạn của dãy số"], ["k11_chuong5_bai16", "Bài 16: Giới hạn của hàm số"], ["k11_chuong5_bai17", "Bài 17: Hàm số liên tục"]] },
+    { ma: "k11_chuong6", so: "VI", ten: "Hàm số mũ và hàm số lôgarit", bai: [["k11_chuong6_bai18", "Bài 18: Lũy thừa với số mũ thực"], ["k11_chuong6_bai19", "Bài 19: Lôgarit"], ["k11_chuong6_bai20", "Bài 20: Hàm số mũ và hàm số lôgarit"], ["k11_chuong6_bai21", "Bài 21: Phương trình, bất phương trình mũ và lôgarit"]] },
+    { ma: "k11_chuong7", so: "VII", ten: "Quan hệ vuông góc trong không gian", bai: [["k11_chuong7_bai22", "Bài 22: Hai đường thẳng vuông góc"], ["k11_chuong7_bai23", "Bài 23: Đường thẳng vuông góc với mặt phẳng"], ["k11_chuong7_bai24", "Bài 24: Phép chiếu vuông góc. Góc giữa đường thẳng và mặt phẳng"], ["k11_chuong7_bai25", "Bài 25: Hai mặt phẳng vuông góc"], ["k11_chuong7_bai26", "Bài 26: Khoảng cách"], ["k11_chuong7_bai27", "Bài 27: Thể tích"]] },
+    { ma: "k11_chuong8", so: "VIII", ten: "Các quy tắc tính xác suất", bai: [["k11_chuong8_bai28", "Bài 28: Biến cố hợp, biến cố giao, biến cố độc lập"], ["k11_chuong8_bai29", "Bài 29: Công thức cộng xác suất"], ["k11_chuong8_bai30", "Bài 30: Công thức nhân xác suất cho hai biến cố độc lập"]] },
+    { ma: "k11_chuong9", so: "IX", ten: "Đạo hàm", bai: [["k11_chuong9_bai31", "Bài 31: Định nghĩa và ý nghĩa của đạo hàm"], ["k11_chuong9_bai32", "Bài 32: Các quy tắc tính đạo hàm"], ["k11_chuong9_bai33", "Bài 33: Đạo hàm cấp hai"]] },
+  ],
+  "12": [
+    { ma: "chuong1", so: "I", ten: "Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số", bai: [["chuong1_bai1", "Bài 1: Tính đơn điệu và cực trị của hàm số"], ["chuong1_bai2", "Bài 2: Giá trị lớn nhất và giá trị nhỏ nhất của hàm số"], ["chuong1_bai3", "Bài 3: Đường tiệm cận của đồ thị hàm số"], ["chuong1_bai4", "Bài 4: Khảo sát sự biến thiên và vẽ đồ thị của hàm số"], ["chuong1_bai5", "Bài 5: Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn"]] },
+    { ma: "chuong2", so: "II", ten: "Vectơ và hệ trục tọa độ trong không gian", bai: [["chuong2_bai6", "Bài 6: Vectơ trong không gian"], ["chuong2_bai7", "Bài 7: Hệ trục tọa độ trong không gian"], ["chuong2_bai8", "Bài 8: Biểu thức tọa độ của các phép toán vectơ"]] },
+    { ma: "chuong3", so: "III", ten: "Các số đặc trưng đo mức độ phân tán của mẫu số liệu ghép nhóm", bai: [["chuong3_bai9", "Bài 9: Khoảng biến thiên và khoảng tứ phân vị"], ["chuong3_bai10", "Bài 10: Phương sai và độ lệch chuẩn"]] },
+    { ma: "chuong4", so: "IV", ten: "Nguyên hàm và tích phân", bai: [["chuong4_bai11", "Bài 11: Nguyên hàm"], ["chuong4_bai12", "Bài 12: Tích phân"], ["chuong4_bai13", "Bài 13: Ứng dụng hình học của tích phân"]] },
+    { ma: "chuong5", so: "V", ten: "Phương pháp tọa độ trong không gian", bai: [["chuong5_bai14", "Bài 14: Phương trình mặt phẳng"], ["chuong5_bai15", "Bài 15: Phương trình đường thẳng trong không gian"], ["chuong5_bai16", "Bài 16: Công thức tính góc trong không gian"], ["chuong5_bai17", "Bài 17: Phương trình mặt cầu"]] },
+    { ma: "chuong6", so: "VI", ten: "Xác suất có điều kiện", bai: [["chuong6_bai18", "Bài 18: Xác suất có điều kiện"], ["chuong6_bai19", "Bài 19: Công thức xác suất toàn phần và công thức Bayes"]] },
+  ],
+};
+const CHUONG_TRINH: ChuongHoc[] = CHUONG_TRINH_THEO_KHOI["12"];
 const TEN_BAI: Record<string, string> = {};
-CHUONG_TRINH.forEach((c) => c.bai.forEach(([ma, ten]) => (TEN_BAI[ma] = ten)));
+Object.values(CHUONG_TRINH_THEO_KHOI).forEach((ds) => ds.forEach((c) => c.bai.forEach(([ma, ten]) => (TEN_BAI[ma] = ten))));
+
+// Đoán khối từ tên lớp: "11B11" -> 11, "Toán 12A09" -> 12, "10CT2" -> 10. Không đoán được thì coi là 12.
+function khoiCuaLop(ten: unknown): string | null {
+  const m = String(ten || "").match(/(?:^|[^0-9])(1[0-2])(?![0-9])/);
+  return m ? m[1] : null;
+}
+function khoiCuaHocSinh(classes: any[]): string {
+  for (const c of classes || []) { const k = khoiCuaLop(c?.name); if (k) return k; }
+  return "12";
+}
+const chuongTrinhKhoi = (khoi: string) => CHUONG_TRINH_THEO_KHOI[khoi] || CHUONG_TRINH;
 
 // =====================================================================
 // PHÂN LOẠI BÀI KIỂM TRA
@@ -429,7 +445,7 @@ const StudentQuestionItem = memo(
 // ==========================================
 // THANH THẺ: Bài kiểm tra · Chương I · Chương II · …
 // ==========================================
-function ThanhTabHocTap({ tab, setTab, khoa, dem }: any) {
+function ThanhTabHocTap({ tab, setTab, khoa, dem, chuongTrinh }: any) {
   const the = (id: string, nhan: string, phu: string, bịKhoa: boolean) => {
     const dang = tab === id;
     return (
@@ -454,7 +470,7 @@ function ThanhTabHocTap({ tab, setTab, khoa, dem }: any) {
     <div style={{ display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "10px", marginBottom: "18px" }}>
       {the("kt15", "Kiểm tra 15 phút", `${dem.kt15 || 0} bài`, false)}
       {the("kt1tiet", "Kiểm tra 1 tiết", `${dem.kt1tiet || 0} bài`, false)}
-      {CHUONG_TRINH.map((c) => the(c.ma, `Chương ${c.so}`, `${c.bai.length} bài`, !!khoa))}
+      {((chuongTrinh || CHUONG_TRINH) as ChuongHoc[]).map((c) => the(c.ma, `Chương ${c.so}`, `${c.bai.length} bài`, !!khoa))}
     </div>
   );
 }
@@ -464,14 +480,14 @@ function ThanhTabHocTap({ tab, setTab, khoa, dem }: any) {
 // Bấm chương → danh sách bài; bấm một bài → ba mục học; bấm "Kiến thức
 // trọng tâm" → nội dung bài học hiện ra ngay trong khung màu xanh bên dưới.
 // ==========================================
-function KhongGianChuong({ maChuong, hocLieu, triggerMath, laHocSinh }: any) {
+function KhongGianChuong({ maChuong, hocLieu, triggerMath, laHocSinh, chuongTrinh }: any) {
   const [baiMo, setBaiMo] = useState<string | null>(null);
   const [mucMo, setMucMo] = useState<string | null>(null);
   // Nhớ những bài đã ghi trong phiên này, để em mở ra đóng vào liên tục
   // không bị đếm thành mười lượt.
   const daGhiRef = useRef<Set<string>>(new Set());
 
-  const chuong = CHUONG_TRINH.find((c) => c.ma === maChuong);
+  const chuong = ((chuongTrinh || CHUONG_TRINH) as ChuongHoc[]).find((c) => c.ma === maChuong);
 
   useEffect(() => { setBaiMo(null); setMucMo(null); }, [maChuong]);
 
@@ -2096,7 +2112,10 @@ function BoSuaLink({ nhan, ds, setDs, goiY }: any) {
 // Chấp nhận HTML và công thức $...$ nên dán thẳng từ Xưởng giáo án được.
 // ==========================================
 function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
+  const [khoi, setKhoi] = useState("12");
   const [tag, setTag] = useState("chuong1_bai1");
+  const dsChuong = chuongTrinhKhoi(khoi);
+  const doiKhoi = (k: string) => { setKhoi(k); const ct = chuongTrinhKhoi(k); if (ct[0]?.bai[0]) setTag(ct[0].bai[0][0]); };
   const [kienThuc, setKienThuc] = useState("");
   const [soDoTuDuy, setSoDoTuDuy] = useState("");
   const [dsGame, setDsGame] = useState<any[]>([]);
@@ -2124,11 +2143,19 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
     <div>
       <div style={{ background: "#fff", padding: "24px", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "20px" }}>
         <h3 style={{ marginTop: 0, color: "#1e3a8a" }}>📘 Chọn bài cần soạn học liệu</h3>
+        <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+          {["10", "11", "12"].map((k) => (
+            <button key={k} type="button" onClick={() => doiKhoi(k)}
+              style={{ padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", border: khoi === k ? "2px solid #1e3a8a" : "1px solid #cbd5e1", background: khoi === k ? "#1e3a8a" : "#fff", color: khoi === k ? "#fff" : "#1e293b" }}>
+              Khối {k}
+            </button>
+          ))}
+        </div>
         <select
           value={tag} onChange={(e) => setTag(e.target.value)}
           style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "15px", background: "#fff" }}
         >
-          {CHUONG_TRINH.map((c) => (
+          {dsChuong.map((c) => (
             <optgroup key={c.ma} label={`Chương ${c.so} — ${c.ten}`}>
               {c.bai.map(([ma, ten]) => (
                 <option key={ma} value={ma}>{daSoan.has(ma) ? "✓ " : "○ "}{ten}</option>
@@ -2137,7 +2164,7 @@ function SoanHocLieu({ hocLieu, act, busy, triggerMath }: any) {
           ))}
         </select>
         <p style={{ fontSize: "13px", color: "#64748b", margin: "8px 0 0" }}>
-          Dấu ✓ là bài đã có kiến thức trọng tâm. Đã soạn {daSoan.size} / {Object.keys(TEN_BAI).length} bài.
+          Dấu ✓ là bài đã có kiến thức trọng tâm. Khối {khoi}: đã soạn {dsChuong.reduce((t, c) => t + c.bai.filter(([ma]) => daSoan.has(ma)).length, 0)} / {dsChuong.reduce((t, c) => t + c.bai.length, 0)} bài. Học sinh lớp {khoi} (tên lớp bắt đầu bằng {khoi}, ví dụ {khoi}A1) sẽ thấy các chương này.
         </p>
       </div>
 
@@ -2567,11 +2594,11 @@ function Student({ active, data, busy, act, answers, setAnswers, triggerMath }: 
           <p style={{ margin: "6px 0 0", fontSize: "14px", color: "#475569" }}>Các đề thi thử dài hơi (từ {NGUONG_NANGLUC} phút trở lên) thầy cô giao riêng cho phần luyện thi.</p>
         </div>
       ) : (
-        <ThanhTabHocTap tab={tabHoc} setTab={setTabHoc} khoa={dangLamBai} dem={demTheoLoai} />
+        <ThanhTabHocTap tab={tabHoc} setTab={setTabHoc} khoa={dangLamBai} dem={demTheoLoai} chuongTrinh={chuongTrinhKhoi(khoiCuaHocSinh(data.classes))} />
       )}
 
       {!laNangLuc && tabHoc !== "kt15" && tabHoc !== "kt1tiet" ? (
-        <KhongGianChuong maChuong={tabHoc} hocLieu={data.hocLieu || []} triggerMath={triggerMath} laHocSinh={data.user?.role === "student"} />
+        <KhongGianChuong maChuong={tabHoc} hocLieu={data.hocLieu || []} triggerMath={triggerMath} laHocSinh={data.user?.role === "student"} chuongTrinh={chuongTrinhKhoi(khoiCuaHocSinh(data.classes))} />
       ) : (
       <div style={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
         {!(data.classes || []).length && (
