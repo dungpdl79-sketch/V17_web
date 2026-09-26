@@ -225,6 +225,7 @@ const V15_FEATURES = [
   "Nạp Hàng Loạt (AI)",
   "Xưởng Ảnh → HTML",
   "Đề Tự Soạn",
+  "Tạo Đề Bằng AI",
   "Thống Kê Ngân Hàng",
   "Lọc Câu Trùng",
   "Danh Mục Bài Học"
@@ -240,7 +241,10 @@ const V15_TARGET: Record<string, string> = {
   "Lọc Câu Trùng": "duplicates",
   "Danh Mục Bài Học": "curriculum",
 };
-const openXuong = (id?: string) => window.open("/v17.html" + (id && V15_TARGET[id] ? "#" + V15_TARGET[id] : ""), "_blank");
+const openXuong = (id?: string) => {
+  if (id === "Tạo Đề Bằng AI") { window.open("/taode.html", "_blank"); return; }
+  window.open("/v17.html" + (id && V15_TARGET[id] ? "#" + V15_TARGET[id] : ""), "_blank");
+};
 
 const TEACHER_GROUPS = [
   {
@@ -252,6 +256,7 @@ const TEACHER_GROUPS = [
         id === "Nạp Hàng Loạt (AI)" ? "🤖" :
         id === "Xưởng Ảnh → HTML" ? "🖼️" :
         id === "Đề Tự Soạn" ? "🗂️" :
+        id === "Tạo Đề Bằng AI" ? "✨" :
         id === "Thống Kê Ngân Hàng" ? "📊" :
         id === "Lọc Câu Trùng" ? "🔍" : "📚"
     }))
@@ -1033,7 +1038,7 @@ function Teacher({ active, data, busy, act, triggerMath, changePasswordAction, r
           Hệ thống mở Xưởng Soạn Đề ở một tab mới để bảo toàn dữ liệu đang soạn.<br /><br />
           Nếu trình duyệt chặn pop-up, bấm nút bên dưới để mở thủ công.
         </p>
-        <button onClick={() => window.open("/v17.html", "_blank")} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>Mở Xưởng Soạn Đề Ngay</button>
+        <button onClick={() => openXuong(active)} style={{ marginTop: "20px", background: "#10b981", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", fontSize: "16px" }}>{active === "Tạo Đề Bằng AI" ? "Mở trang Tạo Đề Bằng AI" : "Mở Xưởng Soạn Đề Ngay"}</button>
       </div>
     );
   }

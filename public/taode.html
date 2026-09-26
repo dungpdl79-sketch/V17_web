@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tạo Đề Kiểm Tra — bản 2 (tương thích Xưởng V17)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- LỖI CŨ: cấu hình MathJax đặt SAU thẻ nạp MathJax nên đôi khi $...$ không được nhận.
+     LỖI CŨ NGHIÊM TRỌNG: bản cũ nạp polyfill.io — tên miền này đã bị chiếm và phát tán mã độc từ 2024. Đã gỡ bỏ. -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root { --primary:#0284c7; --primary-hover:#0369a1; --bg:#f8fafc; --card:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0; --danger:#ef4444; --success:#10b981; --radius:12px; }
+  * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
+  body { background:var(--bg); color:var(--text); line-height:1.6; padding:20px 16px; }
+  .container { max-width:960px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+  header { text-align:center; }
+  h1 { color:var(--primary); font-size:1.7rem; margin-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .card-title { font-size:1.08rem; font-weight:700; color:#334155; margin-bottom:16px; border-bottom:2px solid var(--bg); padding-bottom:8px; }
+  .ai-setup { background:#f0f9ff; border-color:#bae6fd; }
+  .row { display:flex; gap:10px; }
+  .row > * { flex:1; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .full { grid-column:1/-1; }
+  .fg { display:flex; flex-direction:column; gap:6px; }
+  label { font-size:.9rem; font-weight:600; color:#475569; }
+  input[type=text], input[type=number], input[type=password], select, textarea { padding:11px; border:1px solid #cbd5e1; border-radius:8px; font-size:.95rem; outline:none; width:100%; background:#fff; }
+  input:focus, select:focus, textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(2,132,199,.1); }
+  textarea { resize:vertical; min-height:80px; }
+  .hint { font-size:.83rem; color:var(--muted); }
+  .btn { padding:13px 22px; border:none; border-radius:8px; font-weight:600; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-primary:hover { background:var(--primary-hover); }
+  .btn-primary:disabled { background:#93c5fd; cursor:not-allowed; }
+  .btn-secondary { background:#e2e8f0; color:#475569; }
+  .btn-light { background:#fff; border:1px solid #7dd3fc; color:#0284c7; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .btn-outline { background:#fff; border:1px solid var(--border); color:#334155; padding:8px 14px; font-size:.9rem; border-radius:6px; cursor:pointer; font-weight:600; }
+  .btn-outline:hover { background:#f1f5f9; }
+  .btn-v17 { background:#1e3a8a; color:#fff; border:none; padding:8px 14px; font-size:.9rem; border-radius:6px; cursor:pointer; font-weight:600; }
+  .actions { display:flex; gap:14px; }
+  .actions .btn-primary { flex:2; } .actions .btn-secondary { flex:1; }
+  /* Ma trận */
+  table.mt { width:100%; border-collapse:collapse; font-size:.93rem; }
+  table.mt th, table.mt td { border:1px solid #cbd5e1; padding:6px; text-align:center; }
+  table.mt th { background:#f1f5f9; color:#334155; }
+  table.mt td:first-child { text-align:left; font-weight:600; }
+  table.mt input { width:64px; padding:6px; text-align:center; }
+  table.mt tfoot td { background:#f8fafc; font-weight:700; }
+  .chk { display:flex; align-items:center; gap:8px; font-size:.93rem; cursor:pointer; }
+  .chk input { width:18px; height:18px; accent-color:var(--primary); }
+  #loading { display:none; text-align:center; padding:36px 20px; background:#fff; border-radius:var(--radius); border:1px solid var(--border); }
+  .spinner { width:44px; height:44px; border:4px solid #f1f5f9; border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 14px; }
+  @keyframes spin { 100% { transform:rotate(360deg); } }
+  #result { display:none; }
+  .tabs { display:flex; gap:6px; border-bottom:2px solid var(--border); margin-bottom:18px; overflow-x:auto; }
+  .tab-btn { padding:11px 20px; background:none; border:none; font-size:1rem; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; white-space:nowrap; }
+  .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+  .pane { display:none; background:var(--card); padding:28px; border-radius:var(--radius); border:1px solid var(--border); }
+  .pane.active { display:block; }
+  .bar { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; margin-bottom:20px; padding-bottom:14px; border-bottom:1px dashed var(--border); }
+  .ex-title { text-align:center; font-size:1.3rem; text-transform:uppercase; font-weight:700; }
+  .ex-meta { text-align:center; color:var(--muted); margin:4px 0 18px; }
+  .part { font-weight:700; color:#1e3a8a; margin:22px 0 10px; font-size:1.05rem; }
+  .q { margin-bottom:18px; }
+  .q-t { margin-bottom:6px; }
+  .badge { font-size:.72rem; padding:2px 8px; border-radius:10px; font-weight:600; background:#fef3c7; color:#b45309; margin-left:6px; vertical-align:middle; }
+  .opts { display:grid; grid-template-columns:1fr 1fr; gap:6px 18px; padding-left:14px; }
+  .stmts { padding-left:14px; }
+  .guide { background:#f0fdf4; border:1px solid #bbf7d0; padding:12px 14px; border-radius:8px; margin-top:8px; }
+  table.da { border-collapse:collapse; margin:6px 0 14px; }
+  table.da td, table.da th { border:1px solid #cbd5e1; padding:6px 10px; text-align:center; }
+  table.da th { background:#f1f5f9; }
+  .warn { background:#fff7ed; border:1px solid #fdba74; color:#9a3412; padding:10px 14px; border-radius:8px; margin-bottom:14px; font-size:.93rem; }
+  #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(120px); background:#334155; color:#fff; padding:13px 26px; border-radius:30px; font-weight:500; transition:transform .3s; z-index:9999; max-width:92vw; }
+  #toast.show { transform:translateX(-50%) translateY(0); }
+  #toast.error { background:var(--danger); }
+  @media (max-width:768px) {
+    .grid-2, .grid-3, .opts { grid-template-columns:1fr; }
+    .row, .actions { flex-direction:column; }
+    .pane { padding:16px; }
+    table.mt input { width:48px; }
+  }
+  @media print {
+    body { background:#fff; padding:0; }
+    .container > *:not(#result), .tabs, .bar, #toast { display:none !important; }
+    #result { display:block !important; }
+    .pane { display:none !important; border:none; padding:0; }
+    .pane.printing { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>AI Tạo Đề Kiểm Tra Hỗ Trợ Giáo Viên</h1>
+    <p class="hint">Bản 2 · Cấu trúc đề 2025 (Trắc nghiệm · Đúng/Sai · Trả lời ngắn · Tự luận) · Xuất thẳng JSON cho Xưởng V17</p>
+  </header>
+
+  <!-- CẤU HÌNH AI -->
+  <div class="card ai-setup">
+    <div class="card-title">⚙️ Kết nối AI (Google Gemini)</div>
+    <div class="fg">
+      <label>1. Khóa API Google Gemini (bắt đầu bằng AIza…)</label>
+      <div class="row">
+        <input type="password" id="apiKey" placeholder="Dán khóa API vào đây…" autocomplete="off">
+        <button type="button" class="btn-light" style="flex:0 0 auto" onclick="fetchModels()">🔍 Dò tìm mô hình</button>
+      </div>
+      <p class="hint">Lấy khóa miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+        <label class="chk" style="display:inline-flex;margin-left:6px;font-weight:500"><input type="checkbox" id="rememberKey" checked> Ghi nhớ khóa trên máy này</label>
+        (bỏ chọn nếu dùng máy chung).</p>
+    </div>
+    <div class="fg" style="margin-top:10px">
+      <label>2. Mô hình AI</label>
+      <select id="modelSelect">
+        <option value="gemini-2.5-flash" selected>gemini-2.5-flash (mặc định — nhanh, rẻ)</option>
+        <option value="gemini-2.5-pro">gemini-2.5-pro (chính xác hơn, chậm hơn)</option>
+      </select>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" id="autoSwitch" checked> 🔁 <b>Tự đổi mô hình</b> khi mô hình đang chọn quá tải hoặc hết lượt miễn phí</label>
+    </div>
+  </div>
+
+  <form id="appForm">
+    <!-- THÔNG TIN -->
+    <div class="card">
+      <div class="card-title">📘 1. Thông tin bài kiểm tra</div>
+      <div class="grid-3">
+        <div class="fg"><label>Môn học</label><input type="text" id="subject" value="Toán" required></div>
+        <div class="fg"><label>Lớp</label>
+          <select id="grade">
+            <option value="12" selected>Lớp 12</option><option value="11">Lớp 11</option><option value="10">Lớp 10</option>
+            <option value="9">Lớp 9</option><option value="8">Lớp 8</option><option value="7">Lớp 7</option><option value="6">Lớp 6</option>
+          </select></div>
+        <div class="fg"><label>Thời gian (phút)</label><input type="number" id="duration" value="45" min="5" required></div>
+        <div class="fg full" id="lessonBox"><label>Bài học (Toán 10–12, Kết nối tri thức) — gắn mã bài cho Xưởng V17</label>
+          <select id="lesson"></select>
+          <span class="hint" id="lessonHint"></span></div>
+        <div class="fg full"><label>Tên / chủ đề bài kiểm tra</label><input type="text" id="topic" value="Kiểm tra 45 phút — Tính đơn điệu và cực trị của hàm số" required></div>
+        <div class="fg full"><label>Nội dung kiến thức giới hạn</label>
+          <textarea id="content" required placeholder="Dán nội dung lý thuyết hoặc phạm vi kiến thức để AI bám sát…">- Xét tính đồng biến, nghịch biến của hàm số.
+- Tìm cực đại, cực tiểu của hàm đa thức bậc ba và hàm phân thức.</textarea></div>
+      </div>
+    </div>
+
+    <!-- MA TRẬN -->
+    <div class="card">
+      <div class="card-title">📊 2. Ma trận đề (số câu theo dạng × mức độ)</div>
+      <div style="overflow-x:auto">
+      <table class="mt" id="matrix">
+        <thead><tr><th>Dạng câu hỏi</th><th>Nhận biết</th><th>Thông hiểu</th><th>Vận dụng</th><th>VD cao</th><th>Cộng</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><td>Tổng</td><td id="c1"></td><td id="c2"></td><td id="c3"></td><td id="c4"></td><td id="cAll"></td></tr></tfoot>
+      </table>
+      </div>
+      <p class="hint" style="margin-top:8px">Dạng nào không dùng thì để 0. Đề thi tốt nghiệp 2025: 12 trắc nghiệm · 4 Đúng/Sai · 6 trả lời ngắn.</p>
+      <div class="fg" style="margin-top:14px">
+        <label>Ghi chú thêm cho AI (tùy chọn)</label>
+        <textarea id="extra" rows="2" placeholder="Ví dụ: ưu tiên bài toán thực tế; tránh câu phải dùng máy tính…"></textarea>
+      </div>
+      <label class="chk" style="margin-top:12px"><input type="checkbox" id="doubleCheck" checked> 🔎 Cho AI <b>tự giải lại và sửa</b> đáp án sai (gọi AI thêm 1 lượt, lâu hơn nhưng chính xác hơn)</label>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" onclick="resetForm()">🗑️ Làm lại</button>
+      <button type="submit" class="btn btn-primary" id="btnSubmit">✨ Tạo đề kiểm tra</button>
+    </div>
+  </form>
+
+  <div id="loading"><div class="spinner"></div><h3 style="color:var(--primary)" id="loadingText">AI đang soạn đề…</h3><p class="hint">Thường mất 20–60 giây.</p></div>
+
+  <div id="result">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p-de">Đề kiểm tra</button>
+      <button class="tab-btn" data-tab="p-da">Đáp án</button>
+      <button class="tab-btn" data-tab="p-hd">Hướng dẫn giải / chấm</button>
+      <button class="tab-btn" data-tab="p-mt">Bảng đặc tả</button>
+    </div>
+    <div id="p-de" class="pane active">
+      <div class="bar">
+        <button class="btn-outline" onclick="printPane('p-de')">🖨️ In / Lưu PDF</button>
+        <button class="btn-outline" onclick="downloadDoc()">📄 Tải file Word</button>
+        <button class="btn-v17" onclick="copyV17()">📋 Chép JSON cho Xưởng V17</button>
+        <button class="btn-v17" onclick="downloadV17()">⬇️ Tải JSON Xưởng</button>
+      </div>
+      <div id="out-de"></div>
+    </div>
+    <div id="p-da" class="pane"><div class="bar"><button class="btn-outline" onclick="printPane('p-da')">🖨️ In / Lưu PDF</button></div><div id="out-da"></div></div>
+    <div id="p-hd" class="pane"><div class="bar"><button class="btn-outline" onclick="printPane('p-hd')">🖨️ In / Lưu PDF</button></div><div id="out-hd"></div></div>
+    <div id="p-mt" class="pane"><div class="bar"><button class="btn-outline" onclick="printPane('p-mt')">🖨️ In / Lưu PDF</button></div><div id="out-mt"></div></div>
+    <div style="text-align:center;margin-top:24px"><button class="btn btn-primary" onclick="document.getElementById('appForm').requestSubmit()">🔄 Tạo đề khác</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   DỮ LIỆU CHƯƠNG TRÌNH TOÁN 10–12 (Kết nối tri thức) — mã bài trùng Xưởng V17
+   ===================================================================== */
+const CT = {"10":[["I","Mệnh đề và tập hợp",[["k10_chuong1_bai1","Bài 1: Mệnh đề"],["k10_chuong1_bai2","Bài 2: Tập hợp và các phép toán trên tập hợp"]]],["II","Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",[["k10_chuong2_bai3","Bài 3: Bất phương trình bậc nhất hai ẩn"],["k10_chuong2_bai4","Bài 4: Hệ bất phương trình bậc nhất hai ẩn"]]],["III","Hệ thức lượng trong tam giác",[["k10_chuong3_bai5","Bài 5: Giá trị lượng giác của một góc từ 0° đến 180°"],["k10_chuong3_bai6","Bài 6: Hệ thức lượng trong tam giác"]]],["IV","Vectơ",[["k10_chuong4_bai7","Bài 7: Các khái niệm mở đầu"],["k10_chuong4_bai8","Bài 8: Tổng và hiệu của hai vectơ"],["k10_chuong4_bai9","Bài 9: Tích của một vectơ với một số"],["k10_chuong4_bai10","Bài 10: Vectơ trong mặt phẳng tọa độ"],["k10_chuong4_bai11","Bài 11: Tích vô hướng của hai vectơ"]]],["V","Các số đặc trưng của mẫu số liệu không ghép nhóm",[["k10_chuong5_bai12","Bài 12: Số gần đúng và sai số"],["k10_chuong5_bai13","Bài 13: Các số đặc trưng đo xu thế trung tâm"],["k10_chuong5_bai14","Bài 14: Các số đặc trưng đo độ phân tán"]]],["VI","Hàm số, đồ thị và ứng dụng",[["k10_chuong6_bai15","Bài 15: Hàm số"],["k10_chuong6_bai16","Bài 16: Hàm số bậc hai"],["k10_chuong6_bai17","Bài 17: Dấu của tam thức bậc hai"],["k10_chuong6_bai18","Bài 18: Phương trình quy về phương trình bậc hai"]]],["VII","Phương pháp tọa độ trong mặt phẳng",[["k10_chuong7_bai19","Bài 19: Phương trình đường thẳng"],["k10_chuong7_bai20","Bài 20: Vị trí tương đối giữa hai đường thẳng. Góc và khoảng cách"],["k10_chuong7_bai21","Bài 21: Đường tròn trong mặt phẳng tọa độ"],["k10_chuong7_bai22","Bài 22: Ba đường conic"]]],["VIII","Đại số tổ hợp",[["k10_chuong8_bai23","Bài 23: Quy tắc đếm"],["k10_chuong8_bai24","Bài 24: Hoán vị, chỉnh hợp và tổ hợp"],["k10_chuong8_bai25","Bài 25: Nhị thức Newton"]]],["IX","Tính xác suất theo định nghĩa cổ điển",[["k10_chuong9_bai26","Bài 26: Biến cố và định nghĩa cổ điển của xác suất"],["k10_chuong9_bai27","Bài 27: Thực hành tính xác suất theo định nghĩa cổ điển"]]]],"11":[["I","Hàm số lượng giác và phương trình lượng giác",[["k11_chuong1_bai1","Bài 1: Giá trị lượng giác của góc lượng giác"],["k11_chuong1_bai2","Bài 2: Công thức lượng giác"],["k11_chuong1_bai3","Bài 3: Hàm số lượng giác"],["k11_chuong1_bai4","Bài 4: Phương trình lượng giác cơ bản"]]],["II","Dãy số. Cấp số cộng và cấp số nhân",[["k11_chuong2_bai5","Bài 5: Dãy số"],["k11_chuong2_bai6","Bài 6: Cấp số cộng"],["k11_chuong2_bai7","Bài 7: Cấp số nhân"]]],["III","Các số đặc trưng đo xu thế trung tâm của mẫu số liệu ghép nhóm",[["k11_chuong3_bai8","Bài 8: Mẫu số liệu ghép nhóm"],["k11_chuong3_bai9","Bài 9: Các số đặc trưng đo xu thế trung tâm"]]],["IV","Quan hệ song song trong không gian",[["k11_chuong4_bai10","Bài 10: Đường thẳng và mặt phẳng trong không gian"],["k11_chuong4_bai11","Bài 11: Hai đường thẳng song song"],["k11_chuong4_bai12","Bài 12: Đường thẳng và mặt phẳng song song"],["k11_chuong4_bai13","Bài 13: Hai mặt phẳng song song"],["k11_chuong4_bai14","Bài 14: Phép chiếu song song"]]],["V","Giới hạn. Hàm số liên tục",[["k11_chuong5_bai15","Bài 15: Giới hạn của dãy số"],["k11_chuong5_bai16","Bài 16: Giới hạn của hàm số"],["k11_chuong5_bai17","Bài 17: Hàm số liên tục"]]],["VI","Hàm số mũ và hàm số lôgarit",[["k11_chuong6_bai18","Bài 18: Lũy thừa với số mũ thực"],["k11_chuong6_bai19","Bài 19: Lôgarit"],["k11_chuong6_bai20","Bài 20: Hàm số mũ và hàm số lôgarit"],["k11_chuong6_bai21","Bài 21: Phương trình, bất phương trình mũ và lôgarit"]]],["VII","Quan hệ vuông góc trong không gian",[["k11_chuong7_bai22","Bài 22: Hai đường thẳng vuông góc"],["k11_chuong7_bai23","Bài 23: Đường thẳng vuông góc với mặt phẳng"],["k11_chuong7_bai24","Bài 24: Phép chiếu vuông góc. Góc giữa đường thẳng và mặt phẳng"],["k11_chuong7_bai25","Bài 25: Hai mặt phẳng vuông góc"],["k11_chuong7_bai26","Bài 26: Khoảng cách"],["k11_chuong7_bai27","Bài 27: Thể tích"]]],["VIII","Các quy tắc tính xác suất",[["k11_chuong8_bai28","Bài 28: Biến cố hợp, biến cố giao, biến cố độc lập"],["k11_chuong8_bai29","Bài 29: Công thức cộng xác suất"],["k11_chuong8_bai30","Bài 30: Công thức nhân xác suất cho hai biến cố độc lập"]]],["IX","Đạo hàm",[["k11_chuong9_bai31","Bài 31: Định nghĩa và ý nghĩa của đạo hàm"],["k11_chuong9_bai32","Bài 32: Các quy tắc tính đạo hàm"],["k11_chuong9_bai33","Bài 33: Đạo hàm cấp hai"]]]],"12":[["I","Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số",[["chuong1_bai1","Bài 1: Tính đơn điệu và cực trị của hàm số"],["chuong1_bai2","Bài 2: Giá trị lớn nhất và giá trị nhỏ nhất của hàm số"],["chuong1_bai3","Bài 3: Đường tiệm cận của đồ thị hàm số"],["chuong1_bai4","Bài 4: Khảo sát sự biến thiên và vẽ đồ thị của hàm số"],["chuong1_bai5","Bài 5: Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn"]]],["II","Vectơ và hệ trục tọa độ trong không gian",[["chuong2_bai6","Bài 6: Vectơ trong không gian"],["chuong2_bai7","Bài 7: Hệ trục tọa độ trong không gian"],["chuong2_bai8","Bài 8: Biểu thức tọa độ của các phép toán vectơ"]]],["III","Các số đặc trưng đo mức độ phân tán của mẫu số liệu ghép nhóm",[["chuong3_bai9","Bài 9: Khoảng biến thiên và khoảng tứ phân vị"],["chuong3_bai10","Bài 10: Phương sai và độ lệch chuẩn"]]],["IV","Nguyên hàm và tích phân",[["chuong4_bai11","Bài 11: Nguyên hàm"],["chuong4_bai12","Bài 12: Tích phân"],["chuong4_bai13","Bài 13: Ứng dụng hình học của tích phân"]]],["V","Phương pháp tọa độ trong không gian",[["chuong5_bai14","Bài 14: Phương trình mặt phẳng"],["chuong5_bai15","Bài 15: Phương trình đường thẳng trong không gian"],["chuong5_bai16","Bài 16: Công thức tính góc trong không gian"],["chuong5_bai17","Bài 17: Phương trình mặt cầu"]]],["VI","Xác suất có điều kiện",[["chuong6_bai18","Bài 18: Xác suất có điều kiện"],["chuong6_bai19","Bài 19: Công thức xác suất toàn phần và công thức Bayes"]]]]};
+
+const TYPES = [
+  { k: 'mcq', ten: 'Trắc nghiệm 4 phương án', def: [4, 4, 3, 1] },
+  { k: 'tf',  ten: 'Đúng / Sai (4 ý)',        def: [1, 2, 1, 0] },
+  { k: 'sa',  ten: 'Trả lời ngắn',            def: [0, 2, 3, 1] },
+  { k: 'tl',  ten: 'Tự luận',                 def: [0, 0, 0, 0] },
+];
+const LVL = { 1: 'Nhận biết', 2: 'Thông hiểu', 3: 'Vận dụng', 4: 'Vận dụng cao' };
+const $ = (id) => document.getElementById(id);
+let LAST = null;   // { json, meta }
+
+/* ---------- tiện ích ---------- */
+function toast(msg, err = false) {
+  const t = $('toast'); t.textContent = (err ? '⚠️ ' : '✅ ') + msg;
+  t.className = 'show' + (err ? ' error' : ''); clearTimeout(t._h); t._h = setTimeout(() => t.className = '', 4000);
+}
+function esc(s) { return String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+// Nội dung AI trả về được phép có HTML đơn giản (<br>, <b>…) nhưng không được có script / sự kiện.
+function safe(html) {
+  return String(html ?? '')
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)[^>]*\/?>/gi, '')
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/\n/g, '<br>');
+}
+function typeset(nodes) { if (window.MathJax?.typesetPromise) MathJax.typesetPromise(nodes).catch(() => {}); }
+
+/* ---------- khóa API ---------- */
+const KEY_STORE = 'gemini_api_key_v4';
+try { const k = localStorage.getItem(KEY_STORE); if (k) $('apiKey').value = k; } catch {}
+$('apiKey').addEventListener('change', saveKey);
+$('rememberKey').addEventListener('change', saveKey);
+function saveKey() {
+  try {
+    if ($('rememberKey').checked) localStorage.setItem(KEY_STORE, $('apiKey').value.trim());
+    else localStorage.removeItem(KEY_STORE);
+  } catch {}
+}
+
+/* ---------- ma trận ---------- */
+(function buildMatrix() {
+  const tb = document.querySelector('#matrix tbody');
+  tb.innerHTML = TYPES.map(t => `<tr><td>${t.ten}</td>${[1,2,3,4].map(l => `<td><input type="number" min="0" max="40" id="m_${t.k}_${l}" value="${t.def[l-1]}"></td>`).join('')}<td id="s_${t.k}"></td></tr>`).join('');
+  tb.addEventListener('input', sumMatrix); sumMatrix();
+})();
+function readMatrix() {
+  const m = {}; TYPES.forEach(t => m[t.k] = [1,2,3,4].map(l => Math.max(0, parseInt($(`m_${t.k}_${l}`).value) || 0))); return m;
+}
+function sumMatrix() {
+  const m = readMatrix(); let all = 0; const col = [0,0,0,0];
+  TYPES.forEach(t => { const s = m[t.k].reduce((a,b)=>a+b,0); $(`s_${t.k}`).textContent = s; all += s; m[t.k].forEach((v,i)=>col[i]+=v); });
+  col.forEach((v,i)=>$(`c${i+1}`).textContent = v); $('cAll').textContent = all;
+}
+
+/* ---------- chọn bài (gắn mã bài Xưởng V17) ---------- */
+function buildLessons() {
+  const g = $('grade').value, sel = $('lesson');
+  if (!CT[g]) {
+    sel.innerHTML = '<option value="">(Chỉ có sẵn chương trình Toán 10–12 — lớp này dùng mã chung)</option>';
+    $('lessonHint').textContent = 'Mã bài khi xuất JSON Xưởng: khac';
+    return;
+  }
+  sel.innerHTML = CT[g].map((c, i) => `<optgroup label="Chương ${c[0]} — ${esc(c[1])}">${c[2].map(b => `<option value="${b[0]}">${esc(b[1])}</option>`).join('')}</optgroup>`).join('');
+  lessonHint();
+}
+function lessonHint() { const v = $('lesson').value; $('lessonHint').textContent = v ? 'Mã bài khi xuất JSON Xưởng: ' + v : ''; }
+$('grade').addEventListener('change', buildLessons);
+$('lesson').addEventListener('change', () => {
+  lessonHint();
+  const opt = $('lesson').selectedOptions[0];
+  if (opt && $('subject').value.trim().toLowerCase().startsWith('toán')) $('topic').value = 'Kiểm tra — ' + opt.textContent.replace(/^Bài \d+:\s*/, '');
+});
+buildLessons();
+
+/* ---------- tab ---------- */
+// LỖI CŨ: switchTab() dùng biến toàn cục "event" — không chạy trên Firefox.
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); $(b.dataset.tab).classList.add('active');
+}));
+
+function resetForm() {
+  if (!confirm('Xóa toàn bộ nội dung đã nhập?')) return;
+  $('appForm').reset(); buildLessons(); sumMatrix(); $('result').style.display = 'none';
+}
+
+/* ---------- dò mô hình ---------- */
+async function fetchModels() {
+  const key = $('apiKey').value.trim(); if (!key) return toast('Nhập khóa API trước khi dò tìm!', true);
+  const sel = $('modelSelect'); const cu = sel.value; sel.innerHTML = '<option>Đang dò tìm…</option>';
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message || 'Khóa API không hợp lệ');
+    const ds = (d.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /gemini/i.test(m.name) && !/embedding|tts|image|audio|live/i.test(m.name));
+    DS_MODEL = ds.map(m => m.name.replace('models/', ''));
+    sel.innerHTML = ds.map(m => { const v = m.name.replace('models/', ''); return `<option value="${v}">${v}${/flash/.test(v) ? ' (khuyên dùng)' : ''}</option>`; }).join('');
+    // Tự chọn bản flash mới nhất (không phải bản thử nghiệm).
+    const uuTien = ds.map(m => m.name.replace('models/', '')).filter(v => /flash/.test(v) && !/lite|exp|preview/.test(v)).sort().reverse();
+    sel.value = [cu, uuTien[0]].find(v => v && ds.some(m => m.name.endsWith(v))) || sel.options[0]?.value;
+    toast(`Tìm thấy ${ds.length} mô hình.`);
+  } catch (e) {
+    sel.innerHTML = '<option value="gemini-2.5-flash">gemini-2.5-flash (mặc định)</option>';
+    toast('Lỗi: ' + e.message, true);
+  }
+}
+
+/* =====================================================================
+   GỌI GEMINI — ép đúng khuôn JSON của Xưởng V17 bằng responseSchema
+   ===================================================================== */
+const S = (type, extra = {}) => ({ type, ...extra });
+const QBASE = { lvl: S('INTEGER'), q: S('STRING'), exp: S('STRING') };
+const SCHEMA = S('OBJECT', {
+  properties: {
+    tieuDe: S('STRING'),
+    mcq: S('ARRAY', { items: S('OBJECT', { properties: { ...QBASE, opts: S('ARRAY', { items: S('STRING') }), ans: S('INTEGER') }, required: ['lvl', 'q', 'opts', 'ans', 'exp'] }) }),
+    tf:  S('ARRAY', { items: S('OBJECT', { properties: { ...QBASE, stmts: S('ARRAY', { items: S('OBJECT', { properties: { t: S('STRING'), ans: S('BOOLEAN') }, required: ['t', 'ans'] }) }) }, required: ['lvl', 'q', 'stmts', 'exp'] }) }),
+    sa:  S('ARRAY', { items: S('OBJECT', { properties: { ...QBASE, ans: S('STRING') }, required: ['lvl', 'q', 'ans', 'exp'] }) }),
+    tl:  S('ARRAY', { items: S('OBJECT', { properties: { ...QBASE, dapAnMau: S('STRING'), barem: S('ARRAY', { items: S('OBJECT', { properties: { noiDung: S('STRING'), diem: S('NUMBER') }, required: ['noiDung', 'diem'] }) }) }, required: ['lvl', 'q', 'dapAnMau', 'barem', 'exp'] }) }),
+  },
+  required: ['tieuDe', 'mcq', 'tf', 'sa', 'tl'],
+});
+
+const SYS = `Bạn là giáo viên giỏi, ra đề kiểm tra đúng chương trình GDPT 2018 của Việt Nam.
+Chỉ dùng kiến thức trong phạm vi được giao, không bịa, không vượt chương trình của khối lớp.
+Trả về JSON đúng khuôn đã cho, gồm 4 mảng:
+- "mcq": trắc nghiệm, "opts" đúng 4 phương án KHÔNG ghi "A." ở đầu, "ans" là số 0-3 chỉ vị trí phương án đúng; rải đều đáp án đúng ở cả 4 vị trí.
+- "tf": Đúng/Sai, "q" là phần dẫn, "stmts" đúng 4 ý độc lập (không ghi a) b) ở đầu), "ans" true/false, mỗi câu có cả ý đúng và ý sai.
+- "sa": trả lời ngắn, "ans" là chuỗi số tối đa 4 kí tự (vd "12", "-3", "0,75"); nhiều cách viết đúng nối bằng | (vd "0,5|1/2"); đề ghi rõ làm tròn nếu cần.
+- "tl": tự luận, "dapAnMau" là lời giải chuẩn, "barem" tách từng ý chấm được, mỗi ý có "diem".
+"lvl": 1 Nhận biết, 2 Thông hiểu, 3 Vận dụng, 4 Vận dụng cao. "exp": lời giải từng bước.
+Phần mềm sẽ TRỘN thứ tự phương án và các ý: cấm phương án "Cả A và B", "Tất cả đều đúng"; các ý không nhắc nhau.
+Công thức toán viết LaTeX trong $...$ hoặc $$...$$; không gõ dấu < > trần trong công thức, dùng \\lt \\gt \\le \\ge. Xuống dòng dùng <br>.
+Số câu mỗi dạng và mỗi mức độ phải khớp CHÍNH XÁC yêu cầu; dạng có 0 câu thì trả mảng rỗng. Giải lại mọi câu trước khi trả lời.`;
+
+async function goiGemini(key, model, sys, user, schema, temperature) {
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: 'POST',
+    // Khóa gửi qua header thay vì nằm trên đường dẫn (tránh lộ trong lịch sử / nhật ký).
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: sys }] },
+      contents: [{ role: 'user', parts: [{ text: user }] }],
+      generationConfig: { temperature, responseMimeType: 'application/json', responseSchema: schema, maxOutputTokens: 32768 },
+    }),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const er = new Error(d.error?.message || `Lỗi máy chủ AI (${r.status})`); er.status = r.status; er.code = d.error?.status || ''; throw er; }
+  const cand = d.candidates?.[0];
+  if (!cand) throw new Error(d.promptFeedback?.blockReason ? 'AI từ chối yêu cầu: ' + d.promptFeedback.blockReason : 'AI không trả kết quả.');
+  const text = (cand.content?.parts || []).map(p => p.text || '').join('');
+  if (cand.finishReason === 'MAX_TOKENS') throw new Error('Đề quá dài, AI bị cắt giữa chừng. Hãy giảm số câu hoặc chia làm hai lần.');
+  return docJSON(text);
+}
+/* ---------- TỰ ĐỔI MÔ HÌNH khi quá tải (503) / hết lượt (429) / mô hình bị gỡ (404) ----------
+   Thứ tự thử: mô hình đang chọn → các mô hình flash dò được → danh sách dự phòng cố định. */
+let DS_MODEL = [];            // danh sách mô hình dò được bằng nút "Dò tìm"
+const DU_PHONG = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite', 'gemini-flash-lite-latest',
+                  'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-2.5-pro'];
+const nghi = ms => new Promise(r => setTimeout(r, ms));
+function loiDoiDuoc(e) {
+  const s = e.status, t = (e.message || '') + ' ' + (e.code || '');
+  if (s === 400 && /api key|API_KEY/i.test(t)) return false;           // khóa sai → đổi mô hình vô ích
+  if (s === 401 || s === 403) return false;
+  return !s /* mất mạng */ || [404, 408, 429, 500, 502, 503, 504].includes(s)
+      || /overload|high demand|unavailable|quota|exhausted|rate limit|try again|not found|not supported/i.test(t);
+}
+function danhSachThu(chon) {
+  const doDuoc = DS_MODEL.filter(v => /flash/.test(v) && !/exp|tts|image|live/.test(v))
+                         .sort((a, b) => (/lite/.test(a) - /lite/.test(b)) || b.localeCompare(a));
+  return [...new Set([chon, ...doDuoc, ...DU_PHONG, ...DS_MODEL.filter(v => /pro/.test(v))])].filter(Boolean);
+}
+async function goiGeminiDuPhong(key, chon, sys, user, schema, temperature, baoTrangThai) {
+  if (!$('autoSwitch').checked) return { json: await goiGemini(key, chon, sys, user, schema, temperature), model: chon };
+  const ds = danhSachThu(chon), daThu = [];
+  let loiCuoi;
+  for (const model of ds) {
+    for (let lan = 0; lan < 2; lan++) {                 // mỗi mô hình thử tối đa 2 lần
+      try {
+        if (daThu.length || lan) baoTrangThai?.(`${model} — ${lan ? 'thử lại lần 2' : 'đang thử'}…`);
+        const json = await goiGemini(key, model, sys, user, schema, temperature);
+        if (model !== chon) toast(`Mô hình ${chon} bận — đã tự chuyển sang ${model}.`);
+        return { json, model };
+      } catch (e) {
+        loiCuoi = e;
+        if (!loiDoiDuoc(e)) throw e;                    // lỗi nội dung / khóa sai → dừng luôn
+        // 503 quá tải: chờ 3 giây thử lại cùng mô hình một lần. 429 / 404: sang mô hình khác ngay.
+        if (lan === 0 && (e.status === 503 || e.status === 500 || !e.status)) { await nghi(3000); continue; }
+        break;
+      }
+    }
+    daThu.push(model);
+    baoTrangThai?.(`${model} bận/hết lượt → chuyển mô hình khác…`);
+  }
+  throw new Error(`Đã thử ${daThu.length} mô hình (${daThu.join(', ')}) nhưng đều bận hoặc hết lượt. Hãy đợi vài phút rồi thử lại. Lỗi cuối: ${loiCuoi?.message || ''}`);
+}
+
+// Đọc JSON kể cả khi AI lỡ bọc ```json … ``` hoặc thêm chữ thừa.
+function docJSON(text) {
+  let t = String(text || '').trim().replace(/^```(?:json)?/i, '').replace(/```\s*$/, '').trim();
+  try { return JSON.parse(t); } catch {}
+  const a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a >= 0 && b > a) return JSON.parse(t.slice(a, b + 1));
+  throw new Error('AI trả về dữ liệu không đọc được. Bấm tạo lại.');
+}
+
+/* ---------- chuẩn hóa + kiểm tra kết quả ---------- */
+function chuanHoa(j) {
+  const out = { tieuDe: String(j.tieuDe || ''), mcq: [], tf: [], sa: [], tl: [] }, loi = [];
+  (j.mcq || []).forEach((q, i) => {
+    let opts = (q.opts || []).map(o => String(o).replace(/^\s*[A-D][\.\):]\s+/, ''));
+    let ans = Number(q.ans); if (typeof q.ans === 'string' && /^[A-D]$/i.test(q.ans.trim())) ans = 'ABCD'.indexOf(q.ans.trim().toUpperCase());
+    if (opts.length !== 4) loi.push(`Trắc nghiệm câu ${i+1}: có ${opts.length} phương án`);
+    if (!(ans >= 0 && ans <= 3)) { loi.push(`Trắc nghiệm câu ${i+1}: đáp án không hợp lệ`); ans = 0; }
+    out.mcq.push({ lvl: clampLvl(q.lvl), q: q.q, opts, ans, exp: q.exp || '' });
+  });
+  (j.tf || []).forEach((q, i) => {
+    const stmts = (q.stmts || []).slice(0, 4).map(s => ({ t: String(s.t ?? s.text ?? '').replace(/^\s*[a-d]\)\s*/i, ''), ans: s.ans === true || s.ans === 'true' }));
+    if (stmts.length !== 4) loi.push(`Đúng/Sai câu ${i+1}: có ${stmts.length} ý`);
+    out.tf.push({ lvl: clampLvl(q.lvl), q: q.q, stmts, exp: q.exp || '' });
+  });
+  (j.sa || []).forEach((q, i) => {
+    const ans = String(q.ans ?? '').trim();
+    if (!ans) loi.push(`Trả lời ngắn câu ${i+1}: thiếu đáp án`);
+    else if (ans.split('|')[0].length > 4) loi.push(`Trả lời ngắn câu ${i+1}: đáp án "${ans.split('|')[0]}" dài quá 4 kí tự`);
+    out.sa.push({ lvl: clampLvl(q.lvl), q: q.q, ans, exp: q.exp || '' });
+  });
+  (j.tl || []).forEach((q) => out.tl.push({ lvl: clampLvl(q.lvl), q: q.q, dapAnMau: q.dapAnMau || '', barem: (q.barem || []).map(b => ({ noiDung: b.noiDung || '', diem: +b.diem || 0 })), exp: q.exp || '' }));
+  return { out, loi };
+}
+function clampLvl(v) { v = parseInt(v) || 1; return Math.min(4, Math.max(1, v)); }
+function soSanhMaTran(json, m) {
+  const lech = [];
+  TYPES.forEach(t => [1,2,3,4].forEach(l => {
+    const can = m[t.k][l-1], co = (json[t.k] || []).filter(q => q.lvl === l).length;
+    if (can !== co) lech.push(`${t.ten} – ${LVL[l]}: yêu cầu ${can}, AI soạn ${co}`);
+  }));
+  return lech;
+}
+
+/* ---------- tạo đề ---------- */
+$('appForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const key = $('apiKey').value.trim(); if (!key) { toast('Vui lòng nhập khóa API Gemini!', true); $('apiKey').focus(); return; }
+  const m = readMatrix(); const tong = Object.values(m).flat().reduce((a,b)=>a+b,0);
+  if (!tong) return toast('Ma trận đang trống — hãy nhập số câu.', true);
+  const tagSel = $('lesson').value;
+  const meta = {
+    mon: $('subject').value.trim(), lop: $('grade').value, tg: $('duration').value, chuDe: $('topic').value.trim(),
+    noiDung: $('content').value.trim(), them: $('extra').value.trim(), model: $('modelSelect').value,
+    tag: CT[$('grade').value] && tagSel ? tagSel : 'khac', baiHoc: $('lesson').selectedOptions[0]?.textContent || '', maTran: m,
+  };
+  const yeuCau = TYPES.map(t => `- ${t.ten} ("${t.k}"): ${m[t.k].reduce((a,b)=>a+b,0)} câu = ${m[t.k].map((v,i)=>`${v} ${LVL[i+1]}`).join(', ')}`).join('\n');
+  const user = `Môn ${meta.mon} lớp ${meta.lop}. ${meta.baiHoc && meta.tag !== 'khac' ? 'Bài học: ' + meta.baiHoc + ' (sách Kết nối tri thức). ' : ''}Chủ đề: ${meta.chuDe}.
+Phạm vi kiến thức:
+${meta.noiDung}
+Thời gian làm bài ${meta.tg} phút. Số câu từng dạng và mức độ (bắt buộc đúng):
+${yeuCau}
+${meta.them ? 'Ghi chú của giáo viên: ' + meta.them : ''}`;
+
+  const btn = $('btnSubmit'); btn.disabled = true; btn.textContent = '⏳ Đang xử lý…';
+  $('loading').style.display = 'block'; $('result').style.display = 'none'; $('loadingText').textContent = 'AI đang soạn đề…';
+  try {
+    const bao = s => { $('loadingText').textContent = 'AI đang soạn đề… (' + s + ')'; };
+    const kq = await goiGeminiDuPhong(key, meta.model, SYS, user, SCHEMA, 0.5, bao);
+    let json = kq.json; meta.model = kq.model;
+    const doiModel = kq.model !== $('modelSelect').value ? $('modelSelect').value : '';
+    const selM = $('modelSelect');
+    if (![...selM.options].some(o => o.value === kq.model)) selM.add(new Option(kq.model, kq.model));
+    selM.value = kq.model;   // lần sau dùng luôn mô hình đang chạy được
+    if ($('doubleCheck').checked) {
+      $('loadingText').textContent = 'AI đang tự giải lại để kiểm tra đáp án…';
+      try {
+        json = (await goiGeminiDuPhong(key, meta.model,
+          SYS + '\nBây giờ bạn là người PHẢN BIỆN đề: tự giải lại từng câu một cách độc lập, sửa mọi đáp án/ý/lời giải sai, sửa câu có nhiều hơn một đáp án đúng. Giữ nguyên số câu và mức độ. Trả lại toàn bộ đề theo đúng khuôn JSON.',
+          'Đề cần phản biện:\n' + JSON.stringify(json), SCHEMA, 0.2,
+          s => { $('loadingText').textContent = 'AI đang kiểm tra đáp án… (' + s + ')'; })).json;
+      } catch (e2) { toast('Bước kiểm tra lại gặp lỗi, giữ bản đầu: ' + e2.message, true); }
+    }
+    const { out, loi } = chuanHoa(json);
+    LAST = { json: out, meta, canhBao: [...loi, ...soSanhMaTran(out, m)] };
+    render(); toast(doiModel ? `Tạo đề thành công! (${doiModel} đang bận nên đã tự dùng ${meta.model})` : 'Tạo đề thành công!');
+  } catch (err) {
+    console.error(err); toast('Lỗi: ' + err.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = '✨ Tạo đề kiểm tra'; $('loading').style.display = 'none';
+  }
+});
+
+/* =====================================================================
+   HIỂN THỊ
+   ===================================================================== */
+function render() {
+  const { json: j, meta, canhBao } = LAST;
+  const head = `<div class="ex-title">${esc(j.tieuDe || meta.chuDe || 'ĐỀ KIỂM TRA')}</div>
+    <div class="ex-meta"><b>Môn:</b> ${esc(meta.mon)} ${esc(meta.lop)} &nbsp;|&nbsp; <b>Thời gian:</b> ${esc(meta.tg)} phút</div>`;
+  const warn = canhBao.length ? `<div class="warn"><b>⚠️ Cần xem lại trước khi dùng:</b><br>${canhBao.map(esc).join('<br>')}</div>` : '';
+  let de = warn + head, da = head, hd = head, so = 0;
+  const phan = [];
+  if (j.mcq.length) phan.push(['mcq', 'PHẦN I. Câu trắc nghiệm nhiều phương án lựa chọn. Mỗi câu thí sinh chỉ chọn một phương án.']);
+  if (j.tf.length)  phan.push(['tf',  'PHẦN II. Câu trắc nghiệm đúng sai. Trong mỗi ý a), b), c), d) ở mỗi câu, thí sinh chọn đúng hoặc sai.']);
+  if (j.sa.length)  phan.push(['sa',  'PHẦN III. Câu trắc nghiệm trả lời ngắn.']);
+  if (j.tl.length)  phan.push(['tl',  'PHẦN IV. Tự luận.']);
+  phan.forEach(([k, ten], pi) => {
+    de += `<div class="part">${ten}</div>`; hd += `<div class="part">${ten.split('.')[0]}.</div>`;
+    const roman = ['I', 'II', 'III', 'IV'][pi];
+    let bang = '';
+    j[k].forEach((q, i) => {
+      const n = i + 1, badge = `<span class="badge">${LVL[q.lvl]}</span>`;
+      de += `<div class="q"><div class="q-t"><b>Câu ${n}.</b> ${safe(q.q)}${badge}</div>`;
+      if (k === 'mcq') de += `<div class="opts">${q.opts.map((o, x) => `<div><b>${'ABCD'[x]}.</b> ${safe(o)}</div>`).join('')}</div>`;
+      if (k === 'tf') de += `<div class="stmts">${q.stmts.map((s, x) => `<div><b>${'abcd'[x]})</b> ${safe(s.t)}</div>`).join('')}</div>`;
+      de += `</div>`;
+      let dapAn = k === 'mcq' ? 'ABCD'[q.ans] : k === 'tf' ? q.stmts.map((s, x) => `${'abcd'[x]}) ${s.ans ? 'Đ' : 'S'}`).join(' ') : k === 'sa' ? q.ans.split('|')[0] : '';
+      if (k !== 'tl') bang += `<tr><td>${n}</td><td>${esc(dapAn)}</td></tr>`;
+      hd += `<div class="q"><div class="q-t"><b>Câu ${n}.</b> ${safe(q.q)}</div><div class="guide">`;
+      if (k !== 'tl') hd += `<div style="color:var(--success);font-weight:700;margin-bottom:6px">Đáp án: ${esc(dapAn)}${k === 'sa' && q.ans.includes('|') ? ` (chấp nhận: ${esc(q.ans.split('|').join(' ; '))})` : ''}</div>`;
+      if (k === 'tl') {
+        hd += `<div><b>Lời giải mẫu:</b><br>${safe(q.dapAnMau)}</div><table class="da" style="margin-top:8px"><tr><th>Ý chấm</th><th>Điểm</th></tr>${q.barem.map(b => `<tr><td style="text-align:left">${safe(b.noiDung)}</td><td>${b.diem}</td></tr>`).join('')}<tr><th>Cộng</th><th>${Math.round(q.barem.reduce((a, b) => a + b.diem, 0) * 100) / 100}</th></tr></table>`;
+      } else hd += `<b>Hướng dẫn giải:</b><br>${safe(q.exp)}`;
+      hd += `</div></div>`;
+    });
+    if (k !== 'tl') da += `<div class="part">PHẦN ${roman}</div><table class="da"><tr><th>Câu</th><th>Đáp án</th></tr>${bang}</table>`;
+    else da += `<div class="part">PHẦN ${roman} — xem lời giải và barem ở tab Hướng dẫn chấm.</div>`;
+  });
+  $('out-de').innerHTML = de; $('out-da').innerHTML = da; $('out-hd').innerHTML = hd; $('out-mt').innerHTML = head + bangDacTa();
+  document.querySelectorAll('.tab-btn')[0].click();
+  $('result').style.display = 'block'; $('result').scrollIntoView({ behavior: 'smooth' });
+  typeset([$('out-de'), $('out-da'), $('out-hd')]);
+}
+function bangDacTa() {
+  const { json: j, meta } = LAST;
+  let h = `<p style="margin-bottom:8px"><b>Bài học:</b> ${esc(meta.baiHoc || meta.chuDe)} ${meta.tag !== 'khac' ? `<span class="hint">(mã ${esc(meta.tag)})</span>` : ''}</p>
+  <table class="mt"><thead><tr><th>Dạng câu hỏi</th><th>Nhận biết</th><th>Thông hiểu</th><th>Vận dụng</th><th>VD cao</th><th>Cộng</th></tr></thead><tbody>`;
+  const col = [0,0,0,0];
+  TYPES.forEach(t => {
+    const d = [1,2,3,4].map(l => j[t.k].filter(q => q.lvl === l).length); d.forEach((v,i)=>col[i]+=v);
+    h += `<tr><td>${t.ten}</td>${d.map(v => `<td>${v}</td>`).join('')}<td>${d.reduce((a,b)=>a+b,0)}</td></tr>`;
+  });
+  const tong = col.reduce((a,b)=>a+b,0);
+  h += `</tbody><tfoot><tr><td>Tổng</td>${col.map(v=>`<td>${v}</td>`).join('')}<td>${tong}</td></tr><tr><td>Tỉ lệ</td>${col.map(v=>`<td>${tong ? Math.round(v*100/tong) : 0}%</td>`).join('')}<td>100%</td></tr></tfoot></table>`;
+  return h;
+}
+
+/* =====================================================================
+   XUẤT
+   ===================================================================== */
+// JSON đúng khuôn "Nạp Hàng Loạt (AI)" của Xưởng V17: {"mcq":[…],"tf":[…],"sa":[…],"tl":[…]} kèm "tag".
+function jsonXuong() {
+  const { json: j, meta } = LAST, tag = meta.tag;
+  return JSON.stringify({
+    mcq: j.mcq.map(q => ({ tag, lvl: q.lvl, q: q.q, opts: q.opts, ans: q.ans, exp: q.exp })),
+    tf:  j.tf.map(q => ({ tag, lvl: q.lvl, q: q.q, stmts: q.stmts, exp: q.exp })),
+    sa:  j.sa.map(q => ({ tag, lvl: q.lvl, q: q.q, ans: q.ans, exp: q.exp })),
+    tl:  j.tl.map(q => ({ tag, lvl: q.lvl, q: q.q, dapAnMau: q.dapAnMau, barem: q.barem, exp: q.exp })),
+  }, null, 1);
+}
+function copyV17() {
+  if (!LAST) return;
+  const t = jsonXuong();
+  const xong = () => toast('Đã chép! Vào Xưởng → Nạp Hàng Loạt (AI) → dán → GOM VÀO GIỎ TẠM.');
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(xong).catch(() => chepDuPhong(t, xong));
+  else chepDuPhong(t, xong);
+}
+function chepDuPhong(t, xong) {
+  const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); xong(); } catch { toast('Trình duyệt chặn sao chép — hãy dùng nút Tải JSON.', true); }
+  ta.remove();
+}
+function taiFile(ten, noiDung, loai) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([noiDung], { type: loai })); a.download = ten;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function tenFile() { return (LAST.meta.chuDe || 'de-kiem-tra').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/[^\w]+/g, '_').slice(0, 60); }
+function downloadV17() { if (LAST) taiFile(tenFile() + '_Xuong_V17.json', jsonXuong(), 'application/json'); }
+
+// Word: công thức giữ dạng LaTeX $...$ (dán vào MathType / Word Equation để chuyển). Muốn công thức đẹp ngay, dùng In / Lưu PDF.
+function downloadDoc() {
+  if (!LAST) return;
+  const nguon = (id) => $(id).cloneNode(true);
+  const lam = (el) => { el.querySelectorAll('mjx-container').forEach(m => { const tex = m.getAttribute('data-tex') || ''; m.replaceWith(document.createTextNode(tex)); }); el.querySelectorAll('.warn,.badge').forEach(x => x.remove()); return el.innerHTML; };
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:'Times New Roman';font-size:13pt} .ex-title{text-align:center;font-weight:bold;font-size:15pt} .ex-meta{text-align:center} .part{font-weight:bold;margin-top:12pt} table{border-collapse:collapse} td,th{border:1px solid #000;padding:3pt 6pt}</style></head><body>
+    ${lam(nguon('out-de'))}<br style="page-break-before:always">${lam(nguon('out-da'))}<br style="page-break-before:always">${lam(nguon('out-hd'))}</body></html>`;
+  taiFile(tenFile() + '.doc', '\ufeff' + html, 'application/msword');
+  toast('Đã tải file Word. Công thức ở dạng $…$ — muốn công thức đẹp, dùng nút In / Lưu PDF.');
+}
+function printPane(id) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('printing'));
+  $(id).classList.add('printing'); window.print();
+}
+// Giữ lại LaTeX gốc để xuất Word.
+document.addEventListener('DOMContentLoaded', () => {
+  const t = setInterval(() => {
+    if (!window.MathJax?.startup?.document) return; clearInterval(t);
+    MathJax.startup.promise.then(() => {
+      const goc = MathJax.typesetPromise.bind(MathJax);
+      MathJax.typesetPromise = (els) => goc(els).then(() => {
+        for (const m of MathJax.startup.document.math) { if (m.typesetRoot && !m.typesetRoot.getAttribute('data-tex')) m.typesetRoot.setAttribute('data-tex', (m.display ? '$$' : '$') + m.math + (m.display ? '$$' : '$')); }
+      });
+    });
+  }, 300);
+});
+</script>
+</body>
+</html>
